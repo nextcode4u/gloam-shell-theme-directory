@@ -5,13 +5,53 @@
 from __future__ import annotations
 
 import hashlib
+import argparse
+import os
 from pathlib import Path
 import struct
+import sys
 import time
 
 from PIL import Image
 
 import pack_splash
+import splash_project
+
+
+def create_root():
+    """Keep older Windows Python installs usable inside the private environment."""
+    try:
+        root = tk.Tk()
+    except tk.TclError as error:
+        # CPython #125235: Python 3.13.0 looks in the venv for base Tcl data.
+        if (
+            os.name != "nt"
+            or sys.prefix == sys.base_prefix
+            or "init.tcl" not in str(error)
+        ):
+            raise
+        base = Path(sys.base_prefix) / "tcl"
+        libraries = {
+            "TCL_LIBRARY": base / f"tcl{tk.TclVersion}",
+            "TK_LIBRARY": base / f"tk{tk.TkVersion}",
+        }
+        if (
+            not (libraries["TCL_LIBRARY"] / "init.tcl").is_file()
+            or not (libraries["TK_LIBRARY"] / "tk.tcl").is_file()
+        ):
+            raise
+        previous = {name: os.environ.get(name) for name in libraries}
+        try:
+            os.environ.update({name: str(path) for name, path in libraries.items()})
+            root = tk.Tk()
+        finally:
+            for name, value in previous.items():
+                if value is None:
+                    os.environ.pop(name, None)
+                else:
+                    os.environ[name] = value
+    root.withdraw()
+    return root
 
 
 def render(data: bytes, tick: int, reduced=False) -> Image.Image:
@@ -133,12 +173,30 @@ def install_custom(root: Path, data: bytes) -> Path:
 
 
 class Builder:
-    def __init__(self, root):
+    def __init__(self, root, workspace=None):
         self.root = root
+        self.workspace = workspace
+        self.autosave_timer = None
+        self.restoring = True
+        self.export_path = ""
         self.data = None
         self.timer = None
         root.title("Gloam Splash Builder")
         root.minsize(980, 690)
+        workspace_bar = ttk.Frame(root, padding=(18, 10, 18, 0))
+        workspace_bar.pack(fill="x")
+        self.workspace_status = tk.StringVar(
+            value="Choose a working folder to save your project."
+        )
+        ttk.Label(
+            workspace_bar, textvariable=self.workspace_status, wraplength=700
+        ).pack(side="left", fill="x", expand=True)
+        ttk.Button(
+            workspace_bar, text="Open working folder…", command=self.open_workspace
+        ).pack(side="left", padx=6)
+        ttk.Button(workspace_bar, text="Save project", command=self.save_project).pack(
+            side="left"
+        )
         frame = ttk.Frame(root, padding=18)
         frame.pack(fill="both", expand=True)
         left = ttk.Frame(frame)
@@ -228,6 +286,7 @@ class Builder:
             text="Effects animate the overlay when supplied; otherwise they affect the screen image. Unused screens stay black. Sound is packaged; the PC preview is silent.",
             wraplength=570,
         ).pack(anchor="w", pady=8)
+
         buttons = ttk.Frame(left)
         buttons.pack(fill="x", pady=8)
         ttk.Button(buttons, text="Build & preview", command=self.preview).pack(
@@ -274,6 +333,129 @@ class Builder:
             wraplength=320,
         ).pack(anchor="w", pady=8)
 
+        for variable in [
+            *self.paths.values(),
+            *self.values.values(),
+            self.sound,
+            self.direct,
+            self.reduced,
+        ]:
+            variable.trace_add("write", self.changed)
+        if workspace:
+            self.restore_project()
+        self.restoring = False
+        root.protocol("WM_DELETE_WINDOW", self.close)
+
+    def changed(self, *_):
+        if self.restoring or not self.workspace:
+            return
+        self.workspace_status.set(f"{self.workspace.root} — unsaved changes")
+        if self.autosave_timer is not None:
+            self.root.after_cancel(self.autosave_timer)
+        self.autosave_timer = self.root.after(
+            600, lambda: self.save_project(quiet=True)
+        )
+
+    def save_project(self, quiet=False):
+        if self.autosave_timer is not None:
+            self.root.after_cancel(self.autosave_timer)
+            self.autosave_timer = None
+        if not self.workspace:
+            return self.open_workspace()
+        try:
+            state = dict(self.workspace.state)
+            state.update(
+                paths={
+                    key: self.workspace.reference(value.get())
+                    for key, value in self.paths.items()
+                },
+                options={key: value.get() for key, value in self.values.items()},
+                direct=self.direct.get(),
+                reduced=self.reduced.get(),
+                export_path=self.workspace.reference(self.export_path),
+            )
+            state["paths"]["sound"] = self.workspace.reference(self.sound.get())
+            self.workspace.save(state)
+            self.workspace_status.set(f"{self.workspace.root} — project saved")
+            return True
+        except Exception as error:
+            self.workspace_status.set(f"Project not saved: {error}")
+            if not quiet:
+                messagebox.showerror("Project not saved", str(error))
+            return False
+
+    def restore_project(self):
+        self.restoring = True
+        state = self.workspace.state
+        for key, variable in self.paths.items():
+            variable.set(self.workspace.resolve(state["paths"][key]))
+        self.sound.set(self.workspace.resolve(state["paths"]["sound"]))
+        for key, variable in self.values.items():
+            variable.set(state["options"][key])
+        self.direct.set(state["direct"])
+        self.reduced.set(state["reduced"])
+        self.export_path = self.workspace.resolve(state["export_path"])
+        self.workspace_status.set(f"{self.workspace.root} — project loaded")
+        self.root.title(f"Gloam Splash Builder — {self.workspace.root.name}")
+        self.restoring = False
+
+    def open_workspace(self):
+        if self.workspace and not self.save_project():
+            if not messagebox.askyesno(
+                "Open without saving?",
+                "Discard the latest edits and open or reload a working folder?",
+            ):
+                return False
+        folder = filedialog.askdirectory(
+            title="Create or reopen a splash working folder",
+            initialdir=(
+                str(self.workspace.root)
+                if self.workspace
+                else splash_project.last_workspace() or None
+            ),
+        )
+        if not folder:
+            return False
+        try:
+            workspace = splash_project.Workspace(folder)
+            # Validate all references before changing the currently open project.
+            for value in (
+                *workspace.state["paths"].values(),
+                workspace.state["export_path"],
+            ):
+                workspace.resolve(value)
+            self.stop()
+            self.workspace = workspace
+            self.restore_project()
+            self.save_project()
+            try:
+                splash_project.remember_workspace(workspace.root)
+            except OSError:
+                pass
+            self.canvas.delete("all")
+            self.status.set("Project loaded. Build & preview to see it.")
+            return True
+        except Exception as error:
+            messagebox.showerror("Project not opened", str(error))
+            return False
+
+    def close(self):
+        if self.workspace and not self.save_project():
+            if not messagebox.askyesno(
+                "Close without saving?",
+                "The project could not be saved. Close and discard the latest changes?",
+            ):
+                return
+        self.stop()
+        self.root.destroy()
+
+    def selected_asset(self, path, variable):
+        try:
+            value = self.workspace.import_asset(path) if self.workspace else Path(path)
+            variable.set(str(value))
+        except Exception as error:
+            messagebox.showerror("Asset not imported", str(error))
+
     def choose_file(self, variable, sound=False):
         path = filedialog.askopenfilename(
             filetypes=(
@@ -286,22 +468,30 @@ class Builder:
             )
         )
         if path:
-            variable.set(path)
+            self.selected_asset(path, variable)
 
     def choose_frames(self, variable):
         path = filedialog.askdirectory(title="Choose a folder of numbered PNG frames")
         if path:
-            variable.set(path)
+            self.selected_asset(path, variable)
 
     def build(self):
         values = {key: variable.get() or None for key, variable in self.paths.items()}
+        if self.workspace:
+            values = {
+                key: self.workspace.resolve(self.workspace.reference(value)) or None
+                for key, value in values.items()
+            }
         values.update({key: variable.get() for key, variable in self.values.items()})
         for key in ("duration", "poster"):
             values[key] = float(values[key]) if values[key] else None
         values["transition"] = float(values["transition"])
         values["fps"] = int(values["fps"])
         values["logo_width"] = int(values["logo_width"])
-        values.update(direct=self.direct.get(), sound=self.sound.get() or None)
+        sound = self.sound.get()
+        if self.workspace:
+            sound = self.workspace.resolve(self.workspace.reference(sound))
+        values.update(direct=self.direct.get(), sound=sound or None)
         self.data = pack_splash.build(**values)
         self.status.set(
             f"Prepared {len(self.data):,} bytes ({len(self.data) / pack_splash.LIMIT:.1%} of the limit)."
@@ -360,7 +550,18 @@ class Builder:
                 target = Path(folder) / "splash.gsp"
             else:
                 chosen = filedialog.asksaveasfilename(
-                    defaultextension=".gsp", filetypes=[("Gloam splash", "*.gsp")]
+                    defaultextension=".gsp",
+                    filetypes=[("Gloam splash", "*.gsp")],
+                    initialdir=(
+                        str(Path(self.export_path).parent)
+                        if self.export_path
+                        else str(self.workspace.root) if self.workspace else None
+                    ),
+                    initialfile=(
+                        Path(self.export_path).name
+                        if self.export_path
+                        else "splash.gsp"
+                    ),
                 )
                 if not chosen:
                     return
@@ -371,6 +572,9 @@ class Builder:
             ):
                 return
             pack_splash.write_package(target, data, replace=target.exists())
+            self.export_path = str(target)
+            if self.workspace:
+                self.save_project(quiet=True)
             self.status.set(f"Saved {target}")
         except Exception as error:
             messagebox.showerror("Splash not exported", str(error))
@@ -393,14 +597,47 @@ class Builder:
             messagebox.showerror("Splash not installed", str(error))
 
 
-def main():
+def main(argv=None):
     global tk, ttk, filedialog, messagebox, ImageTk
     import tkinter as tk
     from tkinter import ttk, filedialog, messagebox
     from PIL import ImageTk
 
-    root = tk.Tk()
-    Builder(root)
+    parser = argparse.ArgumentParser(
+        description="Create or resume a Gloam splash project."
+    )
+    parser.add_argument(
+        "--workspace", type=Path, help="Working folder containing splash-project.json"
+    )
+    args = parser.parse_args(argv)
+    root = create_root()
+    try:
+        folder = args.workspace or filedialog.askdirectory(
+            title="Create or reopen a splash working folder",
+            initialdir=splash_project.last_workspace() or None,
+        )
+        if not folder:
+            root.destroy()
+            return
+        workspace = splash_project.Workspace(folder)
+        for value in (
+            *workspace.state["paths"].values(),
+            workspace.state["export_path"],
+        ):
+            workspace.resolve(value)
+        builder = Builder(root, workspace)
+        if not builder.save_project():
+            root.destroy()
+            return
+        try:
+            splash_project.remember_workspace(workspace.root)
+        except OSError:
+            pass
+    except Exception as error:
+        messagebox.showerror("Project not opened", str(error))
+        root.destroy()
+        return
+    root.deiconify()
     root.mainloop()
 
 
