@@ -1,5 +1,9 @@
 # Authoring and validating the art collection
 
+For startup artwork and animation, use the [Splash Builder](STARTUP_SPLASHES.md).
+Its GUI, converter and tests are maintained here; Gloam owns native playback and
+the package format. A full theme builder remains future work.
+
 Production illustration masters live in `source/art/`. Their generation prompts
 and draft explorations are not part of the repository. The selected masters,
 configurations and generated runtime artwork are included so builds do not require

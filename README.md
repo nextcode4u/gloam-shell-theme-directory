@@ -46,6 +46,22 @@ folder name before replacing it. Do not copy this repository over your SD root.
 Gloam 1.0 displays the alphabetically first 23 valid theme folders plus Built-in;
 keep only the themes you want installed if you reach that limit.
 
+## Splash Builder
+
+Create static or animated startup splashes with images, GIFs, numbered frames,
+layer effects and optional WAV audio. The graphical builder and converter live
+here; playback lives in Gloam. From this repository's root, run:
+
+```sh
+python -m pip install -r requirements.txt
+python tools/pack_splash.py
+```
+
+Use Python 3.10+ with Tk (included in the standard Windows Python installer).
+Running without arguments opens the graphical builder. See the [splash authoring guide](docs/STARTUP_SPLASHES.md)
+for preview, theme export and custom SD installation. Splash playback requires
+a Gloam build after 1.0.0; the 1.0.0 release does not support it.
+
 ## Share a theme
 
 Read [CONTRIBUTING.md](CONTRIBUTING.md), then open a pull request. Keep the theme
