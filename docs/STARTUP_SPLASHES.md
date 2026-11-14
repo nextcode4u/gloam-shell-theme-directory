@@ -2,7 +2,7 @@
 
 The Splash Builder and command-line converter live in this repository. Gloam
 loads their prepared `.gsp` packages; the console does not need Python or a copy
-of the builder. A complete theme builder remains separate future work.
+of the builder.
 
 Splash playback requires a Gloam build containing commit
 [`82e6116`](https://github.com/nextcode4u/gloam-shell-ndx/commit/82e6116).

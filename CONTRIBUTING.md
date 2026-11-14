@@ -22,3 +22,6 @@
 Use the upstream [theme guide](https://github.com/nextcode4u/gloam-shell-ndx/blob/main/docs/guides/THEME_PACKAGES.md)
 for supported keys, image/audio formats and bounds. Keep community theme artwork
 original or properly licensed; do not copy another frontend’s theme library.
+
+Keep unimplemented theming proposals in chat. Repository guides should describe
+supported features, current limitations and contributor instructions.

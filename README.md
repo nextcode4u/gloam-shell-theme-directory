@@ -14,8 +14,7 @@ frontends are not directly compatible with Gloam’s format.
 
 These previews show the actual host renderer with synthetic content. Each theme
 includes original music, UI cues and its own material/icon treatment. No launcher
-code changes are required. Smoothing uses the existing bitmap-font coverage format;
-translucent glass and proportional text would require separate Gloam improvements.
+code changes are required. Smoothing uses the existing bitmap-font coverage format.
 
 ## Browse themes
 
