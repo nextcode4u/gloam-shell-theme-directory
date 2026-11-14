@@ -1,12 +1,12 @@
 # Vesper
 
-Cream moths, burgundy roses and gold on plum velvet. Chamfered brass frames, engraved symbols and a chamber-like harp loop.
+Plum velvet, brass corner fittings and moth illustrations, with a chamber-like harp loop.
 
 ![Actual Gloam renderer preview](preview.png)
 
 ## Design
 
-- **Scene** composition; pager navigation at the bottom.
+- **Scene** composition; a single pager ribbon.
 - **Shelf** browser by default; other views and icon sizes remain selectable.
 - DejaVu Serif body at 10 px, with a separate DejaVu Serif heading face at 14 px.
 - Separate image-backed reading surfaces; each asset carries its own opacity.
@@ -38,7 +38,7 @@ still need testing on a DSi.
 
 ## Materials and feedback
 
-Dark velvet reading surfaces, brass corner details and a small moth/glint accent.
+Chamfered brass fittings and a gold pager ribbon frame the velvet illustration. Cards have translucent faces, the modal panel stays solid, and a slow moth accent occupies the header.
 Controls include matching arrows, switches, checkboxes and scrollbars. Selection
 feedback is brief; the ambient accent loads after browsing starts. Reduced motion
 freezes the accent and disables the selection gleam. Prepared sprite bundles

@@ -1,12 +1,12 @@
 # Tidal
 
-Translucent jellyfish and deep teal water. Fluid oval controls, luminous porcelain symbols and slow bell-and-pad harmonies.
+Sea-glass lenses and jellyfish over deep teal water, with bell-and-pad harmonies.
 
 ![Actual Gloam renderer preview](preview.png)
 
 ## Design
 
-- **Gallery** composition; icons navigation at the bottom.
+- **Poster** composition; icons below the artwork.
 - **Grid** browser by default; other views and icon sizes remain selectable.
 - DejaVu Sans body at 10 px, with a separate DejaVu Sans heading face at 12 px.
 - Separate image-backed reading surfaces; each asset carries its own opacity.
@@ -38,7 +38,7 @@ still need testing on a DSi.
 
 ## Materials and feedback
 
-Sea-glass reading surfaces, rounded controls and rising header bubbles.
+Open optical arcs and translucent lens-like cards keep the water visible. Round checkboxes, capsule switches and rising bubbles form one control family.
 Controls include matching arrows, switches, checkboxes and scrollbars. Selection
 feedback is brief; the ambient accent loads after browsing starts. Reduced motion
 freezes the accent and disables the selection gleam. Prepared sprite bundles

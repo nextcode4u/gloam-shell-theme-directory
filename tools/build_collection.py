@@ -17,6 +17,7 @@ import wave
 import numpy as np
 from PIL import Image, ImageColor, ImageDraw, ImageFont, ImageOps
 from theme_finishing import finish, parchment_coverage
+from theme_materials import component_skin
 
 ROOT = Path(__file__).resolve().parents[1]
 SPECS = {
@@ -342,9 +343,6 @@ def component(name, spec):
     c = dict(zip(COLOR_KEYS, spec["colors"]))
     im = Image.new("RGBA", (32, 32))
     d = ImageDraw.Draw(im)
-    r = spec["radius"]
-    selected = name in ("row-selected", "card-selected", "tab-selected")
-    edge = c["accent"] if selected else c["line"]
     if name.startswith("battery-"):
         d.rounded_rectangle((2, 8, 27, 24), radius=3, outline=c["text"], width=2)
         d.rectangle((28, 13, 30, 19), fill=c["text"])
@@ -380,63 +378,7 @@ def component(name, spec):
         return im
     if spec["name"] == "Morrow":
         return paper_component(name, spec)
-    frame = name in ("icon-frame", "artwork-frame")
-    if name == "icon-frame":
-        if spec["name"] == "Vesper":
-            for x, y in [(2, 2), (29, 2), (2, 29), (29, 29)]:
-                d.ellipse((x - 1, y - 1, x + 1, y + 1), fill=edge)
-        return im
-    # Nonselected rows are deliberately open so the bottom wallpaper remains visible.
-    if name == "row":
-        d.line((7, 31, 25, 31), fill=(*rgb(c["line"]), 255))
-        return im
-    if name in ("header", "footer"):
-        d.line(
-            (0, 31 if name == "header" else 0, 31, 31 if name == "header" else 0),
-            fill=edge,
-        )
-        return im
-    mask = Image.new("L", (32, 32))
-    m = ImageDraw.Draw(mask)
-    if spec["name"] == "Vesper":
-        m.polygon(
-            [(5, 0), (26, 0), (31, 5), (31, 26), (26, 31), (5, 31), (0, 26), (0, 5)],
-            fill=255,
-        )
-    else:
-        m.rounded_rectangle((1, 1, 30, 30), radius=r, fill=255)
-    base = c["accent"] if name == "tab-selected" else c["surface"]
-    for y in range(32):
-        shade = mix(
-            base,
-            c["text"] if y < 12 else c["background"],
-            (0.10 * (1 - y / 12) if y < 12 else 0.13 * (y - 12) / 20),
-        )
-        d.line((0, y, 31, y), fill=shade)
-    # Two-bit coverage: glass and paper faces reveal the illustration beneath;
-    # solid modal panels and selected tabs protect text contrast.
-    if name in ("card", "card-selected", "row-selected", "artwork-frame"):
-        mask = mask.point(lambda alpha: 170 if alpha else 0)
-    im.putalpha(mask)
-    d = ImageDraw.Draw(im)
-    if frame:
-        d.rounded_rectangle((3, 3, 28, 28), radius=max(0, r - 2), fill=(0, 0, 0, 0))
-    # A translucent outer shadow and a crisp inner rim remain separate layers.
-    if name not in ("panel", "tab-selected"):
-        d.arc((0, 0, 31, 31), 0, 90, fill=(*rgb(c["background"]), 85), width=1)
-    d.rounded_rectangle((1, 1, 30, 30), radius=r, outline=edge, width=1)
-    if selected:
-        if spec["name"] == "Morrow":
-            for x in range(6, 27, 4):
-                d.line((x, 2, x + 1, 2), fill=c["text"])
-        elif spec["name"] == "Koi":
-            d.rectangle((1, 7, 3, 24), fill=c["accent"])
-        elif spec["name"] == "Vesper":
-            for x, y in [(4, 4), (27, 4), (4, 27), (27, 27)]:
-                d.point((x, y), fill=c["text"])
-        else:
-            d.arc((2, 2, 18, 18), 185, 270, fill=c["text"], width=1)
-    return im
+    return component_skin(spec["name"].lower(), name, c)
 
 
 def audio(spec, folder):
@@ -611,8 +553,6 @@ PROFILES = {
         layout="spotlight",
         tabs="icons",
         position="bottom",
-        top=24,
-        bottom=82,
         body=("DejaVuSans", 10, 10, 12),
         heading=("DejaVuSans", 13, 12, 15),
     ),
@@ -620,25 +560,18 @@ PROFILES = {
         layout="gallery",
         tabs="labels",
         position="top",
-        top=60,
-        bottom=86,
         body=("DejaVuSans-Bold", 10, 10, 12),
-        heading=("DejaVuSans-Bold", 13, 12, 15),
+        heading=("DejaVuSerif", 13, 12, 15),
     ),
     "vesper": dict(
         layout="scene",
         tabs="pager",
-        top=82,
-        bottom=88,
         body=("DejaVuSerif", 10, 9, 12),
         heading=("DejaVuSerif", 14, 13, 16),
     ),
     "tidal": dict(
-        layout="gallery",
+        layout="poster",
         tabs="icons",
-        position="bottom",
-        top=48,
-        bottom=82,
         body=("DejaVuSans", 10, 10, 12),
         heading=("DejaVuSans", 12, 12, 15),
     ),
@@ -646,17 +579,12 @@ PROFILES = {
         layout="journal",
         tabs="numbered",
         position="bottom",
-        top=100,
-        bottom=100,
         body=("DejaVuSerif", 10, 9, 12),
         heading=("DejaVuSerif-Italic", 12, 12, 15),
     ),
     "slate": dict(
-        layout="gallery",
-        tabs="labels",
-        position="top",
-        top=64,
-        bottom=88,
+        layout="sidebar_left",
+        tabs="icons",
         body=("DejaVuSans", 10, 10, 12),
         heading=("DejaVuSans-Bold", 13, 12, 15),
     ),
@@ -664,16 +592,12 @@ PROFILES = {
         layout="journal",
         tabs="labels",
         position="top",
-        top=78,
-        bottom=94,
         body=("DejaVuSerif", 10, 9, 12),
         heading=("DejaVuSerif", 14, 13, 16),
     ),
     "phosphor": dict(
         layout="sidebar",
         tabs="numbered",
-        top=70,
-        bottom=90,
         body=("DejaVuSansMono", 10, 9, 12),
         heading=("DejaVuSansMono", 13, 12, 16),
     ),
@@ -698,8 +622,6 @@ def refresh_style(id, gloam, font_dir):
     layout.update(
         top_layout=profile["layout"],
         tab_style=profile["tabs"],
-        top_content_opacity=str(profile["top"]),
-        bottom_content_opacity=str(profile["bottom"]),
     )
     if "position" in profile:
         layout["tabs_position"] = profile["position"]
@@ -709,26 +631,27 @@ def refresh_style(id, gloam, font_dir):
         # Library index remains a personal option; start with the illustrated journal.
         layout["view"] = "extended"
     config["components"]["alpha"] = "coverage"
-    if id in ("slate", "folio", "phosphor"):
-        source = load_tool(gloam / "tools/make_theme_components.py", "gloam_components")
-        style = "paper" if id == "folio" else "terminal"
-        for name in source.COMPONENTS:
-            image = source.component_image(name, style, config["colors"])
-            if name in ("card", "card-selected", "row", "row-selected"):
-                # Preserve the authored solid edges; only the flat interior is translucent.
-                fill = rgb(config["colors"]["surface"])
-                for y in range(3, 29):
-                    for x in range(3, 29):
-                        if image.getpixel((x, y))[:3] == fill:
-                            image.putpixel((x, y), (*fill, 170))
-            image.save(folder / "components" / f"{name}.png", optimize=True)
+    if id != "morrow":
+        # All seven families use local materials; status glyphs share the same
+        # clear battery/wireless language as the illustrated packs.
         status_spec = {
+            "name": id.title(),
             "colors": [config["colors"][key] for key in COLOR_KEYS],
             "radius": 1,
         }
-        component("update-available", status_spec).save(
-            folder / "components/update-available.png", optimize=True
-        )
+        for name in COMPONENTS:
+            image = component_skin(id, name, config["colors"])
+            if image is None:
+                image = component(name, status_spec)
+            image.save(folder / "components" / f"{name}.png", optimize=True)
+        config["components"]["border"] = "6"
+        layout.update(chrome="minimal", tab_highlight="skin")
+        if id == "slate":
+            layout.update(view="extended", icon_size="small", row_padding="2")
+        if id == "folio":
+            layout.update(view="list", row_padding="2", tab_highlight="underline")
+        if id == "phosphor":
+            layout.update(view="classic", row_padding="2", tab_highlight="outline")
     packer = load_tool(gloam / "tools/pack_theme_font.py", "gloam_font_packer")
     (folder / "fonts").mkdir(exist_ok=True)
     font_notes = []
@@ -766,10 +689,14 @@ def refresh_style(id, gloam, font_dir):
         "body/heading faces. DejaVu terms remain in `fonts/LICENSE.txt`.\n"
         "Source: https://dejavu-fonts.github.io/\n\n"
     )
+    if id != "morrow":
+        credits += (
+            "Material shapes and control silhouettes: `tools/theme_materials.py`.\n\n"
+        )
     credits += "\n".join(font_notes) + "\n"
     (folder / "CREDITS.md").write_text(credits)
     asset_packer = load_tool(gloam / "tools/pack_theme_assets.py", "gloam_asset_packer")
-    finish(id, folder, config, PROFILES, asset_packer)
+    finish(id, folder, config, asset_packer)
     out = io.StringIO()
     config.write(out, space_around_delimiters=False)
     (folder / "theme.ini").write_text(out.getvalue().rstrip() + "\n")
@@ -782,7 +709,7 @@ def main():
         "--gloam",
         type=Path,
         required=True,
-        help="Matching Gloam checkout, for the font and starter-component generators",
+        help="Matching Gloam checkout, for the authoritative font and sprite packers",
     )
     parser.add_argument(
         "--font-dir", type=Path, required=True, help="DejaVu TTF directory"

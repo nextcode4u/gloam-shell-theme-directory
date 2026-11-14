@@ -1,14 +1,14 @@
 # Koi
 
-Vermilion koi in ink-blue water, lacquer edges and ivory pictograms. A sparse plucked pentatonic phrase with a quiet water-like bed.
+Ink-blue water, coral lacquer seals and ivory lettering, with a sparse plucked music loop.
 
 ![Actual Gloam renderer preview](preview.png)
 
 ## Design
 
-- **Gallery** composition; labels navigation at the top.
+- **Gallery** composition; labels at the top.
 - **Classic** browser by default; other views and icon sizes remain selectable.
-- DejaVu Sans-Bold body at 10 px, with a separate DejaVu Sans-Bold heading face at 13 px.
+- DejaVu Sans-Bold body at 10 px, with a separate DejaVu Serif heading face at 13 px.
 - Separate image-backed reading surfaces; each asset carries its own opacity.
 - Four-level component coverage for translucent cards and layered edges. Modal panels retain solid reading surfaces.
 - Native title banners retain priority over themed fallback icons.
@@ -38,7 +38,7 @@ still need testing on a DSi.
 
 ## Materials and feedback
 
-Lacquer reading surfaces, coral controls and a quiet ripple accent.
+Open lacquer frames use a coral selection seal and a fine lower edge. Diamond check marks, arrow shafts and a slow ripple accent echo the pond.
 Controls include matching arrows, switches, checkboxes and scrollbars. Selection
 feedback is brief; the ambient accent loads after browsing starts. Reduced motion
 freezes the accent and disables the selection gleam. Prepared sprite bundles

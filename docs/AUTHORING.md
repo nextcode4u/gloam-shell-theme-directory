@@ -46,12 +46,19 @@ build tools and testing fixtures are excluded from runtime packs.
 
 ## Version 2 materials and composition
 
-The profiles in `build_collection.py` define independent top/bottom reading-surface
-opacity, body/heading font selection and named layouts. Aerial uses Spotlight;
-Koi, Tidal and Slate use Gallery; Morrow and Folio use Journal. Vesper retains its
-illustrated Scene and Phosphor its terminal sidebar. Top/bottom tab placement is
-available for the three new presets. The bottom browser retains its shared touch
-geometry. Existing user view and wallpaper overrides remain independent.
+The profiles in `build_collection.py` select body/heading fonts and named layouts.
+Aerial uses Spotlight, Koi uses Gallery, Tidal uses Poster, Slate uses a left icon
+rail, and Morrow and Folio use Journal. Vesper retains its illustrated Scene and
+Phosphor its right sidebar. Top/bottom tab placement is available for Spotlight,
+Gallery and Journal. The bottom browser retains its shared touch geometry.
+Existing user view and wallpaper overrides remain independent.
+
+`theme_materials.py` authors the seven glass, lacquer, velvet, lens, archive,
+notebook and instrument families. Each has its own edge details, selection shape,
+control silhouettes and reading-surface coverage. Its `STYLES` table records
+screen alpha and ambient cadence; shading and quiet texture are baked offline.
+The older paper helpers in `theme_finishing.py` preserve Morrow's aged parchment.
+Use `--theme NAME` with the collection builder to update just one pack.
 
 All packs set `[components] alpha=coverage`. Author PNG alpha as 0, 85, 170 or 255:
 transparent, one-third, two-thirds or opaque coverage. Card fills and soft outer
@@ -61,16 +68,17 @@ binary transparency. No blur is applied. Illustration masters are unchanged;
 lower-screen images receive a small base tint before Gloam's reading surface.
 
 The five illustrated themes are regenerated entirely by this repository's tool.
-Starter themes keep their original artwork/icons/audio; the tool uses Gloam's
-component generator for their material shapes, then adds coverage and fonts.
+Starter themes keep their original illustrations, icons and audio choices, with
+material shapes and controls generated locally. Gloam provides the authoritative
+font and prepared-sprite packers.
 Each pack retains asset provenance and a copy of the applicable font license.
 Do not label format-2 packs as compatible with Gloam 1.0.0.
 
 Every pack uses `[backgrounds] top_surface` and `bottom_surface` for separate
-256×192 RGBA reading surfaces, blended once during loading. `theme_finishing.py`
-authors glass rims, lacquer, brass details, notebook margins and instrument edges.
-Morrow's aged parchment and Folio's quieter paper masters live in
-`source/materials/`. Morrow's `paper_component()` also fits its parchment to
+256×192 RGBA reading surfaces, blended once during loading. The material generator
+keeps edge decoration outside live text. Morrow's aged parchment master lives in
+`source/materials/`; Folio uses a lighter procedural tracing-paper surface.
+Morrow's `paper_component()` also fits its parchment to
 selections and cards, with darkened worn edges and a quiet text area. Keep detail
 inside the six-pixel slice border. Surface alpha is multiplied by screen opacity;
 these packs use 100 to preserve the authored coverage.
@@ -83,8 +91,9 @@ buffer, animation work or per-frame background blending is required.
 
 ## Controls, motion and prepared assets
 
-`theme_finishing.py` generates optional checkbox, toggle, arrow, scrollbar and busy
-sprites. `[components] controls=on` enables them; absent sprites retain Gloam's
+`theme_materials.py` generates each updated family's checkbox, toggle, arrow,
+scrollbar and busy sprites; `theme_finishing.py` retains Morrow's controls.
+`[components] controls=on` enables them; absent sprites retain Gloam's
 standard controls. Their images never change touch targets or input behavior.
 
 Each pack supplies eight 32×32 ambient frames in `motion/ambient.gtm`. Gloam draws
@@ -103,7 +112,7 @@ The converter is kept in Gloam beside its reader to keep their format definition
 aligned. Ordinary users copy the completed folder without authoring tools.
 
 The five illustrated music loops use sixteen beats with circular delay tails;
-the starter loops retain their existing audio. This reduces sample memory without
+the starter packs retain their original audio choices. This reduces sample memory without
 requiring streaming or a runtime audio decoder. Do not remove font/audio notices
 to reduce archive size.
 

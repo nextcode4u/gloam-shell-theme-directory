@@ -1,13 +1,13 @@
 # Slate
 
-Rain-soaked city archive with cool blue accents.
+A rain-soaked city archive with folded labels, a left icon rail and cool blue accents.
 
 ![Actual Gloam renderer preview](preview.png)
 
 ## Design
 
-- **Gallery** composition; labels navigation at the top.
-- **Classic** browser by default; other views and icon sizes remain selectable.
+- **Left sidebar** composition; an icon rail on the left.
+- **Extended** browser by default; other views and icon sizes remain selectable.
 - DejaVu Sans body at 10 px, with a separate DejaVu Sans-Bold heading face at 13 px.
 - Separate image-backed reading surfaces; each asset carries its own opacity.
 - Four-level component coverage for translucent cards and layered edges. Modal panels retain solid reading surfaces.
@@ -38,7 +38,7 @@ still need testing on a DSi.
 
 ## Materials and feedback
 
-Ruled steel reading surfaces, angular controls and a small rainfall accent.
+Folded archive labels and a blue binding strip mark the selection. Edge ticks, segmented sliders and small rain marks complement the city illustration without enclosing every row.
 Controls include matching arrows, switches, checkboxes and scrollbars. Selection
 feedback is brief; the ambient accent loads after browsing starts. Reduced motion
 freezes the accent and disables the selection gleam. Prepared sprite bundles

@@ -1,8 +1,8 @@
 """Small material surfaces, control artwork and bounded ambient marks."""
 
 import math
-from pathlib import Path
 from PIL import Image, ImageColor, ImageDraw
+from theme_materials import STYLES, control_skin, reading_surface_skin
 
 CONTROLS = "check-off check-on toggle-off toggle-on arrow-left arrow-right arrow-up arrow-down scroll-track scroll-thumb busy".split()
 
@@ -27,6 +27,8 @@ def parchment_coverage(image, center, border, fade):
 
 
 def control(name, colors, theme):
+    if theme != "morrow":
+        return control_skin(theme, name, colors)
     image = Image.new("RGBA", (32, 32))
     d = ImageDraw.Draw(image)
     ink, face, line = colors["accent"], colors["surface"], colors["line"]
@@ -73,7 +75,7 @@ def control(name, colors, theme):
     return image
 
 
-def reading_surface(theme, colors, opacity, bottom, materials):
+def reading_surface(theme, colors, bottom, materials):
     image = Image.new("RGBA", (256, 192))
     if theme == "morrow":
         # Transparency is baked once; the console still blends only on loading.
@@ -82,46 +84,7 @@ def reading_surface(theme, colors, opacity, bottom, materials):
         parchment_coverage(sheet, 158 if bottom else 107, border=7, fade=9)
         image.alpha_composite(sheet, (3, 1))
         return image
-    if theme == "folio":
-        paper = Image.open(materials / "morrow-paper.png").convert("RGBA")
-        paper = paper.resize((244, 184), Image.Resampling.LANCZOS)
-        paper.putalpha(240 if bottom else 225)
-        image.alpha_composite(paper, (6, 4))
-        d = ImageDraw.Draw(image)
-        d.line((6, 5, 6, 186), fill=rgba(colors["accent"], 170))
-        return image
-    d = ImageDraw.Draw(image)
-    radius = {"aerial": 12, "tidal": 16, "koi": 3, "vesper": 2}.get(theme, 0)
-    d.rounded_rectangle((7, 5, 251, 189), radius=radius, fill=(0, 0, 0, 65))
-    d.rounded_rectangle(
-        (6, 4, 249, 187),
-        radius=radius,
-        fill=rgba(colors["background"], round(opacity * 2.55)),
-    )
-    # Keep material details on the perimeter, outside live text.
-    if theme in ("aerial", "tidal"):
-        d.arc((6, 4, 46, 44), 180, 270, fill=rgba(colors["text"], 170), width=1)
-        d.line((26, 4, 225, 4), fill=rgba(colors["text"], 120))
-        d.arc((209, 147, 249, 187), 0, 90, fill=rgba(colors["accent"], 170))
-    elif theme == "vesper":
-        for x, y in ((6, 4), (245, 4), (6, 183), (245, 183)):
-            d.polygon(
-                [(x + 2, y), (x + 4, y + 2), (x + 2, y + 4), (x, y + 2)],
-                fill=colors["accent"],
-            )
-        d.line((16, 4, 239, 4), fill=rgba(colors["accent"], 100))
-    elif theme == "koi":
-        d.line((7, 5, 248, 5), fill=rgba(colors["accent"], 170))
-        d.line((7, 186, 248, 186), fill=rgba(colors["line"], 200))
-    elif theme == "slate":
-        d.line((6, 4, 249, 4), fill=rgba(colors["text"], 85))
-        for y in range(12, 183, 12):
-            d.line((6, y, 7, y), fill=rgba(colors["line"], 170))
-    else:
-        d.line((6, 4, 249, 4), fill=rgba(colors["accent"], 100))
-        for x in range(12, 245, 12):
-            d.point((x, 187), fill=rgba(colors["accent"], 170))
-    return image
+    return reading_surface_skin(theme, colors, bottom)
 
 
 def ambient_frame(theme, colors, frame):
@@ -174,7 +137,7 @@ def ambient_frame(theme, colors, frame):
     return image
 
 
-def finish(theme, folder, config, profiles, packer):
+def finish(theme, folder, config, packer):
     colors = config["colors"]
     config["components"]["controls"] = "on"
     for name in CONTROLS:
@@ -185,7 +148,6 @@ def finish(theme, folder, config, profiles, packer):
         image = reading_surface(
             theme,
             colors,
-            profiles[theme][screen],
             screen == "bottom",
             folder.parents[1] / "source/materials",
         )
@@ -200,7 +162,7 @@ def finish(theme, folder, config, profiles, packer):
     )
     config["motion"] = {
         "ambient": "motion/ambient.gtm",
-        "ambient_ticks": "12",
+        "ambient_ticks": str(STYLES[theme]["ticks"]) if theme in STYLES else "12",
         "focus": "pulse",
     }
     config["assets"] = {"prepared": "assets.gfx"}

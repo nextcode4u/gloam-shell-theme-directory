@@ -1,12 +1,12 @@
 # Phosphor
 
-A green radar station with terminal-like contrast and numbered tabs.
+A green radar station with open instrument brackets, segmented controls and numbered navigation.
 
 ![Actual Gloam renderer preview](preview.png)
 
 ## Design
 
-- **Sidebar** composition; numbered navigation at the side.
+- **Right sidebar** composition; numbered tabs on the right.
 - **Classic** browser by default; other views and icon sizes remain selectable.
 - DejaVu SansMono body at 10 px, with a separate DejaVu SansMono heading face at 13 px.
 - Separate image-backed reading surfaces; each asset carries its own opacity.
@@ -38,7 +38,7 @@ still need testing on a DSi.
 
 ## Materials and feedback
 
-Instrument-panel reading surfaces, green controls and a small radar sweep.
+Open targeting brackets replace full row boxes. Segmented switches, diamond check marks and a radar sweep keep the interface consistent with the underlying instruments.
 Controls include matching arrows, switches, checkboxes and scrollbars. Selection
 feedback is brief; the ambient accent loads after browsing starts. Reduced motion
 freezes the accent and disables the selection gleam. Prepared sprite bundles

@@ -1,12 +1,12 @@
 # Aerial
 
-Pearl glass, floating clouds and restrained blue enamel. Soft electric-piano chords and rounded glass cues.
+Pearl-glass panes over open clouds, blue enamel pictograms and rounded switches.
 
 ![Actual Gloam renderer preview](preview.png)
 
 ## Design
 
-- **Spotlight** composition; icons navigation at the bottom.
+- **Spotlight** composition; icons at the bottom.
 - **Extended** browser by default; other views and icon sizes remain selectable.
 - DejaVu Sans body at 10 px, with a separate DejaVu Sans heading face at 13 px.
 - Separate image-backed reading surfaces; each asset carries its own opacity.
@@ -38,7 +38,7 @@ still need testing on a DSi.
 
 ## Materials and feedback
 
-Frosted glass reading surfaces, rounded controls and a small header glint.
+Pearl highlights sit on the pane edges; translucent selection cards leave the clouds visible. Rounded switches and a slow glint keep the controls light.
 Controls include matching arrows, switches, checkboxes and scrollbars. Selection
 feedback is brief; the ambient accent loads after browsing starts. Reduced motion
 freezes the accent and disables the selection gleam. Prepared sprite bundles

@@ -1,12 +1,12 @@
 # Folio
 
-A light botanical field notebook with numbered tabs and quiet UI cues.
+A botanical notebook with translucent tracing paper, folded slips and serif lettering.
 
 ![Actual Gloam renderer preview](preview.png)
 
 ## Design
 
-- **Journal** composition; labels navigation at the top.
+- **Journal** composition; labels at the top.
 - **List** browser by default; other views and icon sizes remain selectable.
 - DejaVu Serif body at 10 px, with a separate DejaVu Serif heading face at 14 px.
 - Separate image-backed reading surfaces; each asset carries its own opacity.
@@ -38,7 +38,7 @@ still need testing on a DSi.
 
 ## Materials and feedback
 
-Textured notebook paper, green margins, angular controls and a leafy accent.
+Fine binding holes, a green margin and folded selection slips replace heavy paper panels. The botanical drawing remains visible through both screens; modal panels retain an opaque reading area.
 Controls include matching arrows, switches, checkboxes and scrollbars. Selection
 feedback is brief; the ambient accent loads after browsing starts. Reduced motion
 freezes the accent and disables the selection gleam. Prepared sprite bundles

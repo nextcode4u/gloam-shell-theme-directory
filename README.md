@@ -24,14 +24,14 @@ Reduced motion disables selection feedback and holds the accent still.
 
 | Theme | Style | Author |
 | --- | --- | --- |
-| [Aerial](themes/aerial) | Cloud study | Gloam project (agent-assisted) |
-| [Koi](themes/koi) | Still water | Gloam project (agent-assisted) |
-| [Vesper](themes/vesper) | The velvet hour | Gloam project (agent-assisted) |
-| [Tidal](themes/tidal) | Below the surface | Gloam project (agent-assisted) |
+| [Aerial](themes/aerial) | Pearl glass and open clouds | Gloam project (agent-assisted) |
+| [Koi](themes/koi) | Coral lacquer and ink-blue water | Gloam project (agent-assisted) |
+| [Vesper](themes/vesper) | Velvet, moths and brass fittings | Gloam project (agent-assisted) |
+| [Tidal](themes/tidal) | Sea-glass lenses and jellyfish | Gloam project (agent-assisted) |
 | [Morrow](themes/morrow) | A slower morning | Gloam project (agent-assisted) |
-| [Slate](themes/slate) | Rain-soaked city archive; cool blue accents | Gloam project |
-| [Folio](themes/folio) | Botanical field notebook; light palette | Gloam project |
-| [Phosphor](themes/phosphor) | Green radar station; terminal-like contrast | Gloam project |
+| [Slate](themes/slate) | City archive; folded labels and left icon rail | Gloam project |
+| [Folio](themes/folio) | Botanical notebook; translucent tracing paper | Gloam project |
+| [Phosphor](themes/phosphor) | Radar instruments; open brackets and segmented controls | Gloam project |
 
 Each theme page includes wallpaper previews, installation instructions and credits.
 Slate, Folio and Phosphor extend their original Gloam designs with the same new
