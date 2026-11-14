@@ -34,7 +34,7 @@ use independent faces at up to 16 pixels. The profile records size and baseline
 for reproducible glyph placement. Coverage uses four grayscale levels, never RGB
 subpixel smoothing. Other source fonts require a fresh bounds/readability review.
 
-The audio generator composes eight bars with a varied second phrase, sustained
+The audio generator composes four bars with a varied second phrase, sustained
 harmony, melodic voices and circular delay tails. Music is 16 kHz, mono PCM16,
 below Gloam’s 1 MiB cap. All cues are also bounded mono PCM16. No recordings from
 commercial games or royalty-free marketplaces are embedded.

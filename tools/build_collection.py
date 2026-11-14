@@ -470,7 +470,7 @@ def component(name, spec):
 def audio(spec, folder):
     rate = 16000
     beat = 60 / spec["bpm"]
-    length = 32 * beat
+    length = 16 * beat
     n = round(length * rate)
     out = np.zeros(n)
     rng = np.random.default_rng(20261114 + spec["bpm"])
@@ -518,14 +518,14 @@ def audio(spec, folder):
         "Tidal": [2, 3, 1, 2, 0, 1, 3, 2],
         "Morrow": [0, 1, 2, 3, 2, 1, 3, 0],
     }[spec["name"]]
-    for bar, shift in enumerate(progressions[spec["name"]] * 2):
+    for bar, shift in enumerate(progressions[spec["name"]]):
         for interval in (0, 7, 14):
             add_note(
                 root - 12 + shift + interval, bar * 4 * beat, 4.6 * beat, 0.055, "pad"
             )
         for j in range(4 if spec["name"] == "Koi" else 8):
             start = (bar * 4 + j * (1 if spec["name"] == "Koi" else 0.5)) * beat
-            note = spec["notes"][melody[(j + (2 if bar >= 4 else 0)) % 8]] + (
+            note = spec["notes"][melody[(j + (2 if bar >= 2 else 0)) % 8]] + (
                 12 if spec["name"] in ("Tidal", "Vesper") else 0
             )
             add_note(
