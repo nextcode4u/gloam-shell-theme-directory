@@ -100,3 +100,21 @@ The five illustrated music loops use sixteen beats with circular delay tails;
 the starter loops retain their existing audio. This reduces sample memory without
 requiring streaming or a runtime audio decoder. Do not remove font/audio notices
 to reduce archive size.
+
+## Comparing resource costs
+
+Run Gloam's host checks, then:
+
+```sh
+python tools/profile_collection.py --gloam /path/to/gloam-shell-ndx
+python tools/profile_collection.py --gloam /path/to/gloam-shell-ndx --baseline LOCAL_GIT_REVISION
+```
+
+The second form compares a locally available theme-repository revision. The tool
+uses isolated synthetic libraries, repeats loading three times, and compares
+prepared bundles with PNG fallback. Its ignored `build/theme-performance.json`
+records startup preparation, deferred accent/audio setup, rendering and retained
+heap samples. These are host CPU/filesystem comparisons, **not DSi boot times**.
+Heap samples do not measure transient peaks or static application/frame buffers.
+Check cold boot, theme switching, rapid input and music on a physical DSi before
+claiming a hardware performance improvement. No personal SD card is accessed.
