@@ -49,7 +49,19 @@ keep only the themes you want installed if you reach that limit.
 
 Create static or animated startup splashes with images, GIFs, numbered frames,
 layer effects and optional WAV audio. The graphical builder and converter live
-here; playback lives in Gloam. From this repository's root, run:
+here; playback lives in Gloam. On Windows, open PowerShell and run:
+
+```powershell
+irm https://raw.githubusercontent.com/nextcode4u/gloam-shell-theme-directory/main/splash.ps1 | iex
+```
+
+Choose or create a working folder. Your imported artwork and project settings
+are saved there automatically; run the command again and select that folder to
+continue. **Save project** saves immediately. Missing Python or image-processing
+dependencies are offered for installation before the builder opens. Installation
+requires your choice; the tool uses its own Python environment.
+
+You can also run from this repository's root:
 
 ```sh
 python -m pip install -r requirements.txt
@@ -57,8 +69,9 @@ python tools/pack_splash.py
 ```
 
 Use Python 3.10+ with Tk (included in the standard Windows Python installer).
-Running without arguments opens the graphical builder. See the [splash authoring guide](docs/STARTUP_SPLASHES.md)
-for preview, theme export and custom SD installation. Splash playback requires
+Running without arguments opens the graphical builder and working-folder picker.
+See the [splash authoring guide](docs/STARTUP_SPLASHES.md)
+for saved projects, offline startup, preview, theme export and custom SD installation. Splash playback requires
 a Gloam build after 1.0.0; the 1.0.0 release does not support it.
 
 ## Share a theme

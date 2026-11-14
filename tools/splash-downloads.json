@@ -1,0 +1,31 @@
+{
+  "format": 1,
+  "pillow": "11.3.0",
+  "files": [
+    {
+      "path": "tools/pack_splash.py",
+      "size": 12307,
+      "sha256": "3ae180cacbb82f25bdbfa5394ff4a71053f24794b10359544d7848ccf5452858"
+    },
+    {
+      "path": "tools/splash_builder.py",
+      "size": 24265,
+      "sha256": "aa8f2ad889cae8824747c41bd0a1a36e6b2ae08247b946cb2e4eec2c81fd5e94"
+    },
+    {
+      "path": "tools/splash_project.py",
+      "size": 7812,
+      "sha256": "a5416800d694a8773c53d29e13689256b069324cffca468f0f6686a4e74732a6"
+    },
+    {
+      "path": "LICENSE",
+      "size": 35141,
+      "sha256": "589ed823e9a84c56feb95ac58e7cf384626b9cbf4fda2a907bc36e103de1bad2"
+    },
+    {
+      "path": "LICENSES.md",
+      "size": 1115,
+      "sha256": "626a658f583456efcbfe7e4ac5ca8a555ce08b2e5794d24b7b55129a78998b68"
+    }
+  ]
+}
