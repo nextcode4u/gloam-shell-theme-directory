@@ -14,7 +14,7 @@ license. Include redistribution permission, attribution and license notices for
 every external asset. Do not assume that an image or song being downloadable gives
 permission to redistribute it.
 
-The Aerial, Koi, Vesper, Tidal and Morrow collection includes AI-assisted wallpaper
+The Aerial, Koi, Vesper, Tidal and Morrow collection includes agent-assisted wallpaper
 illustrations, code-authored geometry and original synthesized music. Project-held
 rights in those assets are dedicated under CC0-1.0; their DejaVu fonts retain the
 full notices included beside each font. See individual CREDITS.md files.

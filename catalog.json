@@ -52,7 +52,7 @@
     {
       "id": "aerial",
       "name": "Aerial",
-      "author": "nextcode4u / Gloam Shell NDX project (AI-assisted)",
+      "author": "nextcode4u / Gloam Shell NDX project (agent-assisted)",
       "description": "Pearl glass, floating clouds and restrained blue enamel. Soft electric-piano chords and rounded glass cues.",
       "path": "themes/aerial",
       "theme_format": 2,
@@ -67,7 +67,7 @@
     {
       "id": "koi",
       "name": "Koi",
-      "author": "nextcode4u / Gloam Shell NDX project (AI-assisted)",
+      "author": "nextcode4u / Gloam Shell NDX project (agent-assisted)",
       "description": "Vermilion koi in ink-blue water, lacquer edges and ivory pictograms. A sparse plucked pentatonic phrase with a quiet water-like bed.",
       "path": "themes/koi",
       "theme_format": 2,
@@ -82,7 +82,7 @@
     {
       "id": "vesper",
       "name": "Vesper",
-      "author": "nextcode4u / Gloam Shell NDX project (AI-assisted)",
+      "author": "nextcode4u / Gloam Shell NDX project (agent-assisted)",
       "description": "Cream moths, burgundy roses and gold on plum velvet. Chamfered brass frames, engraved symbols and a chamber-like harp loop.",
       "path": "themes/vesper",
       "theme_format": 2,
@@ -97,7 +97,7 @@
     {
       "id": "tidal",
       "name": "Tidal",
-      "author": "nextcode4u / Gloam Shell NDX project (AI-assisted)",
+      "author": "nextcode4u / Gloam Shell NDX project (agent-assisted)",
       "description": "Translucent jellyfish and deep teal water. Fluid oval controls, luminous porcelain symbols and slow bell-and-pad harmonies.",
       "path": "themes/tidal",
       "theme_format": 2,
@@ -112,7 +112,7 @@
     {
       "id": "morrow",
       "name": "Morrow",
-      "author": "nextcode4u / Gloam Shell NDX project (AI-assisted)",
+      "author": "nextcode4u / Gloam Shell NDX project (agent-assisted)",
       "description": "Terracotta, olive leaves and a sunlit sea. Paper tabs, stitched borders, quiet marimba and warm chord voicings.",
       "path": "themes/morrow",
       "theme_format": 2,

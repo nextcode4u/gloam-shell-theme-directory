@@ -7,7 +7,7 @@ the package format.
 Production illustration masters live in `source/art/`. Their generation prompts
 and draft explorations are not part of the repository. The selected masters,
 configurations and generated runtime artwork are included so builds do not require
-an image-generation service. Credits identify their AI-assisted origin.
+an image-generation service. Credits identify their agent-assisted origin.
 
 Use Python 3.10+ with `pip install -r requirements.txt`, then:
 

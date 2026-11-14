@@ -21,11 +21,11 @@ opacity and additional top-screen compositions.
 
 | Theme | Style | Author |
 | --- | --- | --- |
-| [Aerial](themes/aerial) | Cloud study | Gloam project (AI-assisted) |
-| [Koi](themes/koi) | Still water | Gloam project (AI-assisted) |
-| [Vesper](themes/vesper) | The velvet hour | Gloam project (AI-assisted) |
-| [Tidal](themes/tidal) | Below the surface | Gloam project (AI-assisted) |
-| [Morrow](themes/morrow) | A slower morning | Gloam project (AI-assisted) |
+| [Aerial](themes/aerial) | Cloud study | Gloam project (agent-assisted) |
+| [Koi](themes/koi) | Still water | Gloam project (agent-assisted) |
+| [Vesper](themes/vesper) | The velvet hour | Gloam project (agent-assisted) |
+| [Tidal](themes/tidal) | Below the surface | Gloam project (agent-assisted) |
+| [Morrow](themes/morrow) | A slower morning | Gloam project (agent-assisted) |
 | [Slate](themes/slate) | Rain-soaked city archive; cool blue accents | Gloam project |
 | [Folio](themes/folio) | Botanical field notebook; light palette | Gloam project |
 | [Phosphor](themes/phosphor) | Green radar station; terminal-like contrast | Gloam project |
