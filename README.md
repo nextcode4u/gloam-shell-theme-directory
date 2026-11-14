@@ -15,7 +15,10 @@ frontends are not directly compatible with Gloam’s format.
 These previews show the actual host renderer with synthetic content. Each theme
 includes original music, UI cues and its own material/icon treatment. The updated
 packs use translucent components, separate body/heading faces, independent screen
-opacity and additional top-screen compositions.
+opacity and additional top-screen compositions. Image-backed reading surfaces,
+matching control sprites and a small ambient header accent give each pack its
+own material treatment. Prepared sprite bundles reduce small-file loading;
+Reduced motion disables selection feedback and holds the accent still.
 
 ## Browse themes
 
@@ -40,7 +43,7 @@ capabilities. These revisions are optional packs, separate from Gloam’s bundle
 
 **These revisions require the updated Gloam build with theme format 2. They do not
 load in Gloam 1.0.0.** The matching frontend changes are in
-[Gloam commit `1d18cc4`](https://github.com/nextcode4u/gloam-shell-ndx/commit/1d18cc4743be705df1466fbf44f4ace9c79c974d).
+[Gloam commit `95b2f3b`](https://github.com/nextcode4u/gloam-shell-ndx/commit/95b2f3bebf181818aae3d5d091410cf8efa9f42e).
 Until a matching release is published, build that revision or later, or choose the
 [original 1.0-compatible collection](https://github.com/nextcode4u/gloam-shell-theme-directory/tree/74fd2dd/themes).
 

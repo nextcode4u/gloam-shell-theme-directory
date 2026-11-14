@@ -7,6 +7,11 @@ import sys
 import tempfile
 import unittest
 import zipfile
+import struct
+import wave
+import zlib
+
+from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
@@ -15,6 +20,59 @@ from build_collection import PROFILES
 
 
 class ThemeCollectionTests(unittest.TestCase):
+    def test_prepared_assets_motion_and_audio_stay_bounded(self):
+        for name in PROFILES:
+            with self.subTest(theme=name):
+                folder = ROOT / "themes" / name
+                config = configparser.ConfigParser()
+                config.read(folder / "theme.ini")
+                self.assertEqual(config.get("components", "controls"), "on")
+                data = (folder / config.get("assets", "prepared")).read_bytes()
+                self.assertEqual(data[:8], b"GLMART01")
+                raw_size, count = struct.unpack_from("<II", data, 8)
+                raw = zlib.decompress(data[16:])
+                self.assertEqual(len(raw), raw_size)
+                self.assertLessEqual(raw_size, 192 * 1024)
+                self.assertLessEqual(len(data), 16 * 1024)
+                seen, offset = set(), 0
+                for _ in range(count):
+                    group, reserved, index, length = struct.unpack_from(
+                        "<BBHI", raw, offset
+                    )
+                    self.assertEqual(reserved, 0)
+                    self.assertIn(group, (0, 1))
+                    self.assertLess(index, 30 if group else 29)
+                    self.assertEqual(length, 2304 if group else 2048)
+                    self.assertNotIn((group, index), seen)
+                    seen.add((group, index))
+                    offset += 8 + length
+                self.assertEqual(offset, len(raw))
+                # Every new control has a prepared record, including busy.
+                self.assertTrue(all((1, index) in seen for index in range(19, 30)))
+                data = (folder / config.get("motion", "ambient")).read_bytes()
+                self.assertEqual(data[:8], b"GLMFX001")
+                self.assertTrue(1 <= data[8] <= 8)
+                self.assertEqual(data[9:16], bytes([32, 32, 0, 0, 0, 0, 0]))
+                self.assertEqual(len(data), 16 + data[8] * 2304)
+                frames = [
+                    data[16 + i * 2304 : 16 + (i + 1) * 2304] for i in range(data[8])
+                ]
+                self.assertGreater(len(set(frames)), 1)
+                for screen in ("top", "bottom"):
+                    with Image.open(
+                        folder / config.get("backgrounds", screen + "_surface")
+                    ) as image:
+                        self.assertEqual(image.size, (256, 192))
+                        self.assertEqual(image.mode, "RGBA")
+                if config.has_option("audio", "music"):
+                    with wave.open(
+                        str(folder / config.get("audio", "music")), "rb"
+                    ) as audio:
+                        self.assertEqual(
+                            (audio.getnchannels(), audio.getsampwidth()), (1, 2)
+                        )
+                        self.assertLessEqual(audio.getnframes() * 2, 512 * 1024)
+
     def test_catalog_and_pack_requirements_agree(self):
         catalog = json.loads((ROOT / "catalog.json").read_text())
         self.assertEqual({entry["id"] for entry in catalog["themes"]}, set(PROFILES))
@@ -59,6 +117,10 @@ class ThemeCollectionTests(unittest.TestCase):
                         "fonts/LICENSE.txt",
                         "fonts/ui.dsfont",
                         "fonts/heading.dsfont",
+                        "assets.gfx",
+                        "motion/ambient.gtm",
+                        "components/toggle-on.png",
+                        "backgrounds/material-top.png",
                     ):
                         self.assertIn(prefix + required, names)
                     for excluded in (

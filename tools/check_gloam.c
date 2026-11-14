@@ -8,6 +8,7 @@
 #include "picker.h"
 #include "renderer.h"
 #include "settings.h"
+#include "theme_motion.h"
 #include "themes.h"
 #include <assert.h>
 #include <stdio.h>
@@ -90,8 +91,24 @@ int main(int argc, char **argv)
     for (int i = 0; i < 3; i++)
         assert((app.audio.effects[i].samples != NULL) == (*app.themes.active.sounds[i] != 0));
     app_category(&app, CATEGORY_GAMES);
-    for (int f = 0; f < 60; f++)
+    for (int f = 0; f < 180; f++)
         app_tick(&app);
+    const uint8_t *ambient_alpha;
+    assert(themes_motion_frame(&app, &ambient_alpha));
+    /* Prepared sprites must preserve exactly what the editable PNGs render. */
+    static uint16_t prepared_top[256 * 192], prepared_bottom[256 * 192];
+    draw();
+    memcpy(prepared_top, top.data, sizeof prepared_top);
+    memcpy(prepared_bottom, bottom.data, sizeof prepared_bottom);
+    char prepared_path[PATH_CAP];
+    snprintf(prepared_path, sizeof prepared_path, "%s", app.themes.active.prepared_assets);
+    app.themes.active.prepared_assets[0] = 0;
+    themes_icons_load(&app.themes.active, false);
+    themes_components_load(&app.themes.active, false);
+    draw();
+    assert(!memcmp(prepared_top, top.data, sizeof prepared_top));
+    assert(!memcmp(prepared_bottom, bottom.data, sizeof prepared_bottom));
+    snprintf(app.themes.active.prepared_assets, PATH_CAP, "%s", prepared_path);
     /* Present synthetic paths as SD paths, without exposing the host workspace. */
     char saved_path[PATH_CAP];
     snprintf(saved_path, sizeof saved_path, "%s", app.locations[app.category].path);
@@ -135,10 +152,12 @@ int main(int argc, char **argv)
     ppm(argv[3], argv[2], "picker-top", top.data);
     ppm(argv[3], argv[2], "picker-bottom", bottom.data);
     picker_close(&app);
+    themes_motion_reset();
     audio_free_clip(&app.audio.music);
     for (int i = 0; i < 3; i++)
         audio_free_clip(&app.audio.effects[i]);
-    printf("PASS %s: load, cancel/apply, icon/component banks, coverage font, music/cues, all "
+    printf("PASS %s: load, cancel/apply, prepared/PNG parity, icon/component banks, coverage font, "
+           "music/cues, all "
            "views/sizes/categories and settings bounds\n",
            argv[2]);
     return 0;

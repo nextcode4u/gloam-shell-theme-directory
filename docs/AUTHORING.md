@@ -66,12 +66,37 @@ component generator for their material shapes, then adds coverage and fonts.
 Each pack retains asset provenance and a copy of the applicable font license.
 Do not label format-2 packs as compatible with Gloam 1.0.0.
 
-Morrow uses `[backgrounds] top_surface` and `bottom_surface` for separate
-256×192 RGBA PNG reading surfaces. These replace the flat mat and are blended
-once during theme loading. Its generated paper master is retained under
-`source/materials/`; `paper_surfaces()` builds native-size sheets so their grain
-is not stretched. `paper_component()` supplies the moving selection and cards.
-Keep opaque text areas quiet and corner details inside the six-pixel slice border.
-Surface alpha is multiplied by the corresponding screen's content opacity;
-Morrow uses 100 to retain the authored coverage. See its catalog entry for the
-required frontend revision. Earlier format-2 builds do not recognize these keys.
+Every pack uses `[backgrounds] top_surface` and `bottom_surface` for separate
+256×192 RGBA reading surfaces, blended once during loading. `theme_finishing.py`
+authors glass rims, lacquer, brass details, notebook margins and instrument edges.
+Morrow's aged parchment and Folio's quieter paper masters live in
+`source/materials/`. Morrow's `paper_component()` also fits its parchment to
+selections and cards, with darkened worn edges and a quiet text area. Keep detail
+inside the six-pixel slice border. Surface alpha is multiplied by screen opacity;
+these packs use 100 to preserve the authored coverage.
+
+## Controls, motion and prepared assets
+
+`theme_finishing.py` generates optional checkbox, toggle, arrow, scrollbar and busy
+sprites. `[components] controls=on` enables them; absent sprites retain Gloam's
+standard controls. Their images never change touch targets or input behavior.
+
+Each pack supplies eight 32×32 ambient frames in `motion/ambient.gtm`. Gloam draws
+them at 16×16 in reserved header space, loads them after browsing is usable and
+pauses them during navigation/modal work. Reduced motion holds the first frame
+and disables the brief selection-margin gleam. The complete accent is 18 KiB
+decoded, with no frame-by-frame file reads. Do not expand it into a background
+movie. Frame count, dimensions, duration and coverage follow the upstream guide.
+
+After PNG generation, the build invokes Gloam's `pack_theme_assets.py` to create
+`assets.gfx`. This bundles icons and components into one checked compressed file,
+replacing dozens of PNG opens/decodes. PNGs remain the editable sources and runtime
+fallbacks. **Rebuild after editing PNGs**, or remove `[assets] prepared` temporarily;
+the console does not check source timestamps. Fonts, surfaces and audio are separate.
+The converter is kept in Gloam beside its reader to keep their format definitions
+aligned. Ordinary users copy the completed folder without authoring tools.
+
+The five illustrated music loops use sixteen beats with circular delay tails;
+the starter loops retain their existing audio. This reduces sample memory without
+requiring streaming or a runtime audio decoder. Do not remove font/audio notices
+to reduce archive size.

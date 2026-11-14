@@ -13,9 +13,9 @@
       "configuration_license": "GPL-3.0-or-later",
       "asset_license": "CC0-1.0 project assets; DejaVu font terms",
       "credits": "themes/slate/CREDITS.md",
-      "requires_gloam": "Unreleased build with theme format 2 (opacity, coverage, DSFONT03 and composition presets)",
+      "requires_gloam": "Unreleased build with theme format 2, image-backed reading surfaces, optional controls, prepared sprites and ambient accents",
       "preview": "themes/slate/preview.png",
-      "minimum_gloam_commit": "1d18cc4743be705df1466fbf44f4ace9c79c974d"
+      "minimum_gloam_commit": "95b2f3bebf181818aae3d5d091410cf8efa9f42e"
     },
     {
       "id": "folio",
@@ -29,9 +29,9 @@
       "configuration_license": "GPL-3.0-or-later",
       "asset_license": "CC0-1.0 project assets; DejaVu font terms",
       "credits": "themes/folio/CREDITS.md",
-      "requires_gloam": "Unreleased build with theme format 2 (opacity, coverage, DSFONT03 and composition presets)",
+      "requires_gloam": "Unreleased build with theme format 2, image-backed reading surfaces, optional controls, prepared sprites and ambient accents",
       "preview": "themes/folio/preview.png",
-      "minimum_gloam_commit": "1d18cc4743be705df1466fbf44f4ace9c79c974d"
+      "minimum_gloam_commit": "95b2f3bebf181818aae3d5d091410cf8efa9f42e"
     },
     {
       "id": "phosphor",
@@ -45,9 +45,9 @@
       "configuration_license": "GPL-3.0-or-later",
       "asset_license": "CC0-1.0 project assets; DejaVu font terms",
       "credits": "themes/phosphor/CREDITS.md",
-      "requires_gloam": "Unreleased build with theme format 2 (opacity, coverage, DSFONT03 and composition presets)",
+      "requires_gloam": "Unreleased build with theme format 2, image-backed reading surfaces, optional controls, prepared sprites and ambient accents",
       "preview": "themes/phosphor/preview.png",
-      "minimum_gloam_commit": "1d18cc4743be705df1466fbf44f4ace9c79c974d"
+      "minimum_gloam_commit": "95b2f3bebf181818aae3d5d091410cf8efa9f42e"
     },
     {
       "id": "aerial",
@@ -61,8 +61,8 @@
       "asset_license": "CC0-1.0 project assets; DejaVu font terms",
       "credits": "themes/aerial/CREDITS.md",
       "preview": "themes/aerial/preview.png",
-      "requires_gloam": "Unreleased build with theme format 2 (opacity, coverage, DSFONT03 and composition presets)",
-      "minimum_gloam_commit": "1d18cc4743be705df1466fbf44f4ace9c79c974d"
+      "requires_gloam": "Unreleased build with theme format 2, image-backed reading surfaces, optional controls, prepared sprites and ambient accents",
+      "minimum_gloam_commit": "95b2f3bebf181818aae3d5d091410cf8efa9f42e"
     },
     {
       "id": "koi",
@@ -76,8 +76,8 @@
       "asset_license": "CC0-1.0 project assets; DejaVu font terms",
       "credits": "themes/koi/CREDITS.md",
       "preview": "themes/koi/preview.png",
-      "requires_gloam": "Unreleased build with theme format 2 (opacity, coverage, DSFONT03 and composition presets)",
-      "minimum_gloam_commit": "1d18cc4743be705df1466fbf44f4ace9c79c974d"
+      "requires_gloam": "Unreleased build with theme format 2, image-backed reading surfaces, optional controls, prepared sprites and ambient accents",
+      "minimum_gloam_commit": "95b2f3bebf181818aae3d5d091410cf8efa9f42e"
     },
     {
       "id": "vesper",
@@ -91,8 +91,8 @@
       "asset_license": "CC0-1.0 project assets; DejaVu font terms",
       "credits": "themes/vesper/CREDITS.md",
       "preview": "themes/vesper/preview.png",
-      "requires_gloam": "Unreleased build with theme format 2 (opacity, coverage, DSFONT03 and composition presets)",
-      "minimum_gloam_commit": "1d18cc4743be705df1466fbf44f4ace9c79c974d"
+      "requires_gloam": "Unreleased build with theme format 2, image-backed reading surfaces, optional controls, prepared sprites and ambient accents",
+      "minimum_gloam_commit": "95b2f3bebf181818aae3d5d091410cf8efa9f42e"
     },
     {
       "id": "tidal",
@@ -106,14 +106,14 @@
       "asset_license": "CC0-1.0 project assets; DejaVu font terms",
       "credits": "themes/tidal/CREDITS.md",
       "preview": "themes/tidal/preview.png",
-      "requires_gloam": "Unreleased build with theme format 2 (opacity, coverage, DSFONT03 and composition presets)",
-      "minimum_gloam_commit": "1d18cc4743be705df1466fbf44f4ace9c79c974d"
+      "requires_gloam": "Unreleased build with theme format 2, image-backed reading surfaces, optional controls, prepared sprites and ambient accents",
+      "minimum_gloam_commit": "95b2f3bebf181818aae3d5d091410cf8efa9f42e"
     },
     {
       "id": "morrow",
       "name": "Morrow",
       "author": "nextcode4u / Gloam Shell NDX project (agent-assisted)",
-      "description": "Sunlit illustration behind warm ivory stationery, folded paper selections, quiet marimba and warm chord voicings.",
+      "description": "Sunlit illustration behind aged parchment, worn selection edges, warm ink controls and quiet marimba.",
       "path": "themes/morrow",
       "theme_format": 2,
       "origin": "Gloam Shell Theme Directory",
@@ -121,8 +121,8 @@
       "asset_license": "CC0-1.0 project assets; DejaVu font terms",
       "credits": "themes/morrow/CREDITS.md",
       "preview": "themes/morrow/preview.png",
-      "requires_gloam": "Unreleased build with theme format 2 and image-backed reading surfaces",
-      "minimum_gloam_commit": "a7c967629aaba9e159dcf1f2c874764a9f6881ee"
+      "requires_gloam": "Unreleased build with theme format 2, image-backed reading surfaces, optional controls, prepared sprites and ambient accents",
+      "minimum_gloam_commit": "95b2f3bebf181818aae3d5d091410cf8efa9f42e"
     }
   ]
 }

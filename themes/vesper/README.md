@@ -9,7 +9,7 @@ Cream moths, burgundy roses and gold on plum velvet. Chamfered brass frames, eng
 - **Scene** composition; pager navigation at the bottom.
 - **Shelf** browser by default; other views and icon sizes remain selectable.
 - DejaVu Serif body at 10 px, with a separate DejaVu Serif heading face at 14 px.
-- Independent reading surfaces: top 82%, bottom 88% opacity.
+- Separate image-backed reading surfaces; each asset carries its own opacity.
 - Four-level component coverage for translucent cards and layered edges. Modal panels retain solid reading surfaces.
 - Native title banners retain priority over themed fallback icons.
 
@@ -17,7 +17,8 @@ Original background music and cursor/confirm/back cues. Select **Audio → Backg
 
 ## Install
 
-**Requires the updated Gloam build with theme format 2. Gloam 1.0.0 cannot load this revision.**
+**Requires Gloam commit `95b2f3b` or later**, including prepared sprites,
+control artwork and ambient accents. Gloam 1.0.0 cannot load this revision.
 The [format guide](https://github.com/nextcode4u/gloam-shell-ndx/blob/main/docs/guides/THEME_PACKAGES.md)
 describes the new capability. The [original 1.0-compatible collection](https://github.com/nextcode4u/gloam-shell-theme-directory/tree/74fd2dd/themes/vesper) remains available in history.
 
@@ -34,3 +35,12 @@ existing pixels; there is no live blur. Physical LCD contrast and frame timing
 still need testing on a DSi.
 
 [Settings preview](settings-preview.png) · [Credits and licenses](CREDITS.md)
+
+## Materials and feedback
+
+Dark velvet reading surfaces, brass corner details and a small moth/glint accent.
+Controls include matching arrows, switches, checkboxes and scrollbars. Selection
+feedback is brief; the ambient accent loads after browsing starts. Reduced motion
+freezes the accent and disables the selection gleam. Prepared sprite bundles
+reduce file opens while keeping the PNGs editable; rebuild `assets.gfx` after
+changing icons or components.
