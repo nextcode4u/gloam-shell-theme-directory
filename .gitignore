@@ -1,0 +1,9 @@
+dist/
+build/
+__pycache__/
+*.zip
+*.7z
+*.tmp
+*-prompt.txt
+.DS_Store
+Thumbs.db

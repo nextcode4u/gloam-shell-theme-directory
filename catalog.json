@@ -1,0 +1,47 @@
+{
+  "format_version": 1,
+  "themes": [
+    {
+      "id": "slate",
+      "name": "Slate",
+      "author": "nextcode4u / Gloam Shell NDX contributors",
+      "description": "Rain-soaked city archive with cool blue accents.",
+      "path": "themes/slate",
+      "minimum_gloam_version": "1.0.0",
+      "theme_format": 1,
+      "origin": "Gloam Shell NDX",
+      "source": "https://github.com/nextcode4u/gloam-shell-ndx/tree/v1.0.0/sdroot/_nds/dsi-frontend/themes/slate",
+      "configuration_license": "GPL-3.0-or-later",
+      "asset_license": "CC0-1.0",
+      "credits": "themes/slate/CREDITS.md"
+    },
+    {
+      "id": "folio",
+      "name": "Folio",
+      "author": "nextcode4u / Gloam Shell NDX contributors",
+      "description": "A light botanical field notebook with numbered tabs and quiet UI cues.",
+      "path": "themes/folio",
+      "minimum_gloam_version": "1.0.0",
+      "theme_format": 1,
+      "origin": "Gloam Shell NDX",
+      "source": "https://github.com/nextcode4u/gloam-shell-ndx/tree/v1.0.0/sdroot/_nds/dsi-frontend/themes/folio",
+      "configuration_license": "GPL-3.0-or-later",
+      "asset_license": "CC0-1.0",
+      "credits": "themes/folio/CREDITS.md"
+    },
+    {
+      "id": "phosphor",
+      "name": "Phosphor",
+      "author": "nextcode4u / Gloam Shell NDX contributors",
+      "description": "A green radar station with terminal-like contrast and numbered tabs.",
+      "path": "themes/phosphor",
+      "minimum_gloam_version": "1.0.0",
+      "theme_format": 1,
+      "origin": "Gloam Shell NDX",
+      "source": "https://github.com/nextcode4u/gloam-shell-ndx/tree/v1.0.0/sdroot/_nds/dsi-frontend/themes/phosphor",
+      "configuration_license": "GPL-3.0-or-later",
+      "asset_license": "CC0-1.0",
+      "credits": "themes/phosphor/CREDITS.md"
+    }
+  ]
+}
