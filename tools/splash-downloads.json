@@ -4,13 +4,13 @@
   "files": [
     {
       "path": "tools/pack_splash.py",
-      "size": 13487,
-      "sha256": "dbc2891b62e880fcda3576f315669a7d596580252f1abb324113c5df619a3897"
+      "size": 13763,
+      "sha256": "c7688aaa804f3fd6b1d2ec44aa1318f3e75b0bdd0de6f7d50a85d03de3de50f4"
     },
     {
       "path": "tools/splash_builder.py",
-      "size": 30162,
-      "sha256": "701140d03286152bee0b4fd783c19f7b9a1a26d0d36d6a208a47e99aed9b88ac"
+      "size": 30211,
+      "sha256": "ee06a0ab53fffdbe54cfb397c1356434a6f18d5e4af9749f8d0ae52d8fbc1bd8"
     },
     {
       "path": "tools/splash_project.py",
@@ -19,8 +19,8 @@
     },
     {
       "path": "tools/splash_motion.py",
-      "size": 13153,
-      "sha256": "2be579baa28228f41fbcb3f0c6327872223466add423d41840dd55881070c432"
+      "size": 14636,
+      "sha256": "20c6d2ac52cf425fe2ad38c924e404265169f8fed27f6dfb227fc964d4aeb51a"
     },
     {
       "path": "LICENSE",

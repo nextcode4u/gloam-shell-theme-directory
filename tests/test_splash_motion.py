@@ -42,6 +42,53 @@ class MotionTests(unittest.TestCase):
             layer_options=options,
         )
 
+    def test_compression_preserves_pixels_and_keeps_small_raw_layers(self):
+        large = self.root / "large.png"
+        Image.new("RGB", (256, 192), "purple").save(large)
+        tiny = self.root / "tiny.png"
+        Image.new("RGB", (1, 1), "lime").save(tiny)
+        for direct in (False, True):
+            options = dict(
+                top=large,
+                bottom_logo=tiny,
+                direct=direct,
+                duration=2,
+                layer_options={
+                    "top": {"preset": "none"},
+                    "bottom_logo": {"preset": "none", "fit": "native"},
+                },
+            )
+            raw = pack_splash.build(**options)
+            packed = pack_splash.build(**options, compress=True)
+            self.assertEqual(packed[:8], b"GLOMSP03")
+            self.assertEqual(packed[81], 1)
+            self.assertEqual(packed[145], 0)
+            self.assertLess(len(packed), len(raw))
+            self.assertEqual(
+                splash_builder.render(raw, 0).tobytes(),
+                splash_builder.render(packed, 0).tobytes(),
+            )
+
+    def test_full_screen_sequences_fit_without_dropping_frames(self):
+        frames = self.root / "frames"
+        frames.mkdir()
+        for index in range(64):
+            Image.new("RGB", (256, 192), (index * 4, 0, 255 - index * 4)).save(
+                frames / f"{index:03}.png"
+            )
+        options = dict(
+            top=frames, bottom=frames, effect="none", fit="native", duration=3.2
+        )
+        with self.assertRaisesRegex(ValueError, "2 MiB"):
+            pack_splash.build(**options)
+        data = pack_splash.build(**options, compress=True)
+        self.assertEqual(data[:8], b"GLOMSP03")
+        self.assertEqual(struct.unpack_from("<H", data, 16)[0], 192)
+        for layer in range(2):
+            self.assertEqual(
+                struct.unpack_from("<4H", data, 36 + layer * 64), (256, 192, 64, 3)
+            )
+
     def test_independent_layers_and_static_scale(self):
         data = self.build(
             top={"preset": "none", "fit": "native", "scale_from": 200, "scale_to": 200},
@@ -138,8 +185,14 @@ class MotionTests(unittest.TestCase):
                 "-std=c11",
                 "-g",
                 "-fsanitize=address,undefined",
+                "-ffunction-sections",
+                "-fdata-sections",
+                "-Wl,--gc-sections",
                 "-I" + str(gloam / "arm9/include"),
+                "-I" + str(gloam / "third_party/stb"),
+                "-I" + str(gloam / "third_party/lodepng"),
                 str(gloam / "arm9/source/splash.c"),
+                str(gloam / "arm9/source/image_decode.c"),
                 str(ROOT / "tests/native_splash_preview.c"),
                 "-o",
                 str(executable),
@@ -187,6 +240,7 @@ class MotionTests(unittest.TestCase):
                 duration=2,
                 background="#182838",
                 direct=bool(index % 2),
+                compress=bool(index % 3),
                 layer_options={
                     "top": controls,
                     "bottom_logo": {

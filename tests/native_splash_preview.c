@@ -15,6 +15,7 @@ int main(int argc, char **argv)
     Splash splash = {0};
     assert(splash_load(&splash, argv[1]));
     top.before = top.after = bottom.before = bottom.after = 0xC0FFEE;
+    assert(splash_prepare(&splash, strtoul(argv[2], NULL, 10), atoi(argv[3]) != 0));
     splash_render(&splash, strtoul(argv[2], NULL, 10), atoi(argv[3]) != 0, top.pixels,
                   bottom.pixels);
     assert(top.before == 0xC0FFEE && top.after == 0xC0FFEE);

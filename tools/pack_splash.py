@@ -199,8 +199,14 @@ def build(
     direct=False,
     sound=None,
     layer_options=None,
+    compress=False,
 ) -> bytes:
-    if layer_options is not None or effect not in EFFECTS or fit not in ("fit", "crop"):
+    if (
+        compress
+        or layer_options is not None
+        or effect not in EFFECTS
+        or fit not in ("fit", "crop")
+    ):
         return splash_motion.build(
             top=top,
             bottom=bottom,
@@ -217,6 +223,7 @@ def build(
             direct=direct,
             sound=sound,
             layer_options=layer_options,
+            compress=compress,
         )
     if fps not in FPS or effect not in EFFECTS or fit not in ("fit", "crop"):
         raise ValueError("Unsupported frame rate, effect or fitting mode.")
@@ -351,6 +358,11 @@ def main():
     parser.add_argument("--background", default="#080e18")
     parser.add_argument("--logo-width", type=int, default=128)
     parser.add_argument(
+        "--compress",
+        action="store_true",
+        help="Compress each frame when smaller; requires splash format 3",
+    )
+    parser.add_argument(
         "--direct", action="store_true", help="RGB555 instead of shared indexed colour"
     )
     parser.add_argument(
@@ -359,7 +371,7 @@ def main():
     parser.add_argument(
         "--layers",
         type=Path,
-        help="JSON object of per-layer motion controls; exports version 2",
+        help="JSON object of per-layer motion controls (version 2, or 3 with compression)",
     )
     parser.add_argument("--replace", action="store_true")
     options = vars(parser.parse_args())

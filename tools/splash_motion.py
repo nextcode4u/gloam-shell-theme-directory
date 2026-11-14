@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-"""Bounded layer authoring and a pixel-accurate preview for GLOMSP02 packages."""
+"""Bounded layer authoring and a pixel-accurate preview for GLOMSP02/03 packages."""
 
 from __future__ import annotations
 
@@ -104,6 +104,18 @@ def prepare_frames(path, fps, fit, width=None):
     return result
 
 
+def compress_frames(content, frame_bytes, count, indexed):
+    """Independent streams allow skipping directly to a frame with fixed RAM."""
+    palette_bytes = 512 if indexed else 0
+    table = bytearray(4 * (count + 1))
+    for frame in range(count):
+        struct.pack_into("<I", table, frame * 4, len(table))
+        start = palette_bytes + frame * frame_bytes
+        table.extend(zlib.compress(content[start : start + frame_bytes], level=9))
+    struct.pack_into("<I", table, count * 4, len(table))
+    return content[:palette_bytes] + table
+
+
 def build(
     *,
     top=None,
@@ -121,6 +133,7 @@ def build(
     direct=False,
     sound=None,
     layer_options=None,
+    compress=False,
 ):
     import pack_splash
 
@@ -185,6 +198,7 @@ def build(
     if still >= length:
         raise ValueError("The still-frame time must be before the end.")
     data = bytearray(32 + 64 * len(layers))
+    compressed = False
     for i, (key, options, frames, delay, time, values, scales, opacity) in enumerate(
         layers
     ):
@@ -194,6 +208,14 @@ def build(
             )
         w, h = frames[0].size
         content = pack_splash.encode_frames(frames, direct)
+        if compress:
+            candidate = compress_frames(
+                content, w * h * (2 if direct else 1), len(frames), not direct
+            )
+            if len(candidate) < len(content):
+                content = candidate
+                data[32 + i * 64 + 49] = 1
+                compressed = True
         struct.pack_into(
             "<4B4H2h2H3I",
             data,
@@ -240,7 +262,7 @@ def build(
         "<8sIIHHBBHII",
         data,
         0,
-        b"GLOMSP02",
+        b"GLOMSP03" if compressed else b"GLOMSP02",
         len(data),
         0,
         length,
@@ -355,11 +377,23 @@ def render(data, tick, reduced=False):
             continue
         frame = frame_at(elapsed, hold, count, sequence)
         palette = struct.unpack_from("<256H", data, offset) if fmt else None
-        origin = offset + (512 if fmt else 0) + frame * w * h * (1 if fmt else 2)
+        size = w * h * (1 if fmt else 2)
+        origin = offset + (512 if fmt else 0)
+        if data[:8] == b"GLOMSP03" and data[32 + i * 64 + 49]:
+            start, end = struct.unpack_from("<2I", data, origin + frame * 4)
+            decoder = zlib.decompressobj()
+            pixels_data = decoder.decompress(
+                data[origin + start : origin + end], size + 1
+            )
+            if len(pixels_data) != size or not decoder.eof or decoder.unused_data:
+                raise ValueError("Invalid compressed splash frame.")
+        else:
+            origin += frame * size
+            pixels_data = data[origin : origin + size]
         words = (
-            [palette[index] for index in data[origin : origin + w * h]]
+            [palette[index] for index in pixels_data]
             if fmt
-            else struct.unpack_from(f"<{w*h}H", data, origin)
+            else struct.unpack(f"<{w*h}H", pixels_data)
         )
         columns = [(col - x) * w // width for col in range(left, right)]
         for row in range(top, bottom):

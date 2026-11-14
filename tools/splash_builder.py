@@ -57,7 +57,7 @@ def create_root():
 
 def render(data: bytes, tick: int, reduced=False) -> Image.Image:
     """PC preview of builder-owned output, using the same prepared pixels/timing."""
-    if data[:8] == b"GLOMSP02":
+    if data[:8] in (b"GLOMSP02", b"GLOMSP03"):
         return splash_motion.render(data, tick, reduced)
     if reduced:
         tick = struct.unpack_from("<H", data, 18)[0]
@@ -375,7 +375,7 @@ class Builder:
         ).pack(side="left", padx=4)
         ttk.Label(
             left,
-            text="Each screen and overlay has independent controls. New exports require Gloam splash format 2. Sound is packaged; the PC preview is silent.",
+            text="Each layer has independent controls. Frames compress automatically when smaller; compressed exports require Gloam splash format 3. The PC preview is silent.",
             wraplength=570,
         ).pack(anchor="w", pady=8)
 
@@ -619,7 +619,7 @@ class Builder:
         sound = self.sound.get()
         if self.workspace:
             sound = self.workspace.resolve(self.workspace.reference(sound))
-        values.update(direct=self.direct.get(), sound=sound or None)
+        values.update(direct=self.direct.get(), sound=sound or None, compress=True)
         values["layer_options"] = {
             key: {field: value.get() for field, value in controls.items()}
             for key, controls in self.layer_values.items()

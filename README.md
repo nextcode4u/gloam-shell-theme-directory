@@ -84,7 +84,9 @@ Running without arguments opens the graphical builder and working-folder picker.
 See the [splash authoring guide](docs/STARTUP_SPLASHES.md)
 for saved projects, offline startup, preview, theme export and custom SD installation. Splash playback requires
 a Gloam build after 1.0.0; new motion exports additionally require
-`GLOMSP02` support. The 1.0.0 release does not support splashes.
+`GLOMSP02` support, and automatically compressed exports require `GLOMSP03`.
+Compression retains every prepared frame while reducing SD/package size.
+The 1.0.0 release does not support splashes.
 
 ## Share a theme
 

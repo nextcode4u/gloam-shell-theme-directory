@@ -118,11 +118,18 @@ in effect even while its name is selected. Choose Custom to edit without applyin
 another preset. Sizing, delay, duration and frame-repeat choices survive changing
 a preset. The controls pane scrolls on smaller windows.
 
-**These controls export splash format 2 and require Gloam commit
+**Uncompressed layer controls export splash format 2 and require Gloam commit
 [`9cb5604`](https://github.com/nextcode4u/gloam-shell-ndx/commit/9cb5604) or later.**
 Existing version-1 splashes still play. Old saved projects migrate when
 opened, preserving their global choices and overlay behavior. The previous file
 is backed up when saved. Older builders cannot edit version-2 projects.
+
+The GUI also compresses each layer's prepared frames when this makes the package
+smaller. Compressed exports use **splash format 3**, requiring a matching Gloam
+build with compressed-frame playback. Compression preserves the prepared pixels,
+timing and motion controls; it does not drop frames or reduce resolution. Both
+formats use the same editable project files. The standalone Gloam 1.0.0 release
+supports neither format.
 
 Add to theme writes only `splash.gsp`; it needs no INI changes. Include the source
 artwork's credits/license with the theme. Custom installation keeps the package
@@ -137,6 +144,7 @@ python tools/pack_splash.py splash.gsp --top animation.gif --bottom still.png --
 python tools/pack_splash.py splash.gsp --top frames/ --fps 20 --sound intro.wav
 python tools/pack_splash.py splash.gsp --top sky.png --effect fade-zoom
 python tools/pack_splash.py splash.gsp --top sky.png --bottom-logo logo.png --layers motion.json
+python tools/pack_splash.py splash.gsp --top top.gif --bottom bottom.gif --fps 20 --compress
 ```
 
 `--layers` accepts a JSON object with optional `top`, `bottom`, `top_logo` and
@@ -156,7 +164,8 @@ python tools/pack_splash.py splash.gsp --top sky.png --bottom-logo logo.png --la
 Other keys are `start_x`, `end_x`, `opacity_from`, `opacity_to`, `repeat`,
 `sequence` and `reveal`. Effects and full per-layer controls are shared with the
 GUI. Legacy CLI requests using only old effects/fit modes still export version 1;
-new controls export version 2 automatically. New exports never silently drop
+new controls export version 2, or version 3 when `--compress` saves space.
+The CLI leaves compression off unless requested. New exports never silently drop
 motion options to accommodate an older runtime.
 
 An existing output requires `--replace`. `--duration` and `--poster` use seconds;
@@ -173,7 +182,18 @@ supports 5, 6, 10, 12, 15 and 20 fps and reports the final size before export.
 Transforms reuse their prepared images without baking intermediate frames.
 Scaling uses nearest-neighbour sampling on the DSi; use suitable source artwork
 and test small text on hardware. Source GIF frames still count against the
-uncompressed 2 MiB limit; motion controls do not compress full-screen videos.
+2 MiB package limit. Compression can make a full-screen animation fit, but noisy
+or long sequences can still exceed the limit. Use fewer/smaller source frames
+when that happens; the builder never changes your frame rate automatically.
+
+Gloam reads the complete package once and decodes only the current source frame
+per compressed layer. It uses one reusable frame buffer for each compressed
+layer (48 KiB for a full indexed screen, 96 KiB for direct colour). There are no
+per-frame SD reads or heap allocations. Missed deadlines skip directly to the
+current frame. Test timing on a DSi as well as the PC preview, especially with
+several full-screen layers. The supplied Gloam default has two 64-frame screens
+at 20 fps and remains outside the executable, under
+`/_nds/dsi-frontend/themes/default/splash.gsp`.
 
 In Gloam, use **START → Appearance** to select Theme or Custom and preview the
 result. While loading can finish early; Play once allows the full intro. Any
