@@ -42,6 +42,76 @@
       "configuration_license": "GPL-3.0-or-later",
       "asset_license": "CC0-1.0",
       "credits": "themes/phosphor/CREDITS.md"
+    },
+    {
+      "id": "aerial",
+      "name": "Aerial",
+      "author": "nextcode4u / Gloam Shell NDX project (AI-assisted)",
+      "description": "Pearl glass, floating clouds and restrained blue enamel. Soft electric-piano chords and rounded glass cues.",
+      "path": "themes/aerial",
+      "minimum_gloam_version": "1.0.0",
+      "theme_format": 1,
+      "origin": "Gloam Shell Theme Directory",
+      "configuration_license": "GPL-3.0-or-later",
+      "asset_license": "CC0-1.0 project assets; DejaVu font terms",
+      "credits": "themes/aerial/CREDITS.md",
+      "preview": "themes/aerial/preview.png"
+    },
+    {
+      "id": "koi",
+      "name": "Koi",
+      "author": "nextcode4u / Gloam Shell NDX project (AI-assisted)",
+      "description": "Vermilion koi in ink-blue water, lacquer edges and ivory pictograms. A sparse plucked pentatonic phrase with a quiet water-like bed.",
+      "path": "themes/koi",
+      "minimum_gloam_version": "1.0.0",
+      "theme_format": 1,
+      "origin": "Gloam Shell Theme Directory",
+      "configuration_license": "GPL-3.0-or-later",
+      "asset_license": "CC0-1.0 project assets; DejaVu font terms",
+      "credits": "themes/koi/CREDITS.md",
+      "preview": "themes/koi/preview.png"
+    },
+    {
+      "id": "vesper",
+      "name": "Vesper",
+      "author": "nextcode4u / Gloam Shell NDX project (AI-assisted)",
+      "description": "Cream moths, burgundy roses and gold on plum velvet. Chamfered brass frames, engraved symbols and a chamber-like harp loop.",
+      "path": "themes/vesper",
+      "minimum_gloam_version": "1.0.0",
+      "theme_format": 1,
+      "origin": "Gloam Shell Theme Directory",
+      "configuration_license": "GPL-3.0-or-later",
+      "asset_license": "CC0-1.0 project assets; DejaVu font terms",
+      "credits": "themes/vesper/CREDITS.md",
+      "preview": "themes/vesper/preview.png"
+    },
+    {
+      "id": "tidal",
+      "name": "Tidal",
+      "author": "nextcode4u / Gloam Shell NDX project (AI-assisted)",
+      "description": "Translucent jellyfish and deep teal water. Fluid oval controls, luminous porcelain symbols and slow bell-and-pad harmonies.",
+      "path": "themes/tidal",
+      "minimum_gloam_version": "1.0.0",
+      "theme_format": 1,
+      "origin": "Gloam Shell Theme Directory",
+      "configuration_license": "GPL-3.0-or-later",
+      "asset_license": "CC0-1.0 project assets; DejaVu font terms",
+      "credits": "themes/tidal/CREDITS.md",
+      "preview": "themes/tidal/preview.png"
+    },
+    {
+      "id": "morrow",
+      "name": "Morrow",
+      "author": "nextcode4u / Gloam Shell NDX project (AI-assisted)",
+      "description": "Terracotta, olive leaves and a sunlit sea. Paper tabs, stitched borders, quiet marimba and warm chord voicings.",
+      "path": "themes/morrow",
+      "minimum_gloam_version": "1.0.0",
+      "theme_format": 1,
+      "origin": "Gloam Shell Theme Directory",
+      "configuration_license": "GPL-3.0-or-later",
+      "asset_license": "CC0-1.0 project assets; DejaVu font terms",
+      "credits": "themes/morrow/CREDITS.md",
+      "preview": "themes/morrow/preview.png"
     }
   ]
 }

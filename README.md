@@ -3,20 +3,36 @@
 A home for community-made themes and original themes for
 [Gloam Shell NDX](https://github.com/nextcode4u/gloam-shell-ndx), the Nintendo DSi SD-card frontend.
 
-The collection starts with three Gloam themes. Community submissions are welcome;
+The collection includes five new illustrated themes and three Gloam starter themes.
+Community submissions are welcome;
 there are no community entries yet. Themes from AKMenu, TWiLight Menu++ or other
 frontends are not directly compatible with Gloam’s format.
+
+## Art collection
+
+![Five themes rendered in Gloam](docs/collection-preview.png)
+
+These previews show the actual host renderer with synthetic content. Each theme
+includes original music, UI cues and its own material/icon treatment. No launcher
+code changes are required. Smoothing uses the existing bitmap-font coverage format;
+translucent glass and proportional text would require separate Gloam improvements.
 
 ## Browse themes
 
 | Theme | Style | Author |
 | --- | --- | --- |
+| [Aerial](themes/aerial) | Cloud study | Gloam project (AI-assisted) |
+| [Koi](themes/koi) | Still water | Gloam project (AI-assisted) |
+| [Vesper](themes/vesper) | The velvet hour | Gloam project (AI-assisted) |
+| [Tidal](themes/tidal) | Below the surface | Gloam project (AI-assisted) |
+| [Morrow](themes/morrow) | A slower morning | Gloam project (AI-assisted) |
 | [Slate](themes/slate) | Rain-soaked city archive; cool blue accents | Gloam project |
 | [Folio](themes/folio) | Botanical field notebook; light palette | Gloam project |
 | [Phosphor](themes/phosphor) | Green radar station; terminal-like contrast | Gloam project |
 
 Each theme page includes wallpaper previews, installation instructions and credits.
-These initial entries match the themes bundled with Gloam 1.0.0.
+Slate, Folio and Phosphor match Gloam’s bundled themes. The five art-collection
+themes are separate optional downloads; they are not included in Gloam 1.0.0’s SD ZIP.
 
 ## Install
 
@@ -52,3 +68,8 @@ theme’s CREDITS.md. This directory does not relicense community work.
 This project was developed with assistance from AI language models. Some source
 code and documentation were generated or refined using AI, with the resulting
 work reviewed and integrated by the project author where appropriate.
+
+## Building packs
+
+See [authoring and validation](docs/AUTHORING.md) for reproducible asset builds,
+renderer checks and local install ZIP generation. Generated ZIPs stay out of Git.
