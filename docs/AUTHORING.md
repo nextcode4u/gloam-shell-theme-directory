@@ -65,3 +65,13 @@ Starter themes keep their original artwork/icons/audio; the tool uses Gloam's
 component generator for their material shapes, then adds coverage and fonts.
 Each pack retains asset provenance and a copy of the applicable font license.
 Do not label format-2 packs as compatible with Gloam 1.0.0.
+
+Morrow uses `[backgrounds] top_surface` and `bottom_surface` for separate
+256×192 RGBA PNG reading surfaces. These replace the flat mat and are blended
+once during theme loading. Its generated paper master is retained under
+`source/materials/`; `paper_surfaces()` builds native-size sheets so their grain
+is not stretched. `paper_component()` supplies the moving selection and cards.
+Keep opaque text areas quiet and corner details inside the six-pixel slice border.
+Surface alpha is multiplied by the corresponding screen's content opacity;
+Morrow uses 100 to retain the authored coverage. See its catalog entry for the
+required frontend revision. Earlier format-2 builds do not recognize these keys.

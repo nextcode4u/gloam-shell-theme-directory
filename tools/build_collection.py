@@ -122,7 +122,7 @@ SPECS = {
         radius=1,
         bpm=88,
         notes=[60, 64, 67, 71],
-        description="Terracotta, olive leaves and a sunlit sea. Paper tabs, stitched borders, quiet marimba and warm chord voicings.",
+        description="Sunlit illustration behind warm ivory stationery, folded paper selections, quiet marimba and warm chord voicings.",
     ),
 }
 COLOR_KEYS = ("background", "surface", "line", "text", "muted", "accent", "ink")
@@ -317,6 +317,55 @@ def icon(kind, spec):
     return image.resize((32, 32), Image.Resampling.LANCZOS)
 
 
+def paper_component(name, spec):
+    """Small stationery shapes; corner details stay inside the six-pixel slices."""
+    colors = dict(zip(COLOR_KEYS, spec["colors"]))
+    image = Image.new("RGBA", (32, 32))
+    draw = ImageDraw.Draw(image)
+    if name in ("header", "footer", "row", "icon-frame"):
+        return image
+    selected = name in ("row-selected", "card-selected", "tab-selected")
+    frame = name == "artwork-frame"
+    paper = Image.open(ROOT / "source/materials/morrow-paper.png").convert("RGBA")
+    paper = ImageOps.fit(paper, (32, 32), method=Image.Resampling.LANCZOS)
+    # An offset, partly transparent shadow, then a crisp sheet above it.
+    draw.rectangle((2, 3, 31, 31), fill=(*rgb(colors["muted"]), 85))
+    mask = Image.new("L", (32, 32))
+    edge = ImageDraw.Draw(mask)
+    edge.polygon([(1, 1), (26, 1), (30, 5), (30, 29), (1, 29)], fill=255)
+    paper.putalpha(mask)
+    image.alpha_composite(paper)
+    draw = ImageDraw.Draw(image)
+    draw.line([(1, 28), (29, 28), (29, 7)], fill=colors["line"])
+    draw.polygon([(26, 1), (26, 5), (30, 5)], fill=colors["line"])
+    draw.line([(26, 1), (26, 5), (30, 5)], fill=colors["surface"])
+    if selected:
+        # A printed left margin identifies selection without boxing in the text.
+        draw.line((1, 3, 1, 27), fill=colors["accent"], width=2)
+    if name == "tab-selected":
+        draw.rectangle((3, 3, 23, 26), fill=colors["accent"])
+    if frame:
+        draw.rectangle((4, 4, 25, 25), fill=(0, 0, 0, 0))
+    return image
+
+
+def paper_surfaces(folder):
+    """Native-size material assets keep the grain out of nine-slice stretching."""
+    paper = Image.open(ROOT / "source/materials/morrow-paper.png").convert("RGBA")
+    for screen, opacity in (("top", 238), ("bottom", 248)):
+        surface = Image.new("RGBA", (256, 192))
+        draw = ImageDraw.Draw(surface)
+        draw.rectangle((8, 6, 251, 189), fill=(77, 58, 35, 75))
+        sheet = ImageOps.fit(paper, (244, 184), method=Image.Resampling.LANCZOS)
+        sheet.putalpha(opacity)
+        surface.alpha_composite(sheet, (6, 4))
+        draw = ImageDraw.Draw(surface)
+        draw.line((6, 4, 249, 4), fill=(255, 251, 237, 230))
+        draw.line((6, 5, 6, 186), fill=(255, 251, 237, 190))
+        draw.line((7, 187, 249, 187), fill=(154, 131, 98, 150))
+        surface.save(folder / "backgrounds" / f"paper-{screen}.png", optimize=True)
+
+
 def component(name, spec):
     c = dict(zip(COLOR_KEYS, spec["colors"]))
     im = Image.new("RGBA", (32, 32))
@@ -357,6 +406,8 @@ def component(name, spec):
         d.line((16, 24, 16, 9), fill=c["ink"], width=3)
         d.line([(10, 15), (16, 9), (22, 15)], fill=c["ink"], width=3)
         return im
+    if spec["name"] == "Morrow":
+        return paper_component(name, spec)
     frame = name in ("icon-frame", "artwork-frame")
     if name == "icon-frame":
         if spec["name"] == "Vesper":
@@ -533,6 +584,8 @@ def build(id):
     tone = Image.new("RGB", (256, 192), spec["colors"][0])
     bottom = Image.blend(art, tone, 0.18)
     bottom.save(p / "backgrounds/bottom.png", optimize=True)
+    if id == "morrow":
+        paper_surfaces(p)
     for kind in ICONS:
         icon(kind, spec).save(p / "icons" / f"{kind}.png", optimize=True)
     for name in COMPONENTS:
@@ -568,6 +621,11 @@ def build(id):
         "bottom": "backgrounds/bottom.png",
         "strength": "100",
     }
+    if id == "morrow":
+        config["backgrounds"].update(
+            top_surface="backgrounds/paper-top.png",
+            bottom_surface="backgrounds/paper-bottom.png",
+        )
     config["icons"] = {"directory": "icons"}
     config["components"] = {"directory": "components", "border": "6"}
     config["audio"] = {
@@ -623,8 +681,8 @@ PROFILES = {
         layout="journal",
         tabs="numbered",
         position="bottom",
-        top=76,
-        bottom=88,
+        top=100,
+        bottom=100,
         body=("DejaVuSerif", 10, 9, 12),
         heading=("DejaVuSerif-Italic", 12, 12, 15),
     ),

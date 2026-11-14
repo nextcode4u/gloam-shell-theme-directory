@@ -113,7 +113,7 @@
       "id": "morrow",
       "name": "Morrow",
       "author": "nextcode4u / Gloam Shell NDX project (agent-assisted)",
-      "description": "Terracotta, olive leaves and a sunlit sea. Paper tabs, stitched borders, quiet marimba and warm chord voicings.",
+      "description": "Sunlit illustration behind warm ivory stationery, folded paper selections, quiet marimba and warm chord voicings.",
       "path": "themes/morrow",
       "theme_format": 2,
       "origin": "Gloam Shell Theme Directory",
@@ -121,8 +121,8 @@
       "asset_license": "CC0-1.0 project assets; DejaVu font terms",
       "credits": "themes/morrow/CREDITS.md",
       "preview": "themes/morrow/preview.png",
-      "requires_gloam": "Unreleased build with theme format 2 (opacity, coverage, DSFONT03 and composition presets)",
-      "minimum_gloam_commit": "1d18cc4743be705df1466fbf44f4ace9c79c974d"
+      "requires_gloam": "Unreleased build with theme format 2 and image-backed reading surfaces",
+      "minimum_gloam_commit": "a7c967629aaba9e159dcf1f2c874764a9f6881ee"
     }
   ]
 }

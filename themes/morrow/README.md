@@ -1,15 +1,21 @@
 # Morrow
 
-Terracotta, olive leaves and a sunlit sea. Paper tabs, stitched borders, quiet marimba and warm chord voicings.
+Sunlit illustration behind warm ivory stationery, folded paper selections,
+quiet marimba and warm chord voicings.
 
 ![Actual Gloam renderer preview](preview.png)
+
+Requires Gloam commit `a7c9676` or later for the separate reading-surface assets.
 
 ## Design
 
 - **Journal** composition; numbered navigation at the bottom.
 - **Extended** browser by default; other views and icon sizes remain selectable.
 - DejaVu Serif body at 10 px, with a separate DejaVu Serif-Italic heading face at 12 px.
-- Independent reading surfaces: top 76%, bottom 88% opacity.
+- Separate native-size paper assets for the two reading surfaces, with subtle
+  grain and translucent edges. PNG alpha supplies the coverage at 100% surface opacity.
+- Paper-strip selection and card assets with a printed margin, folded corner
+  and soft shadow. The same selection follows into file pickers and settings.
 - Four-level component coverage for translucent cards and layered edges. Modal panels retain solid reading surfaces.
 - Native title banners retain priority over themed fallback icons.
 

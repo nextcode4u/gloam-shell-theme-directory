@@ -44,6 +44,10 @@ def main():
     )
     roms = sd / "roms"
     roms.mkdir(exist_ok=True)
+    media = sd / "media"
+    media.mkdir(exist_ok=True)
+    # A valid picker fixture exercises selection skins and image previews.
+    shutil.copyfile(ROOT / "themes/morrow/backgrounds/top.png", media / "Morning.png")
     for name in ["Adventure", "Homebrew", "Nintendo DS", "Puzzle"]:
         (roms / name).mkdir(exist_ok=True)
     for name in [

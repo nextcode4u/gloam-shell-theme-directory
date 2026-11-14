@@ -5,6 +5,7 @@
 #include "audio.h"
 #include "browser.h"
 #include "font_pack.h"
+#include "picker.h"
 #include "renderer.h"
 #include "settings.h"
 #include "themes.h"
@@ -99,6 +100,11 @@ int main(int argc, char **argv)
     ppm(argv[3], argv[2], "top", top.data);
     ppm(argv[3], argv[2], "bottom", bottom.data);
     snprintf(app.locations[app.category].path, PATH_CAP, "%s", saved_path);
+    app_category(&app, CATEGORY_HOME);
+    app.locations[CATEGORY_HOME].selected = 1;
+    draw();
+    ppm(argv[3], argv[2], "home-top", top.data);
+    ppm(argv[3], argv[2], "home-bottom", bottom.data);
     for (int view = 0; view < BROWSER_STYLE_COUNT; view++)
         for (int size = 0; size < 2; size++) {
             app.browser_style = view;
@@ -119,6 +125,16 @@ int main(int argc, char **argv)
     settings_open(&app);
     draw();
     ppm(argv[3], argv[2], "settings", bottom.data);
+    app.settings.open = false;
+    assert(picker_open_background(&app, 1));
+    for (int frame = 0; frame < 60; frame++)
+        picker_tick(&app);
+    assert(app.picker.count > 0 && !app.picker.failed);
+    snprintf(app.picker.path, PATH_CAP, "sd:/media");
+    draw();
+    ppm(argv[3], argv[2], "picker-top", top.data);
+    ppm(argv[3], argv[2], "picker-bottom", bottom.data);
+    picker_close(&app);
     audio_free_clip(&app.audio.music);
     for (int i = 0; i < 3; i++)
         audio_free_clip(&app.audio.effects[i]);

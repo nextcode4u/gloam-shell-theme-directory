@@ -1,9 +1,12 @@
 # Morrow — credits and license
 
-Art direction and theme integration: nextcode4u / Gloam Shell NDX project, with AI assistance.
+Art direction and theme integration: nextcode4u / Gloam Shell NDX project, with agent assistance.
 The wallpaper illustration was generated using OpenAI’s built-in image-generation tool
 for this theme. It is not copied from another launcher or a third-party theme pack.
 The selected production master is retained at `source/art/morrow.png` in this repository.
+The paper material was also generated with the built-in image-generation tool;
+its master is `source/materials/morrow-paper.png`. The authoring tool fits this
+material to the reading surfaces and combines it with the project's component geometry.
 
 Component and icon geometry, musical composition and synthesized sound cues are
 provided by `tools/build_collection.py`. No sampled songs or downloaded recordings
