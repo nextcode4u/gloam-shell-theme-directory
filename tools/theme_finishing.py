@@ -11,6 +11,21 @@ def rgba(color, alpha=255):
     return (*ImageColor.getrgb(color), alpha)
 
 
+def parchment_coverage(image, center, border, fade):
+    """Thin the paper interior while retaining the authored, worn perimeter."""
+    width, height = image.size
+    original = image.getchannel("A").tobytes()
+    coverage = bytearray(len(original))
+    for y in range(height):
+        for x in range(width):
+            distance = min(x, y, width - 1 - x, height - 1 - y)
+            rim = max(0, min(fade, border + fade - distance))
+            opacity = center + (255 - center) * rim // fade
+            index = y * width + x
+            coverage[index] = original[index] * opacity // 255
+    image.putalpha(Image.frombytes("L", image.size, bytes(coverage)))
+
+
 def control(name, colors, theme):
     image = Image.new("RGBA", (32, 32))
     d = ImageDraw.Draw(image)
@@ -61,12 +76,10 @@ def control(name, colors, theme):
 def reading_surface(theme, colors, opacity, bottom, materials):
     image = Image.new("RGBA", (256, 192))
     if theme == "morrow":
-        # Preserve the generated material's original alpha and aged perimeter.
+        # Transparency is baked once; the console still blends only on loading.
         sheet = Image.open(materials / "morrow-parchment.png").convert("RGBA")
         sheet = sheet.resize((250, 190), Image.Resampling.LANCZOS)
-        sheet.putalpha(
-            sheet.getchannel("A").point(lambda a: a * (250 if bottom else 240) // 255)
-        )
+        parchment_coverage(sheet, 158 if bottom else 107, border=7, fade=9)
         image.alpha_composite(sheet, (3, 1))
         return image
     if theme == "folio":

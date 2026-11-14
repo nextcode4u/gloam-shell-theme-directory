@@ -11,9 +11,12 @@ quiet marimba and warm chord voicings.
 - **Extended** browser by default; other views and icon sizes remain selectable.
 - DejaVu Serif body at 10 px, with a separate DejaVu Serif-Italic heading face at 12 px.
 - Separate native-size paper assets for the two reading surfaces, with subtle
-  grain and translucent edges. PNG alpha supplies the coverage at 100% surface opacity.
+  grain and aged edges. The interior is about 42% opaque on top and 62% below,
+  revealing the coastal illustration while retaining a stronger worn perimeter.
+  PNG alpha supplies this coverage at 100% configured surface opacity.
 - Parchment-strip selection and card assets with a printed margin, aged edges
-  and soft shadow. The same selection follows into file pickers and settings.
+  and a two-thirds-opaque center. The same selection follows into file pickers
+  and settings; modal panels retain their opaque text surface.
 - Four-level component coverage for translucent cards and layered edges. Modal panels retain solid reading surfaces.
 - Native title banners retain priority over themed fallback icons.
 

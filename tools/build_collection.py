@@ -16,7 +16,7 @@ import wave
 
 import numpy as np
 from PIL import Image, ImageColor, ImageDraw, ImageFont, ImageOps
-from theme_finishing import finish
+from theme_finishing import finish, parchment_coverage
 
 ROOT = Path(__file__).resolve().parents[1]
 SPECS = {
@@ -326,6 +326,8 @@ def paper_component(name, spec):
         return image
     paper = Image.open(ROOT / "source/materials/morrow-parchment.png").convert("RGBA")
     image = paper.resize((32, 32), Image.Resampling.LANCZOS)
+    if name in ("row-selected", "card-selected", "card"):
+        parchment_coverage(image, 170, border=3, fade=3)
     d = ImageDraw.Draw(image)
     if name in ("row-selected", "card-selected"):
         d.line((2, 5, 2, 26), fill=colors["accent"], width=1)

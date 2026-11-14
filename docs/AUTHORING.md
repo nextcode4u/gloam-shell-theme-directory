@@ -75,6 +75,12 @@ selections and cards, with darkened worn edges and a quiet text area. Keep detai
 inside the six-pixel slice border. Surface alpha is multiplied by screen opacity;
 these packs use 100 to preserve the authored coverage.
 
+Morrow's parchment uses a feathered alpha profile: the interior is about 42%
+opaque on top and 62% on the bottom, increasing toward its worn perimeter.
+Selections and cards retain two-thirds center coverage; modal panels stay opaque.
+`parchment_coverage()` applies this during asset generation. No extra console
+buffer, animation work or per-frame background blending is required.
+
 ## Controls, motion and prepared assets
 
 `theme_finishing.py` generates optional checkbox, toggle, arrow, scrollbar and busy
