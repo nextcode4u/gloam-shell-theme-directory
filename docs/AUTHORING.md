@@ -12,11 +12,12 @@ an image-generation service. Credits identify their AI-assisted origin.
 Use Python 3.10+ with `pip install -r requirements.txt`, then:
 
 ```sh
-python tools/build_collection.py --font /path/to/DejaVuSansMono.ttf
+python tools/build_collection.py --gloam /path/to/gloam-shell-ndx --font-dir /path/to/dejavu
 python tools/render_previews.py --gloam /path/to/gloam-shell-ndx
 python tools/package_collection.py
 ```
 
+Use the Gloam revision required by `catalog.json` or later.
 Run Gloam’s `tools/host-check.sh` first to obtain its sanitizer-built model/render
 objects. The preview tool compiles `check_gloam.c` against those objects and makes
 an isolated synthetic SD fixture under this repository’s ignored `build/` folder.
@@ -27,9 +28,10 @@ Leak checking is disabled for process-exit global caches; address and undefined
 behavior checks remain enabled. These are host tests, not hardware certification.
 
 Keep the DejaVu license beside every font when rebuilding. The font source hash
-is recorded in each theme’s credits. The packer measures every glyph and rejects
-ones wider/taller than the cell; it shifts a few accents/underscores to stay in
-bounds instead of clipping them. Coverage uses four grayscale levels, never RGB
+is recorded in each theme’s credits. Gloam’s authoritative DSFONT03 packer measures every glyph and rejects
+ink outside its advance or line height. The body remains 12 pixels high; headings
+use independent faces at up to 16 pixels. The profile records size and baseline
+for reproducible glyph placement. Coverage uses four grayscale levels, never RGB
 subpixel smoothing. Other source fonts require a fresh bounds/readability review.
 
 The audio generator composes eight bars with a varied second phrase, sustained
@@ -37,7 +39,29 @@ harmony, melodic voices and circular delay tails. Music is 16 kHz, mono PCM16,
 below Gloam’s 1 MiB cap. All cues are also bounded mono PCM16. No recordings from
 commercial games or royalty-free marketplaces are embedded.
 
-Packaging writes individual ZIPs, a combined ZIP and SHA256SUMS under `dist/`.
+Packaging writes eight individual ZIPs, illustrated/starter collection ZIPs and SHA256SUMS under `dist/`.
 Paths are ready for extraction into an SD root. Each archive contains its theme
 credits, font license, GPL notice and licensing summary. Source masters, previews,
 build tools and testing fixtures are excluded from runtime packs.
+
+## Version 2 materials and composition
+
+The profiles in `build_collection.py` define independent top/bottom reading-surface
+opacity, body/heading font selection and named layouts. Aerial uses Spotlight;
+Koi, Tidal and Slate use Gallery; Morrow and Folio use Journal. Vesper retains its
+illustrated Scene and Phosphor its terminal sidebar. Top/bottom tab placement is
+available for the three new presets. The bottom browser retains its shared touch
+geometry. Existing user view and wallpaper overrides remain independent.
+
+All packs set `[components] alpha=coverage`. Author PNG alpha as 0, 85, 170 or 255:
+transparent, one-third, two-thirds or opaque coverage. Card fills and soft outer
+edges reveal the background; solid rims protect structure. Panels and selected
+tabs stay opaque for contrast. Native ROM banners and icon PNGs retain their
+binary transparency. No blur is applied. Illustration masters are unchanged;
+lower-screen images receive a small base tint before Gloam's reading surface.
+
+The five illustrated themes are regenerated entirely by this repository's tool.
+Starter themes keep their original artwork/icons/audio; the tool uses Gloam's
+component generator for their material shapes, then adds coverage and fonts.
+Each pack retains asset provenance and a copy of the applicable font license.
+Do not label format-2 packs as compatible with Gloam 1.0.0.

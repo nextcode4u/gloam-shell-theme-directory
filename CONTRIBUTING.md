@@ -1,11 +1,12 @@
 # Contributing a theme
 
 1. Give your theme a unique folder ID: ASCII letters, numbers, hyphens or underscores,
-   up to 63 characters. Put it in `themes/<id>/` with a format-1 `theme.ini`.
+   up to 63 characters. Put it in `themes/<id>/` with a versioned `theme.ini`. Use format 2 for translucent components,
+   independent screen opacity, proportional/heading fonts or the new compositions.
 2. Keep all referenced assets inside that folder. Include only runtime assets,
    documentation and editable source where useful; no executables, ROMs, BIOS,
    user settings, generated archives, prompt logs or private testing files.
-3. Add a README with author, description, minimum Gloam version, installation
+3. Add a README with author, description, required Gloam version/build, installation
    instructions and previews. Label wallpaper-only or renderer previews clearly.
 4. Add CREDITS.md with license terms, source links and attribution for your own and
    third-party assets. Include required license texts. Only submit assets you own

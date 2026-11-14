@@ -2,41 +2,35 @@
 
 Cream moths, burgundy roses and gold on plum velvet. Chamfered brass frames, engraved symbols and a chamber-like harp loop.
 
-![Actual Gloam host-renderer preview](preview.png)
+![Actual Gloam renderer preview](preview.png)
 
 ## Design
 
-- Top composition: **scene**. Navigation: **pager**.
-- Default browser: **shelf**, large icons; other views remain selectable.
-- Original full-screen illustration, matching lower-screen reading surface,
-  29 icons, selection frames and battery/Wi-Fi/update symbols.
-- Softly antialiased Latin-1 font using Gloam’s existing four-level coverage.
-- Original **26.67-second** mono music loop at 72 BPM,
-  plus cursor, confirm and back cues. [Listen to the music](sounds/loop.wav).
+- **Scene** composition; pager navigation at the bottom.
+- **Shelf** browser by default; other views and icon sizes remain selectable.
+- DejaVu Serif body at 10 px, with a separate DejaVu Serif heading face at 14 px.
+- Independent reading surfaces: top 82%, bottom 88% opacity.
+- Four-level component coverage for translucent cards and layered edges. Modal panels retain solid reading surfaces.
+- Native title banners retain priority over themed fallback icons.
+
+Original background music and cursor/confirm/back cues. Select **Audio → Background music → Theme** to hear the loop.
 
 ## Install
 
-Requires **Gloam Shell NDX 1.0.0 or later**, theme format 1. Copy the whole `vesper`
-folder to `/_nds/dsi-frontend/themes/vesper/` on the SD card, or extract this theme’s
-install ZIP into the SD root. Back up an existing theme with the same ID first.
+**Requires the updated Gloam build with theme format 2. Gloam 1.0.0 cannot load this revision.**
+The [format guide](https://github.com/nextcode4u/gloam-shell-ndx/blob/main/docs/guides/THEME_PACKAGES.md)
+describes the new capability. The [original 1.0-compatible collection](https://github.com/nextcode4u/gloam-shell-theme-directory/tree/74fd2dd/themes/vesper) remains available in history.
 
-Open **START → Appearance → Theme**, select Vesper and press A. Set
-**Audio → Background music → Theme** and enable theme sounds. Reset personal
-wallpaper overrides if the illustration does not appear. Reapply the theme to
-restore its default view and accent; your audio-volume settings are respected.
+Copy the entire `vesper` folder to `/_nds/dsi-frontend/themes/vesper/` on your SD card,
+backing up any existing theme with that name. In Gloam, choose **START → Appearance → Theme**,
+select Vesper and press A. Reapply to restore the default view and accent.
+Reset personal wallpaper overrides to see the supplied backgrounds.
 
-## Validation and limits
+## Preview and limits
 
-Preview images are actual Gloam host-renderer output with synthetic folder/file
-names, not console photographs. Checked with Gloam 1.0’s loader/rendering code:
-preview/cancel/apply, all six browser views at both icon sizes, category screens,
-item details, Reduced motion, settings, every icon/component and all WAV assets.
-Framebuffer bounds were checked under AddressSanitizer/UndefinedBehaviorSanitizer.
-Physical LCD readability and on-console audio balance remain to be checked.
-
-Transparent frame centers work in Gloam 1.0. Glass/metal depth is shaded artwork;
-components do not perform translucent alpha blending or background blur. Native
-ROM/system banners still take priority over theme fallback icons. Library Index
-and item details intentionally use Gloam’s shared index/inspector arrangement.
+Previews use Gloam's actual renderer and synthetic content. Library index and
+item details use the shared index/inspector arrangement. Component coverage blends
+existing pixels; there is no live blur. Physical LCD contrast and frame timing
+still need testing on a DSi.
 
 [Settings preview](settings-preview.png) · [Credits and licenses](CREDITS.md)

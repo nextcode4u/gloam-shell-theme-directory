@@ -8,7 +8,7 @@ import shutil
 import subprocess
 import os
 from PIL import Image, ImageDraw, ImageFont
-from build_collection import ROOT, SPECS
+from build_collection import ROOT, SPECS, PROFILES
 
 
 def main():
@@ -56,7 +56,9 @@ def main():
         (roms / name).touch()
     gallery = Image.new("RGB", (256 * 5, 428), "#12171d")
     draw = ImageDraw.Draw(gallery)
-    for i, id in enumerate(SPECS):
+    starters = Image.new("RGB", (256 * 3, 428), "#12171d")
+    starter_draw = ImageDraw.Draw(starters)
+    for i, id in enumerate(PROFILES):
         # Each process starts clean: no preference state leaks between themes.
         for state in (sd / "_nds/dsi-frontend").glob("state.*"):
             state.unlink()
@@ -71,9 +73,14 @@ def main():
         Image.open(renders / f"{id}-settings.ppm").save(
             ROOT / "themes" / id / "settings-preview.png", optimize=True
         )
-        draw.text((i * 256 + 10, 8), SPECS[id]["name"], fill="white")
-        gallery.paste(combined, (i * 256, 32))
+        if id in SPECS:
+            draw.text((i * 256 + 10, 8), SPECS[id]["name"], fill="white")
+            gallery.paste(combined, (i * 256, 32))
+        else:
+            starter_draw.text(((i - 5) * 256 + 10, 8), id.title(), fill="white")
+            starters.paste(combined, ((i - 5) * 256, 32))
     gallery.save(ROOT / "docs/collection-preview.png", optimize=True)
+    starters.save(ROOT / "docs/starter-preview.png", optimize=True)
 
 
 if __name__ == "__main__":

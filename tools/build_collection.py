@@ -1,16 +1,17 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: GPL-3.0-or-later
-"""Build the five original collection themes. No Gloam source modifications.
+"""Build original illustrated themes and refresh the three starter themes.
 Artwork comes from source/art; geometry, music and cues are authored here.
 """
 
 import argparse
 import configparser
 import hashlib
+import importlib.util
+import io
 import json
 import math
 from pathlib import Path
-import struct
 import wave
 
 import numpy as np
@@ -389,10 +390,17 @@ def component(name, spec):
             (0.10 * (1 - y / 12) if y < 12 else 0.13 * (y - 12) / 20),
         )
         d.line((0, y, 31, y), fill=shade)
+    # Two-bit coverage: glass and paper faces reveal the illustration beneath;
+    # solid modal panels and selected tabs protect text contrast.
+    if name in ("card", "card-selected", "row-selected", "artwork-frame"):
+        mask = mask.point(lambda alpha: 170 if alpha else 0)
     im.putalpha(mask)
     d = ImageDraw.Draw(im)
     if frame:
         d.rounded_rectangle((3, 3, 28, 28), radius=max(0, r - 2), fill=(0, 0, 0, 0))
+    # A translucent outer shadow and a crisp inner rim remain separate layers.
+    if name not in ("panel", "tab-selected"):
+        d.arc((0, 0, 31, 31), 0, 90, fill=(*rgb(c["background"]), 85), width=1)
     d.rounded_rectangle((1, 1, 30, 30), radius=r, outline=edge, width=1)
     if selected:
         if spec["name"] == "Morrow":
@@ -406,29 +414,6 @@ def component(name, spec):
         else:
             d.arc((2, 2, 18, 18), 185, 270, fill=c["text"], width=1)
     return im
-
-
-def font_pack(font_path):
-    face = ImageFont.truetype(str(font_path), 11)
-    result = bytearray(b"DSFONT02" + bytes([7, 12, 32, 95, 160, 96, 0, 0]))
-    for cp in list(range(32, 127)) + list(range(160, 256)):
-        glyph = chr(cp)
-        left, top, right, bottom = face.getbbox(glyph, anchor="ls")
-        if right - left > 7 or bottom - top > 12:
-            raise ValueError(f"Font overflow: {glyph!r}")
-        baseline = max(-top, min(10, 12 - bottom))
-        mask = Image.new("L", (7, 12))
-        ImageDraw.Draw(mask).text(
-            (max(0, -left), baseline), glyph, font=face, anchor="ls", fill=255
-        )
-        for y in range(12):
-            # A small ink boost retains weight on a low-contrast physical LCD.
-            row = sum(
-                min(3, round((mask.getpixel((x, y)) / 255) ** 0.82 * 3)) << (2 * x)
-                for x in range(7)
-            )
-            result.extend(struct.pack("<H", row))
-    return bytes(result)
 
 
 def audio(spec, folder):
@@ -533,7 +518,7 @@ def audio(spec, folder):
     return round(length, 2)
 
 
-def build(id, font_path):
+def build(id):
     spec = SPECS[id]
     p = ROOT / "themes" / id
     for sub in ("backgrounds", "icons", "components", "sounds", "fonts"):
@@ -546,13 +531,12 @@ def build(id, font_path):
     art.save(p / "backgrounds/top.png", optimize=True)
     # A cohesive secondary surface, with the image subdued for long browser rows.
     tone = Image.new("RGB", (256, 192), spec["colors"][0])
-    bottom = Image.blend(art, tone, 0.78)
+    bottom = Image.blend(art, tone, 0.18)
     bottom.save(p / "backgrounds/bottom.png", optimize=True)
     for kind in ICONS:
         icon(kind, spec).save(p / "icons" / f"{kind}.png", optimize=True)
     for name in COMPONENTS:
         component(name, spec).save(p / "components" / f"{name}.png", optimize=True)
-    (p / "fonts/ui.dsfont").write_bytes(font_pack(font_path))
     length = audio(spec, p / "sounds")
     config = configparser.ConfigParser()
     config.optionxform = str
@@ -597,10 +581,193 @@ def build(id, font_path):
     return length
 
 
-if __name__ == "__main__":
+# Faces are deliberately different; body line height stays 12 so every browser,
+# settings row and touch target retains its geometry. Values are size/baseline/height.
+PROFILES = {
+    "aerial": dict(
+        layout="spotlight",
+        tabs="icons",
+        position="bottom",
+        top=24,
+        bottom=82,
+        body=("DejaVuSans", 10, 10, 12),
+        heading=("DejaVuSans", 13, 12, 15),
+    ),
+    "koi": dict(
+        layout="gallery",
+        tabs="labels",
+        position="top",
+        top=60,
+        bottom=86,
+        body=("DejaVuSans-Bold", 10, 10, 12),
+        heading=("DejaVuSans-Bold", 13, 12, 15),
+    ),
+    "vesper": dict(
+        layout="scene",
+        tabs="pager",
+        top=82,
+        bottom=88,
+        body=("DejaVuSerif", 10, 9, 12),
+        heading=("DejaVuSerif", 14, 13, 16),
+    ),
+    "tidal": dict(
+        layout="gallery",
+        tabs="icons",
+        position="bottom",
+        top=48,
+        bottom=82,
+        body=("DejaVuSans", 10, 10, 12),
+        heading=("DejaVuSans", 12, 12, 15),
+    ),
+    "morrow": dict(
+        layout="journal",
+        tabs="numbered",
+        position="bottom",
+        top=76,
+        bottom=88,
+        body=("DejaVuSerif", 10, 9, 12),
+        heading=("DejaVuSerif-Italic", 12, 12, 15),
+    ),
+    "slate": dict(
+        layout="gallery",
+        tabs="labels",
+        position="top",
+        top=64,
+        bottom=88,
+        body=("DejaVuSans", 10, 10, 12),
+        heading=("DejaVuSans-Bold", 13, 12, 15),
+    ),
+    "folio": dict(
+        layout="journal",
+        tabs="labels",
+        position="top",
+        top=78,
+        bottom=94,
+        body=("DejaVuSerif", 10, 9, 12),
+        heading=("DejaVuSerif", 14, 13, 16),
+    ),
+    "phosphor": dict(
+        layout="sidebar",
+        tabs="numbered",
+        top=70,
+        bottom=90,
+        body=("DejaVuSansMono", 10, 9, 12),
+        heading=("DejaVuSansMono", 13, 12, 16),
+    ),
+}
+
+
+def load_tool(path, name):
+    module_spec = importlib.util.spec_from_file_location(name, path)
+    module = importlib.util.module_from_spec(module_spec)
+    module_spec.loader.exec_module(module)
+    return module
+
+
+def refresh_style(id, gloam, font_dir):
+    """Use Gloam's authoritative font packer; do not duplicate its binary format."""
+    profile = PROFILES[id]
+    folder = ROOT / "themes" / id
+    config = configparser.ConfigParser()
+    config.read(folder / "theme.ini")
+    config["theme"]["version"] = "2"
+    layout = config["layout"]
+    layout.update(
+        top_layout=profile["layout"],
+        tab_style=profile["tabs"],
+        top_content_opacity=str(profile["top"]),
+        bottom_content_opacity=str(profile["bottom"]),
+    )
+    if "position" in profile:
+        layout["tabs_position"] = profile["position"]
+    elif "tabs_position" in layout:
+        del layout["tabs_position"]
+    if id == "morrow":
+        # Library index remains a personal option; start with the illustrated journal.
+        layout["view"] = "extended"
+    config["components"]["alpha"] = "coverage"
+    if id in ("slate", "folio", "phosphor"):
+        source = load_tool(gloam / "tools/make_theme_components.py", "gloam_components")
+        style = "paper" if id == "folio" else "terminal"
+        for name in source.COMPONENTS:
+            image = source.component_image(name, style, config["colors"])
+            if name in ("card", "card-selected", "row", "row-selected"):
+                # Preserve the authored solid edges; only the flat interior is translucent.
+                fill = rgb(config["colors"]["surface"])
+                for y in range(3, 29):
+                    for x in range(3, 29):
+                        if image.getpixel((x, y))[:3] == fill:
+                            image.putpixel((x, y), (*fill, 170))
+            image.save(folder / "components" / f"{name}.png", optimize=True)
+        status_spec = {
+            "colors": [config["colors"][key] for key in COLOR_KEYS],
+            "radius": 1,
+        }
+        component("update-available", status_spec).save(
+            folder / "components/update-available.png", optimize=True
+        )
+    packer = load_tool(gloam / "tools/pack_theme_font.py", "gloam_font_packer")
+    (folder / "fonts").mkdir(exist_ok=True)
+    font_notes = []
+    for role, key in (("body", "ui"), ("heading", "heading")):
+        name, size, baseline, height = profile[role]
+        ttf = font_dir / f"{name}.ttf"
+        data = packer.pack_font(
+            ttf, size, baseline, latin1=True, proportional=True, height=height
+        )
+        (folder / "fonts" / f"{key}.dsfont").write_bytes(data)
+        config["fonts"][key] = f"fonts/{key}.dsfont"
+        font_notes.append(
+            f"- {role.title()}: {name}, {size} px; line height {height}; "
+            f"SHA-256 `{hashlib.sha256(ttf.read_bytes()).hexdigest()}`."
+        )
+    license_text = (ROOT / "themes/aerial/fonts/LICENSE.txt").read_text()
+    (folder / "fonts/LICENSE.txt").write_text(license_text)
+    credits = (folder / "CREDITS.md").read_text()
+    # Replace the previous generated font paragraph without losing asset provenance.
+    start = credits.find("Font: DejaVu")
+    if start >= 0:
+        end = credits.index("Configuration, tools", start)
+        credits = credits[:start] + credits[end:]
+    credits = credits.replace(
+        "Uses the built-in font, illustrated wallpapers and UI sounds; no background music is included.",
+        "Illustrated wallpapers and UI sounds; no background music is included.",
+    )
+    credits = credits.split("\n## Version 2 treatment")[0].rstrip()
+    credits += "\n\n## Version 2 treatment\n\n"
+    credits += (
+        "Updated layout, material coverage and fonts are generated by "
+        "`tools/build_collection.py` in this repository. Fonts use Gloam's "
+        "DSFONT03 converter, four grayscale coverage levels and independent "
+        "body/heading faces. DejaVu terms remain in `fonts/LICENSE.txt`.\n"
+        "Source: https://dejavu-fonts.github.io/\n\n"
+    )
+    credits += "\n".join(font_notes) + "\n"
+    (folder / "CREDITS.md").write_text(credits)
+    out = io.StringIO()
+    config.write(out, space_around_delimiters=False)
+    (folder / "theme.ini").write_text(out.getvalue().rstrip() + "\n")
+
+
+def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--font", type=Path, required=True)
-    parser.add_argument("--theme", choices=SPECS)
+    parser.add_argument(
+        "--gloam",
+        type=Path,
+        required=True,
+        help="Matching Gloam checkout, for the font and starter-component generators",
+    )
+    parser.add_argument(
+        "--font-dir", type=Path, required=True, help="DejaVu TTF directory"
+    )
+    parser.add_argument("--theme", choices=PROFILES)
     args = parser.parse_args()
-    for id in ([args.theme] if args.theme else SPECS):
-        print(id, build(id, args.font))
+    for id in ([args.theme] if args.theme else PROFILES):
+        if id in SPECS:
+            build(id)
+        refresh_style(id, args.gloam, args.font_dir)
+        print(id)
+
+
+if __name__ == "__main__":
+    main()

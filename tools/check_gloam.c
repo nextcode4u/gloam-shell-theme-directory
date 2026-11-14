@@ -4,6 +4,7 @@
 #include "app.h"
 #include "audio.h"
 #include "browser.h"
+#include "font_pack.h"
 #include "renderer.h"
 #include "settings.h"
 #include "themes.h"
@@ -64,19 +65,29 @@ int main(int argc, char **argv)
         assert(themes_icon(&app.themes.active, i));
     for (int i = 0; i < THEME_COMPONENT_COUNT; i++)
         assert(themes_component(&app.themes.active, i));
+    assert(app.themes.active.format_version == 2);
+    assert(app.themes.active.component_coverage && app.themes.active.custom_heading);
     unsigned soft = 0;
     for (int g = 0; g < app.themes.active.font.glyph_count; g++)
-        for (int y = 0; y < 12; y++)
-            for (int x = 0; x < 7; x++) {
+        for (int y = 0; y < app.themes.active.font.height; y++)
+            for (int x = 0; x < app.themes.active.font.advance[g]; x++) {
                 unsigned v = (app.themes.active.font.rows[g][y] >> (2 * x)) & 3;
                 soft += v == 1 || v == 2;
             }
     assert(soft);
+    const uint8_t *coverage = themes_component_alpha(&app.themes.active, THEME_CARD);
+    assert(coverage);
+    unsigned translucent = 0;
+    for (unsigned pixel = 0; pixel < 1024; pixel++) {
+        unsigned alpha = (coverage[pixel / 4] >> ((pixel % 4) * 2)) & 3;
+        translucent += alpha == 1 || alpha == 2;
+    }
+    assert(translucent);
     app.audio.mode = 1;
     audio_reload(&app);
-    assert(app.audio.music.samples);
+    assert((app.audio.music.samples != NULL) == (*app.themes.active.music != 0));
     for (int i = 0; i < 3; i++)
-        assert(app.audio.effects[i].samples);
+        assert((app.audio.effects[i].samples != NULL) == (*app.themes.active.sounds[i] != 0));
     app_category(&app, CATEGORY_GAMES);
     for (int f = 0; f < 60; f++)
         app_tick(&app);

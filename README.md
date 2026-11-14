@@ -13,8 +13,9 @@ frontends are not directly compatible with Gloam’s format.
 ![Five themes rendered in Gloam](docs/collection-preview.png)
 
 These previews show the actual host renderer with synthetic content. Each theme
-includes original music, UI cues and its own material/icon treatment. No launcher
-code changes are required. Smoothing uses the existing bitmap-font coverage format.
+includes original music, UI cues and its own material/icon treatment. The updated
+packs use translucent components, separate body/heading faces, independent screen
+opacity and additional top-screen compositions.
 
 ## Browse themes
 
@@ -30,10 +31,18 @@ code changes are required. Smoothing uses the existing bitmap-font coverage form
 | [Phosphor](themes/phosphor) | Green radar station; terminal-like contrast | Gloam project |
 
 Each theme page includes wallpaper previews, installation instructions and credits.
-Slate, Folio and Phosphor match Gloam’s bundled themes. The five art-collection
-themes are separate optional downloads; they are not included in Gloam 1.0.0’s SD ZIP.
+Slate, Folio and Phosphor extend their original Gloam designs with the same new
+capabilities. These revisions are optional packs, separate from Gloam’s bundled themes.
+
+![Updated starter themes rendered in Gloam](docs/starter-preview.png)
 
 ## Install
+
+**These revisions require the updated Gloam build with theme format 2. They do not
+load in Gloam 1.0.0.** The matching frontend changes are in
+[Gloam commit `1d18cc4`](https://github.com/nextcode4u/gloam-shell-ndx/commit/1d18cc4743be705df1466fbf44f4ace9c79c974d).
+Until a matching release is published, build that revision or later, or choose the
+[original 1.0-compatible collection](https://github.com/nextcode4u/gloam-shell-theme-directory/tree/74fd2dd/themes).
 
 1. Choose **Code → Download ZIP**, then extract the archive on your computer.
 2. Copy the desired folder from `themes/` to `/_nds/dsi-frontend/themes/` on your SD card.

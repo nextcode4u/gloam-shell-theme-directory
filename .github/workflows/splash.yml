@@ -1,4 +1,4 @@
-name: Splash Builder checks
+name: Theme and splash authoring checks
 
 on:
   push:

@@ -5,7 +5,7 @@
 from pathlib import Path
 import hashlib
 import zipfile
-from build_collection import ROOT, SPECS
+from build_collection import ROOT, SPECS, PROFILES
 
 
 def package(path, ids):
@@ -30,16 +30,22 @@ def package(path, ids):
 def main():
     out = ROOT / "dist"
     out.mkdir(exist_ok=True)
-    for id in SPECS:
+    for id in PROFILES:
         package(out / f"{id}.zip", [id])
     package(out / "gloam-art-collection.zip", list(SPECS))
-    names = [f"{id}.zip" for id in SPECS] + ["gloam-art-collection.zip"]
+    package(
+        out / "gloam-starter-themes.zip", [id for id in PROFILES if id not in SPECS]
+    )
+    names = [f"{id}.zip" for id in PROFILES] + [
+        "gloam-art-collection.zip",
+        "gloam-starter-themes.zip",
+    ]
     (out / "SHA256SUMS").write_text(
         "".join(
             f"{hashlib.sha256((out/n).read_bytes()).hexdigest()}  {n}\n" for n in names
         )
     )
-    print("Packaged five themes and combined collection in dist/")
+    print("Packaged eight themes and two collections in dist/")
 
 
 if __name__ == "__main__":
