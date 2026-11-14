@@ -16,6 +16,7 @@ from PIL import Image
 
 import pack_splash
 import splash_project
+import splash_motion
 
 
 def create_root():
@@ -56,6 +57,8 @@ def create_root():
 
 def render(data: bytes, tick: int, reduced=False) -> Image.Image:
     """PC preview of builder-owned output, using the same prepared pixels/timing."""
+    if data[:8] == b"GLOMSP02":
+        return splash_motion.render(data, tick, reduced)
     if reduced:
         tick = struct.unpack_from("<H", data, 18)[0]
     screens = Image.new("RGB", (256, 384), "black")
@@ -199,8 +202,31 @@ class Builder:
         )
         frame = ttk.Frame(root, padding=18)
         frame.pack(fill="both", expand=True)
-        left = ttk.Frame(frame)
-        left.grid(row=0, column=0, sticky="nsew", padx=(0, 18))
+        left_shell = ttk.Frame(frame)
+        left_shell.grid(row=0, column=0, sticky="nsew", padx=(0, 18))
+        frame.rowconfigure(0, weight=1)
+        self.controls_canvas = tk.Canvas(left_shell, highlightthickness=0)
+        scrollbar = ttk.Scrollbar(
+            left_shell, orient="vertical", command=self.controls_canvas.yview
+        )
+        self.controls_canvas.configure(yscrollcommand=scrollbar.set)
+        scrollbar.pack(side="right", fill="y")
+        self.controls_canvas.pack(side="left", fill="both", expand=True)
+        left = ttk.Frame(self.controls_canvas)
+        window = self.controls_canvas.create_window(0, 0, window=left, anchor="nw")
+        self.controls_canvas.bind(
+            "<Configure>",
+            lambda event: self.controls_canvas.itemconfigure(window, width=event.width),
+        )
+        left.bind(
+            "<Configure>",
+            lambda event: self.controls_canvas.configure(
+                scrollregion=self.controls_canvas.bbox("all")
+            ),
+        )
+        self.root.bind("<MouseWheel>", self.scroll_controls, add="+")
+        self.root.bind("<Button-4>", self.scroll_controls, add="+")
+        self.root.bind("<Button-5>", self.scroll_controls, add="+")
         frame.columnconfigure(0, weight=1)
         right = ttk.Frame(frame)
         right.grid(row=0, column=1, sticky="n")
@@ -212,18 +238,25 @@ class Builder:
             text="Import images or animations. Gloam plays the prepared package.",
             wraplength=580,
         ).pack(anchor="w", pady=(6, 14))
-        self.paths = {}
+        self.paths, self.layer_values = {}, {}
+        self.values = {
+            key: tk.StringVar(value=value)
+            for key, value in splash_project.DEFAULT_OPTIONS.items()
+        }
+        notebook = ttk.Notebook(left)
+        notebook.pack(fill="x")
         for key, label in (
-            ("top", "Top screen"),
-            ("bottom", "Bottom screen"),
-            ("top_logo", "Top overlay / logo"),
-            ("bottom_logo", "Bottom overlay / logo"),
+            ("top", "Top"),
+            ("bottom", "Bottom"),
+            ("top_logo", "Top overlay"),
+            ("bottom_logo", "Bottom overlay"),
         ):
-            ttk.Label(left, text=label).pack(anchor="w")
-            row = ttk.Frame(left)
+            page = ttk.Frame(notebook, padding=10)
+            notebook.add(page, text=label)
+            ttk.Label(page, text="Image, GIF or numbered frames").pack(anchor="w")
+            row = ttk.Frame(page)
             row.pack(fill="x", pady=(3, 9))
-            variable = tk.StringVar()
-            self.paths[key] = variable
+            variable = self.paths[key] = tk.StringVar()
             ttk.Entry(row, textvariable=variable).pack(
                 side="left", fill="x", expand=True
             )
@@ -233,22 +266,81 @@ class Builder:
             ttk.Button(
                 row, text="Frames…", command=lambda v=variable: self.choose_frames(v)
             ).pack(side="left")
-        options = ttk.Frame(left)
+            values = self.layer_values[key] = {
+                name: tk.StringVar(value=value)
+                for name, value in splash_motion.preset("fade").items()
+            }
+            preset_row = ttk.Frame(page)
+            preset_row.pack(fill="x", pady=(0, 8))
+            ttk.Label(preset_row, text="Motion preset").pack(side="left", padx=(0, 8))
+            picker = ttk.Combobox(
+                preset_row,
+                textvariable=values["preset"],
+                values=(*splash_motion.PRESETS, "custom"),
+                state="readonly",
+                width=16,
+            )
+            picker.pack(side="left")
+            picker.bind(
+                "<<ComboboxSelected>>", lambda event, k=key: self.apply_preset(k)
+            )
+            ttk.Label(preset_row, text="Then adjust the controls below.").pack(
+                side="left", padx=8
+            )
+            controls = ttk.Frame(page)
+            controls.pack(fill="x")
+            fields = (
+                ("fit", "Sizing", splash_motion.FITS),
+                ("width", "Overlay width (px)", None),
+                ("scale_from", "Start scale (%)", None),
+                ("scale_to", "End scale (%)", None),
+                ("start_x", "Start X offset", None),
+                ("start_y", "Start Y offset", None),
+                ("end_x", "End X offset", None),
+                ("end_y", "End Y offset", None),
+                ("opacity_from", "Start opacity (%)", None),
+                ("opacity_to", "End opacity (%)", None),
+                ("delay", "Start delay (s)", None),
+                ("transition", "Motion duration (s)", None),
+                ("easing", "Easing", splash_motion.EASING),
+                ("repeat", "Motion repeat", splash_motion.REPEAT),
+                ("reveal", "Reveal direction", splash_motion.REVEAL),
+                ("sequence", "GIF/frame repeat", splash_motion.REPEAT),
+            )
+            for i, (name, title, choices) in enumerate(fields):
+                row, col = i // 2, (i % 2) * 2
+                ttk.Label(controls, text=title).grid(
+                    row=row, column=col, sticky="w", padx=(0, 5), pady=3
+                )
+                widget = (
+                    ttk.Combobox(
+                        controls,
+                        textvariable=values[name],
+                        values=choices,
+                        state="readonly",
+                        width=11,
+                    )
+                    if choices
+                    else ttk.Entry(controls, textvariable=values[name], width=11)
+                )
+                widget.grid(row=row, column=col + 1, sticky="ew", padx=(0, 10), pady=3)
+                if name == "width" and not key.endswith("_logo"):
+                    widget.configure(state="disabled")
+            ttk.Label(
+                page,
+                text="Offsets are pixels from the centred image. Equal start/end scales resize without zoom.\nScale: 0–400%; opacity: 0–100%. Native sizing avoids enlarging small artwork.",
+                wraplength=560,
+            ).pack(anchor="w", pady=(8, 0))
+        options = ttk.LabelFrame(left, text="Whole splash", padding=8)
         options.pack(fill="x", pady=8)
-        self.values = {}
-        for i, (key, label, default, choices) in enumerate(
+        for i, (key, label, choices) in enumerate(
             (
-                ("effect", "Effect", "fade", pack_splash.EFFECTS),
-                ("fps", "Frame rate", "20", pack_splash.FPS),
-                ("fit", "Image fitting", "fit", ("fit", "crop")),
-                ("transition", "Effect seconds", "0.5", None),
-                ("duration", "Duration (blank = automatic)", "", None),
-                ("poster", "Still-frame time (blank = end)", "", None),
-                ("logo_width", "Overlay width", "128", None),
-                ("background", "Letterbox colour", "#080e18", None),
+                ("fps", "Frame rate", pack_splash.FPS),
+                ("duration", "Duration (s, blank = auto)", None),
+                ("poster", "Still time (s, blank = end)", None),
+                ("background", "Background colour", None),
             )
         ):
-            variable = self.values[key] = tk.StringVar(value=default)
             row, col = i // 2, (i % 2) * 2
             ttk.Label(options, text=label).grid(
                 row=row, column=col, sticky="w", padx=(0, 6), pady=4
@@ -256,13 +348,13 @@ class Builder:
             control = (
                 ttk.Combobox(
                     options,
-                    textvariable=variable,
+                    textvariable=self.values[key],
                     values=choices,
                     state="readonly",
                     width=12,
                 )
                 if choices
-                else ttk.Entry(options, textvariable=variable, width=12)
+                else ttk.Entry(options, textvariable=self.values[key], width=12)
             )
             control.grid(row=row, column=col + 1, sticky="ew", padx=(0, 10), pady=4)
         self.direct = tk.BooleanVar()
@@ -283,7 +375,7 @@ class Builder:
         ).pack(side="left", padx=4)
         ttk.Label(
             left,
-            text="Effects animate the overlay when supplied; otherwise they affect the screen image. Unused screens stay black. Sound is packaged; the PC preview is silent.",
+            text="Each screen and overlay has independent controls. New exports require Gloam splash format 2. Sound is packaged; the PC preview is silent.",
             wraplength=570,
         ).pack(anchor="w", pady=8)
 
@@ -336,6 +428,11 @@ class Builder:
         for variable in [
             *self.paths.values(),
             *self.values.values(),
+            *(
+                value
+                for layer in self.layer_values.values()
+                for value in layer.values()
+            ),
             self.sound,
             self.direct,
             self.reduced,
@@ -345,6 +442,29 @@ class Builder:
             self.restore_project()
         self.restoring = False
         root.protocol("WM_DELETE_WINDOW", self.close)
+
+    def scroll_controls(self, event):
+        pointer_x = self.root.winfo_pointerx()
+        left = self.controls_canvas.winfo_rootx()
+        if not left <= pointer_x < left + self.controls_canvas.winfo_width():
+            return
+        if isinstance(event.widget, ttk.Combobox):
+            return  # Let a dropdown keep its own interaction.
+        direction = (
+            -1
+            if getattr(event, "num", None) == 4 or getattr(event, "delta", 0) > 0
+            else 1
+        )
+        self.controls_canvas.yview_scroll(direction * 3, "units")
+
+    def apply_preset(self, key):
+        values = self.layer_values[key]
+        name = values["preset"].get()
+        if name == "custom":
+            return
+        defaults = splash_motion.preset(name)
+        for field in splash_motion.MOTION_KEYS:
+            values[field].set(defaults[field])
 
     def changed(self, *_):
         if self.restoring or not self.workspace:
@@ -369,7 +489,12 @@ class Builder:
                     key: self.workspace.reference(value.get())
                     for key, value in self.paths.items()
                 },
+                format=2,
                 options={key: value.get() for key, value in self.values.items()},
+                layers={
+                    key: {field: value.get() for field, value in controls.items()}
+                    for key, controls in self.layer_values.items()
+                },
                 direct=self.direct.get(),
                 reduced=self.reduced.get(),
                 export_path=self.workspace.reference(self.export_path),
@@ -392,6 +517,9 @@ class Builder:
         self.sound.set(self.workspace.resolve(state["paths"]["sound"]))
         for key, variable in self.values.items():
             variable.set(state["options"][key])
+        for key, controls in self.layer_values.items():
+            for field, variable in controls.items():
+                variable.set(state["layers"][key][field])
         self.direct.set(state["direct"])
         self.reduced.set(state["reduced"])
         self.export_path = self.workspace.resolve(state["export_path"])
@@ -492,6 +620,10 @@ class Builder:
         if self.workspace:
             sound = self.workspace.resolve(self.workspace.reference(sound))
         values.update(direct=self.direct.get(), sound=sound or None)
+        values["layer_options"] = {
+            key: {field: value.get() for field, value in controls.items()}
+            for key, controls in self.layer_values.items()
+        }
         self.data = pack_splash.build(**values)
         self.status.set(
             f"Prepared {len(self.data):,} bytes ({len(self.data) / pack_splash.LIMIT:.1%} of the limit)."

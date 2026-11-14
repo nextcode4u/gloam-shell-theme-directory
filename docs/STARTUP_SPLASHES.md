@@ -82,25 +82,47 @@ a project changed by another window. Reopen it to load the saved version before
 editing further. A `.gsp` export is separate from the editable project: autosave
 does not rebuild or overwrite an installed splash.
 
-1. Choose PNG/JPEG artwork, an animated GIF, or a folder of numbered PNG frames
-   for each screen. A single screen is enough; unused screens stay black.
-2. Optionally add a transparent overlay/logo for either screen. Overlays are
-   centered; their width can be adjusted. Without an overlay, the chosen effect
-   applies to the screen image instead.
-3. Choose fit or crop, frame rate and effect: none, fade, slide up, slide left or
-   reveal. Effects last 0.5 seconds by default. Fit preserves aspect ratio and
-   uses the selected letterbox colour; crop explicitly fills the screen.
-4. Set duration and a still-frame time, or leave them automatic. Animated inputs
-   retain their timing through fixed-rate sampling; PNG folders use the selected
-   frame rate. Short sequences hold their last frame. Frames beyond an explicitly
-   shorter package duration are not shown.
-5. Optionally choose a WAV. The converter accepts mono/stereo 8/16-bit PCM at
-   8–48 kHz and converts it to mono PCM16 at 16 kHz. Sound is limited to the package
-   duration. The PC visual preview is silent; check audio in Gloam.
-6. Build and preview. Check Reduced motion, Skip, and the fast-startup simulation.
-   The opening image should already make sense: While loading may end mid-animation.
-7. Save a `.gsp`, **Add to theme** (choose the folder containing `theme.ini`), or
-   **Install as custom splash** (choose the SD root/staging folder).
+1. Open the **Top**, **Bottom**, **Top overlay** or **Bottom overlay** tab and
+   choose PNG/JPEG artwork, an animated GIF or numbered PNG frames. Leave unused
+   layers empty. Each layer has its own settings.
+2. Choose sizing: **fit** preserves aspect ratio, **crop** fills the layer's box,
+   **stretch** fills it without preserving proportions, and **native** keeps small
+   artwork at its original size (oversized artwork is reduced to fit). Overlays
+   also have a width control, independent for each screen.
+3. Choose a motion preset, then tune its values. **Start/End scale** support
+   0–400%; use equal values for a static size, or different values for zoom.
+   Scaling is centred. **Start/End X/Y** offsets move the layer relative to its
+   centred position. Motion outside its screen is clipped.
+4. Adjust **Start/End opacity**, **Start delay**, **Motion duration**, and easing
+   (**linear**, **ease-in**, **ease-out**, **smooth**). Combine movement, zoom and
+   fade. **Reveal direction** can independently reveal right, left, up or down.
+5. **Motion repeat** and **GIF/frame repeat** each offer once, loop or ping-pong.
+   Once holds the final state. A pulse can run independently of an animated logo's
+   frame sequence. Repeated motion and reveals require a positive duration.
+6. Set the whole splash's frame rate, duration, still-frame time and background
+   colour. Automatic duration covers source sequences and layer effects including
+   delays. A shorter explicit duration deliberately cuts playback short. Animated
+   GIF timing is resampled at the chosen rate; the rate does not add frames to
+   a static-image motion effect.
+7. Optionally choose a WAV. Mono/stereo 8/16-bit PCM at 8–48 kHz is converted to
+   mono PCM16 at 16 kHz, limited to the splash duration. The PC preview is silent.
+8. Build and preview. Check Reduced motion, Skip and fast-startup simulation.
+   Reduced motion uses the selected source frame with final position/scale/opacity;
+   it does not play transforms. While loading may end partway through the intro.
+9. Save a `.gsp`, **Add to theme**, or **Install as custom splash**. All layer
+   settings save with the working project, including unfinished numeric entries.
+
+Presets include fade, four slides, four reveals, zoom-in, zoom-out, fade-zoom,
+pulse and drift. Choosing a preset fills motion fields; subsequent edits remain
+in effect even while its name is selected. Choose Custom to edit without applying
+another preset. Sizing, delay, duration and frame-repeat choices survive changing
+a preset. The controls pane scrolls on smaller windows.
+
+**These controls export splash format 2 and require Gloam commit
+[`9cb5604`](https://github.com/nextcode4u/gloam-shell-ndx/commit/9cb5604) or later.**
+Existing version-1 splashes still play. Old saved projects migrate when
+opened, preserving their global choices and overlay behavior. The previous file
+is backed up when saved. Older builders cannot edit version-2 projects.
 
 Add to theme writes only `splash.gsp`; it needs no INI changes. Include the source
 artwork's credits/license with the theme. Custom installation keeps the package
@@ -113,7 +135,29 @@ For repeatable command-line builds:
 python tools/pack_splash.py splash.gsp --top sky.png --top-logo logo.png --effect fade
 python tools/pack_splash.py splash.gsp --top animation.gif --bottom still.png --fps 15
 python tools/pack_splash.py splash.gsp --top frames/ --fps 20 --sound intro.wav
+python tools/pack_splash.py splash.gsp --top sky.png --effect fade-zoom
+python tools/pack_splash.py splash.gsp --top sky.png --bottom-logo logo.png --layers motion.json
 ```
+
+`--layers` accepts a JSON object with optional `top`, `bottom`, `top_logo` and
+`bottom_logo` objects. Example:
+
+```json
+{
+  "top": {"preset": "none", "fit": "crop"},
+  "bottom_logo": {
+    "preset": "fade-zoom", "width": 96, "delay": 0.3,
+    "transition": 0.8, "scale_from": 45, "scale_to": 100,
+    "start_y": 24, "end_y": 0, "easing": "ease-out"
+  }
+}
+```
+
+Other keys are `start_x`, `end_x`, `opacity_from`, `opacity_to`, `repeat`,
+`sequence` and `reveal`. Effects and full per-layer controls are shared with the
+GUI. Legacy CLI requests using only old effects/fit modes still export version 1;
+new controls export version 2 automatically. New exports never silently drop
+motion options to accommodate an older runtime.
 
 An existing output requires `--replace`. `--duration` and `--poster` use seconds;
 `--transition` controls effect duration. The default is shared indexed colour;
@@ -122,10 +166,14 @@ frame sequences remain editable; the `.gsp` is the runtime asset.
 
 ## Package limits and playback
 
-A package can use one or both 256×192 screens, four layers, up to 120 frames
+Both format versions can use one or both 256×192 screens, four layers, up to 120 frames
 per layer and ten seconds of playback, within 2 MiB total. Prefer a static
 background and a small animated overlay to keep loading fast. The builder
 supports 5, 6, 10, 12, 15 and 20 fps and reports the final size before export.
+Transforms reuse their prepared images without baking intermediate frames.
+Scaling uses nearest-neighbour sampling on the DSi; use suitable source artwork
+and test small text on hardware. Source GIF frames still count against the
+uncompressed 2 MiB limit; motion controls do not compress full-screen videos.
 
 In Gloam, use **START → Appearance** to select Theme or Custom and preview the
 result. While loading can finish early; Play once allows the full intro. Any
@@ -148,6 +196,12 @@ Linux run the command through `xvfb-run -a`. Windows PowerShell tests check down
 verification, cached fallback and cancellation without installing Python. Tests use
 temporary synthetic fixtures and do not need an SD card or a Gloam checkout.
 
+For pixel-for-pixel checks against the updated native runtime, set `GLOAM_SOURCE`
+to a Gloam checkout and run `tests/test_splash_motion.py` with a host C compiler
+available. It checks presets, clipping, scaling, opacity, frame repetition and
+Reduced motion under address/undefined-behavior sanitizers. Normal tool tests do
+not require that checkout. DSi frame timing still requires hardware testing.
+
 After editing a downloaded builder file or its license notices, maintainers must
 refresh the launcher's manifest before committing:
 
@@ -162,7 +216,8 @@ isolate its cache. Dependency downloads still require confirmation. `-NoLaunch`
 prepares and verifies the tool without opening its window.
 
 For native compatibility checks, run Gloam's `tools/host-check.sh`, then generate
-an isolated fixture with `python tests/test_splash.py --fixture /tmp/splash-check`.
+an isolated fixture from that checkout with
+`python tests/splash_fixture.py /tmp/splash-check`.
 Run Gloam's `build/host/splash-test /tmp/splash-check` against it. Use a new temporary
 folder each time: the native suite writes test preferences inside that fixture.
 Keep generated packages under ignored `build/` or `dist/` while designing; commit

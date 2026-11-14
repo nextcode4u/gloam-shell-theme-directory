@@ -88,6 +88,20 @@ class BootstrapTests(unittest.TestCase):
             "$failed=$false; try { $null=Test-SplashPackage $package } catch { $failed=$true }; if(-not $failed){throw 'Tampering accepted'}"
         )
 
+    def test_legacy_cached_package_remains_usable(self):
+        manifest = self.package / "tools/splash-downloads.json"
+        data = json.loads(manifest.read_text())
+        data["files"] = [
+            entry
+            for entry in data["files"]
+            if entry["path"] != "tools/splash_motion.py"
+        ]
+        manifest.write_text(json.dumps(data))
+        (self.package / "tools/splash_motion.py").unlink()
+        self.run_ps(
+            "$null=Test-SplashPackage $package; Write-Output 'Legacy cache verified'"
+        )
+
     def test_unknown_manifest_destinations_rejected(self):
         path = self.package / "tools/splash-downloads.json"
         data = json.loads(path.read_text())

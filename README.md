@@ -57,7 +57,9 @@ keep only the themes you want installed if you reach that limit.
 ## Splash Builder
 
 Create static or animated startup splashes with images, GIFs, numbered frames,
-layer effects and optional WAV audio. The graphical builder and converter live
+independent layer motion and optional WAV audio. Fit/crop/stretch/native sizing,
+start/end scale and opacity, position, timing, easing and repeat controls make
+each screen and overlay independently editable. The graphical builder and converter live
 here; playback lives in Gloam. On Windows, open PowerShell and run:
 
 ```powershell
@@ -81,7 +83,8 @@ Use Python 3.10+ with Tk (included in the standard Windows Python installer).
 Running without arguments opens the graphical builder and working-folder picker.
 See the [splash authoring guide](docs/STARTUP_SPLASHES.md)
 for saved projects, offline startup, preview, theme export and custom SD installation. Splash playback requires
-a Gloam build after 1.0.0; the 1.0.0 release does not support it.
+a Gloam build after 1.0.0; new motion exports additionally require
+`GLOMSP02` support. The 1.0.0 release does not support splashes.
 
 ## Share a theme
 

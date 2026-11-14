@@ -10,6 +10,7 @@ from __future__ import annotations
 import argparse
 import array
 import math
+import json
 from pathlib import Path
 import re
 import struct
@@ -18,6 +19,7 @@ import wave
 import zlib
 
 from PIL import Image, ImageColor, ImageOps, ImageSequence
+import splash_motion
 
 MAGIC = b"GLOMSP01"
 LIMIT = 2 * 1024 * 1024
@@ -31,15 +33,17 @@ def ticks(seconds: float) -> int:
     return round(seconds * 60)
 
 
-def source_frames(path: Path, fps: int) -> list[Image.Image]:
+def source_frames(path: Path, fps: int, *, upscale=True) -> list[Image.Image]:
     """Composite GIF disposal, sampling in order without retaining every source frame."""
 
     def prepared(image):
         if image.width > 4096 or image.height > 4096:
             raise ValueError("Resize source artwork to at most 4096×4096 first.")
-        return ImageOps.contain(
-            image.convert("RGBA"), (512, 384), Image.Resampling.LANCZOS
-        )
+        image = image.convert("RGBA")
+        if upscale:
+            return ImageOps.contain(image, (512, 384), Image.Resampling.LANCZOS)
+        image.thumbnail((512, 384), Image.Resampling.LANCZOS)
+        return image
 
     if path.is_dir():
         paths = sorted(
@@ -194,7 +198,26 @@ def build(
     logo_width=128,
     direct=False,
     sound=None,
+    layer_options=None,
 ) -> bytes:
+    if layer_options is not None or effect not in EFFECTS or fit not in ("fit", "crop"):
+        return splash_motion.build(
+            top=top,
+            bottom=bottom,
+            top_logo=top_logo,
+            bottom_logo=bottom_logo,
+            fps=fps,
+            duration=duration,
+            poster=poster,
+            effect=effect,
+            transition=transition,
+            fit=fit,
+            background=background,
+            logo_width=logo_width,
+            direct=direct,
+            sound=sound,
+            layer_options=layer_options,
+        )
     if fps not in FPS or effect not in EFFECTS or fit not in ("fit", "crop"):
         raise ValueError("Unsupported frame rate, effect or fitting mode.")
     if not 1 <= logo_width <= 256:
@@ -320,9 +343,11 @@ def main():
         type=float,
         help="Reduced-motion still time in seconds; defaults to the end",
     )
-    parser.add_argument("--effect", choices=EFFECTS, default="fade")
+    parser.add_argument(
+        "--effect", choices=tuple(splash_motion.PRESETS), default="fade"
+    )
     parser.add_argument("--transition", type=float, default=0.5)
-    parser.add_argument("--fit", choices=("fit", "crop"), default="fit")
+    parser.add_argument("--fit", choices=splash_motion.FITS, default="fit")
     parser.add_argument("--background", default="#080e18")
     parser.add_argument("--logo-width", type=int, default=128)
     parser.add_argument(
@@ -331,10 +356,20 @@ def main():
     parser.add_argument(
         "--sound", type=Path, help="Optional WAV, converted to mono PCM16 at 16 kHz"
     )
+    parser.add_argument(
+        "--layers",
+        type=Path,
+        help="JSON object of per-layer motion controls; exports version 2",
+    )
     parser.add_argument("--replace", action="store_true")
     options = vars(parser.parse_args())
     output, replace = options.pop("output"), options.pop("replace")
     try:
+        layers = options.pop("layers")
+        if layers:
+            if layers.stat().st_size > 65536:
+                raise ValueError("Layer options exceed 64 KiB.")
+            options["layer_options"] = json.loads(layers.read_text())
         data = build(**options)
         write_package(output, data, replace=replace)
     except (ValueError, OSError, wave.Error) as exc:

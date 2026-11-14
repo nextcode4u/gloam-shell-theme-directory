@@ -12,6 +12,7 @@ FILES = (
     "tools/pack_splash.py",
     "tools/splash_builder.py",
     "tools/splash_project.py",
+    "tools/splash_motion.py",
     "LICENSE",
     "LICENSES.md",
 )

@@ -24,8 +24,9 @@ function Test-SplashPackage([string]$Folder) {
         throw 'The Splash Builder download manifest is missing or oversized.'
     }
     $manifest = Get-Content -Raw -LiteralPath $manifestPath | ConvertFrom-Json
-    $allowed = @('tools/pack_splash.py', 'tools/splash_builder.py', 'tools/splash_project.py', 'LICENSE', 'LICENSES.md')
-    if ($manifest.format -ne 1 -or $manifest.pillow -notmatch '^\d+\.\d+\.\d+$' -or @($manifest.files).Count -ne $allowed.Count) {
+    $required = @('tools/pack_splash.py', 'tools/splash_builder.py', 'tools/splash_project.py', 'LICENSE', 'LICENSES.md')
+    $allowed = $required + @('tools/splash_motion.py')
+    if ($manifest.format -ne 1 -or $manifest.pillow -notmatch '^\d+\.\d+\.\d+$' -or @($manifest.files).Count -notin @($required.Count, $allowed.Count)) {
         throw 'Unsupported Splash Builder download manifest.'
     }
     $seen = @{}
@@ -40,6 +41,9 @@ function Test-SplashPackage([string]$Folder) {
             (Get-SplashHash $path) -cne $file.sha256) {
             throw "Splash Builder file failed verification: $name"
         }
+    }
+    foreach ($name in $required) {
+        if (-not $seen.ContainsKey($name)) { throw "Missing Splash Builder file: $name" }
     }
     return $manifest
 }
@@ -80,7 +84,10 @@ function Get-SplashPackage([string]$Cache, [string]$LocalSource, [bool]$UseOffli
             $url = "https://raw.githubusercontent.com/$repo/$revision/"
             Get-SplashDownload ($url + 'tools/splash-downloads.json') (Join-Path $staging 'tools/splash-downloads.json')
             # Only fixed builder paths are downloaded; the manifest never supplies URLs or destinations.
-            foreach ($name in @('tools/pack_splash.py','tools/splash_builder.py','tools/splash_project.py','LICENSE','LICENSES.md')) {
+            $files = @('tools/pack_splash.py','tools/splash_builder.py','tools/splash_project.py','LICENSE','LICENSES.md')
+            $downloadManifest = Get-Content -Raw -LiteralPath (Join-Path $staging 'tools/splash-downloads.json') | ConvertFrom-Json
+            if (@($downloadManifest.files.path) -ccontains 'tools/splash_motion.py') { $files += 'tools/splash_motion.py' }
+            foreach ($name in $files) {
                 Get-SplashDownload ($url + $name) (Join-Path $staging $name)
             }
             $null = Test-SplashPackage $staging

@@ -10,6 +10,8 @@ from pathlib import Path
 import re
 import shutil
 import tempfile
+import copy
+import splash_motion
 
 PROJECT_FILE = "splash-project.json"
 PATH_KEYS = ("top", "bottom", "top_logo", "bottom_logo", "sound")
@@ -40,9 +42,12 @@ def atomic_write(path: Path, data: bytes):
 
 def default_state():
     return {
-        "format": 1,
+        "format": 2,
         "paths": dict.fromkeys(PATH_KEYS, ""),
         "options": DEFAULT_OPTIONS.copy(),
+        "layers": {
+            key: splash_motion.preset("fade") for key in splash_motion.LAYER_KEYS
+        },
         "direct": False,
         "reduced": False,
         "export_path": "",
@@ -53,7 +58,7 @@ def validate(state):
     if (
         not isinstance(state, dict)
         or type(state.get("format")) is not int
-        or state["format"] != 1
+        or state["format"] not in (1, 2)
     ):
         raise ValueError(
             "Unsupported splash project version; the project was left unchanged."
@@ -67,6 +72,20 @@ def validate(state):
             for value in values.values()
         ):
             raise ValueError(f"Invalid project {key} value.")
+    if state["format"] == 2:
+        layers = state.get("layers")
+        if not isinstance(layers, dict) or set(layers) != set(splash_motion.LAYER_KEYS):
+            raise ValueError("Invalid project layers.")
+        for values in layers.values():
+            if not isinstance(values, dict) or set(values) != set(
+                splash_motion.DEFAULTS
+            ):
+                raise ValueError("Invalid layer controls.")
+            if any(
+                not isinstance(value, str) or len(value) > 4096 or "\0" in value
+                for value in values.values()
+            ):
+                raise ValueError("Invalid layer value.")
     if any(type(state.get(key)) is not bool for key in ("direct", "reduced")):
         raise ValueError("Invalid project display options.")
     if (
@@ -74,6 +93,32 @@ def validate(state):
         or len(state["export_path"]) > 4096
     ):
         raise ValueError("Invalid project export path.")
+    return state
+
+
+def upgraded(state):
+    """Old projects keep their paths and global choices; writes retain a backup."""
+    validate(state)
+    if state["format"] == 2:
+        return state
+    state = copy.deepcopy(state)
+    options = state["options"]
+    layers = {}
+    for key in splash_motion.LAYER_KEYS:
+        effect = options["effect"]
+        if not key.endswith("_logo") and state["paths"][key + "_logo"]:
+            effect = "none"
+        # Preserve unfinished legacy input until build validation can explain it.
+        values = splash_motion.preset(
+            effect if effect in splash_motion.PRESETS else "custom"
+        )
+        values.update(
+            fit=options["fit"],
+            transition=options["transition"],
+            width=options["logo_width"],
+        )
+        layers[key] = values
+    state.update(format=2, layers=layers)
     return state
 
 
@@ -89,7 +134,7 @@ class Workspace:
             )
         self.original = self._read()
         self.state = (
-            validate(json.loads(self.original))
+            upgraded(json.loads(self.original))
             if self.original is not None
             else default_state()
         )
