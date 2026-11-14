@@ -31,7 +31,8 @@ class SplashGuiTests(unittest.TestCase):
         ).items():
             setattr(splash_builder, key, value)
         with tempfile.TemporaryDirectory() as temporary:
-            base = Path(temporary)
+            # Windows CI can expose TEMP through an 8.3 alias such as RUNNER~1.
+            base = Path(temporary).resolve()
             project = base / "working folder"
             project.mkdir()
             source = base / "source.png"
