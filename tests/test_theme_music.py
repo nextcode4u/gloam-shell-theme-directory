@@ -16,14 +16,14 @@ from prepare_theme_music import circular_loop, verify
 
 class ThemeMusicTests(unittest.TestCase):
     def test_reviewed_recordings_and_notices(self):
-        manifest = json.loads((ROOT / "config/theme-music.json").read_text())
+        manifest = json.loads((ROOT / "config/theme-music.json").read_text(encoding="utf-8"))
         for theme, entry in manifest["themes"].items():
             with self.subTest(theme=theme):
                 folder = ROOT / manifest["theme_root"] / theme
                 path = folder / "sounds/loop.wav"
                 verify(path, entry)
-                self.assertIn(entry["title"], (folder / "MUSIC.md").read_text())
-                self.assertIn(entry["source_url"], (folder / "MUSIC.md").read_text())
+                self.assertIn(entry["title"], (folder / "MUSIC.md").read_text(encoding="utf-8"))
+                self.assertIn(entry["source_url"], (folder / "MUSIC.md").read_text(encoding="utf-8"))
                 self.assertEqual(
                     hashlib.sha256(
                         (folder / "MUSIC-LICENSE.txt").read_bytes()

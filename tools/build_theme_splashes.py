@@ -49,7 +49,7 @@ def font_source(repo: Path, theme: str, download: bool, font_dir: Path, role="he
             / ("DejaVuSerif-Italic.ttf" if role == "heading" else "DejaVuSans.ttf"),
             None,
         )
-    manifest = json.loads((repo / "config/theme-fonts.json").read_text())
+    manifest = json.loads((repo / "config/theme-fonts.json").read_text(encoding="utf-8"))
     spec = manifest["themes"][theme][role]
     family = spec["family"]
     path = verified_source(

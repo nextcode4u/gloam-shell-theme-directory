@@ -109,7 +109,7 @@ def main():
         parser.error(
             "Rebuilding theme music requires FFmpeg on PATH; normal builds do not."
         )
-    manifest = json.loads((ROOT / "config/theme-music.json").read_text())
+    manifest = json.loads((ROOT / "config/theme-music.json").read_text(encoding="utf-8"))
     for theme, entry in manifest["themes"].items():
         output = ROOT / manifest["theme_root"] / theme / "sounds/loop.wav"
         notice = output.parent.parent / "MUSIC-LICENSE.txt"
@@ -121,8 +121,8 @@ def main():
             raise ValueError("Missing or changed music license: " + str(notice))
         if (
             not credit.is_file()
-            or entry["title"] not in credit.read_text()
-            or entry["source_url"] not in credit.read_text()
+            or entry["title"] not in credit.read_text(encoding="utf-8")
+            or entry["source_url"] not in credit.read_text(encoding="utf-8")
         ):
             raise ValueError("Missing music attribution: " + str(credit))
         if args.rebuild:
