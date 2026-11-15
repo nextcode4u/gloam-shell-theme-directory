@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # SPDX-License-Identifier: GPL-3.0-or-later
 """Build original illustrated themes and refresh the three starter themes.
-Artwork comes from source/art; geometry, music and cues are authored here.
+Artwork comes from source/art; geometry and UI cues are authored here. Licensed background music is prepared separately.
 """
 
 import argparse
@@ -42,7 +42,7 @@ SPECS = {
         radius=7,
         bpm=80,
         notes=[62, 66, 69, 73],
-        description="Pearl glass, floating clouds and restrained blue enamel. Soft electric-piano chords and rounded glass cues.",
+        description="Pearl glass, floating clouds and restrained blue enamel. Recorded dreamlike piano/percussion and rounded glass UI cues.",
     ),
     "koi": dict(
         name="Koi",
@@ -63,7 +63,7 @@ SPECS = {
         radius=2,
         bpm=64,
         notes=[57, 60, 64, 67],
-        description="Vermilion koi in ink-blue water, lacquer edges and ivory pictograms. A sparse plucked pentatonic phrase with a quiet water-like bed.",
+        description="Vermilion koi in ink-blue water, lacquer edges and ivory pictograms. Recorded koto, flute and percussion.",
     ),
     "vesper": dict(
         name="Vesper",
@@ -84,7 +84,7 @@ SPECS = {
         radius=3,
         bpm=72,
         notes=[53, 56, 60, 63],
-        description="Cream moths, burgundy roses and gold on plum velvet. Chamfered brass frames, engraved symbols and a chamber-like harp loop.",
+        description="Cream moths, burgundy roses and gold on plum velvet. Chamfered brass frames, engraved symbols and reflective recorded piano.",
     ),
     "tidal": dict(
         name="Tidal",
@@ -105,7 +105,7 @@ SPECS = {
         radius=9,
         bpm=68,
         notes=[50, 57, 60, 64],
-        description="Translucent jellyfish and deep teal water. Fluid oval controls, luminous porcelain symbols and slow bell-and-pad harmonies.",
+        description="Translucent jellyfish and deep teal water. Fluid oval controls, luminous porcelain symbols and recorded guitar, ocarina and electric piano.",
     ),
     "morrow": dict(
         name="Morrow",
@@ -126,7 +126,7 @@ SPECS = {
         radius=1,
         bpm=88,
         notes=[60, 64, 67, 71],
-        description="Sunlit illustration behind aged ivory parchment, worn paper selections, quiet marimba and warm chord voicings.",
+        description="Sunlit illustration behind aged ivory parchment, worn paper selections, flowing recorded acoustic guitars.",
     ),
 }
 COLOR_KEYS = ("background", "surface", "line", "text", "muted", "accent", "ink")
@@ -224,75 +224,7 @@ def component(name, spec):
 
 def audio(spec, folder):
     rate = 16000
-    beat = 60 / spec["bpm"]
-    length = 16 * beat
-    n = round(length * rate)
-    out = np.zeros(n)
-    rng = np.random.default_rng(20261114 + spec["bpm"])
-
-    def add_note(midi, start, duration, amp, voice):
-        count = round(duration * rate)
-        t = np.arange(count) / rate
-        f = 440 * 2 ** ((midi - 69) / 12)
-        if voice == "pluck":
-            s = (
-                np.sin(2 * np.pi * f * t)
-                + 0.25 * np.sin(2 * np.pi * f * 2 * t)
-                + 0.10 * np.sin(2 * np.pi * f * 3 * t)
-            )
-            env = (1 - np.exp(-t * 180)) * np.exp(-t * 2.4)
-        elif voice == "bell":
-            s = (
-                np.sin(2 * np.pi * f * t)
-                + 0.28 * np.sin(2 * np.pi * f * 2.01 * t)
-                + 0.08 * np.sin(2 * np.pi * f * 4 * t)
-            )
-            env = (1 - np.exp(-t * 250)) * np.exp(-t * 1.7)
-        else:
-            s = np.sin(2 * np.pi * f * t) + 0.15 * np.sin(2 * np.pi * f * 2 * t)
-            env = np.sin(np.pi * np.minimum(t / duration, 1)) ** 2
-        wavelet = amp * s * env * np.minimum(1, (duration - t) * 12)
-        indices = (round(start * rate) + np.arange(count)) % n
-        np.add.at(out, indices, wavelet)
-        # Circular delay preserves reverb tails at the loop boundary.
-        for delay, gain in ((0.23, 0.18), (0.47, 0.08)):
-            np.add.at(out, (indices + round(delay * rate)) % n, wavelet * gain)
-
     root = spec["notes"][0]
-    progressions = {
-        "Aerial": [0, 5, 9, 7],
-        "Koi": [0, 0, 5, 7],
-        "Vesper": [0, 8, 5, 7],
-        "Tidal": [0, 3, 8, 5],
-        "Morrow": [0, 5, 7, 0],
-        "BUUF": [0, 3, 5, 7],
-    }
-    melody = {
-        "Aerial": [0, 2, 3, 1, 2, 1, 3, 2],
-        "Koi": [0, 2, 1, 3, 2, 0, 1, 2],
-        "Vesper": [3, 2, 1, 0, 2, 3, 1, 0],
-        "Tidal": [2, 3, 1, 2, 0, 1, 3, 2],
-        "Morrow": [0, 1, 2, 3, 2, 1, 3, 0],
-        "BUUF": [0, 2, 1, 3, 2, 1, 0, 2],
-    }[spec["name"]]
-    for bar, shift in enumerate(progressions[spec["name"]]):
-        for interval in (0, 7, 14):
-            add_note(
-                root - 12 + shift + interval, bar * 4 * beat, 4.6 * beat, 0.055, "pad"
-            )
-        for j in range(4 if spec["name"] == "Koi" else 8):
-            start = (bar * 4 + j * (1 if spec["name"] == "Koi" else 0.5)) * beat
-            note = spec["notes"][melody[(j + (2 if bar >= 2 else 0)) % 8]] + (
-                12 if spec["name"] in ("Tidal", "Vesper") else 0
-            )
-            add_note(
-                note,
-                start,
-                2.5 * beat,
-                0.13 if j % 2 == 0 else 0.08,
-                "bell" if spec["name"] in ("Aerial", "Tidal") else "pluck",
-            )
-    out *= 0.66 / max(1, np.max(np.abs(out)))
 
     def write(name, data):
         with wave.open(str(folder / name), "wb") as w:
@@ -301,7 +233,6 @@ def audio(spec, folder):
                 np.clip(np.rint(data * 32767), -32767, 32767).astype("<i2").tobytes()
             )
 
-    write("loop.wav", out)
     for name, tones, duration in [
         ("cursor", [root + 24], 0.065),
         ("confirm", [root + 24, root + 31], 0.24),
@@ -323,7 +254,8 @@ def audio(spec, folder):
             )
         cue *= np.minimum(1, (duration - t) * 100)
         write(name + ".wav", cue)
-    return round(length, 2)
+    with wave.open(str(folder / "loop.wav")) as music:
+        return music.getnframes() / music.getframerate()
 
 
 def build(id):
@@ -524,7 +456,7 @@ def refresh_style(id, gloam, font_dir, download_fonts=False):
         credits = credits[:start] + credits[end:]
     credits = credits.replace(
         "Uses the built-in font, illustrated wallpapers and UI sounds; no background music is included.",
-        "Illustrated wallpapers and UI sounds; no background music is included.",
+        "Illustrated wallpapers and original UI cues; background music is separately credited in MUSIC.md.",
     )
     credits = credits.split("\n## Version 2 treatment")[0].rstrip()
     credits += "\n\n## Version 2 treatment\n\n"
@@ -545,6 +477,14 @@ def refresh_style(id, gloam, font_dir, download_fonts=False):
     )
     credits += "Full-image materials and individual focus skins: `tools/collection_surfaces.py`; no repeated patches.\n\n"
     credits += "\n".join(font_notes) + "\n"
+    track = json.loads((ROOT / "config/theme-music.json").read_text())["themes"][id]
+    credits += (
+        "\n## Background music\n\n“"
+        + track["title"]
+        + "” by Kevin MacLeod (incompetech.com), CC-BY-4.0. "
+        "See [MUSIC.md](MUSIC.md) and [MUSIC-LICENSE.txt](MUSIC-LICENSE.txt) "
+        "for source, adaptations and the full terms.\n"
+    )
     (folder / "CREDITS.md").write_text(credits)
     asset_packer = load_tool(gloam / "tools/pack_theme_assets.py", "gloam_asset_packer")
     finish(id, folder, config, asset_packer)

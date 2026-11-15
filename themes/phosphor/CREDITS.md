@@ -38,3 +38,7 @@ Full-image materials and individual focus skins: `tools/collection_surfaces.py`;
 
 - Body: IBMPlexSansCondensed-Regular, 12px; line height 12.
 - Heading: SpaceGrotesk, 14px; line height 16.
+
+## Background music
+
+“Concentration” by Kevin MacLeod (incompetech.com), CC-BY-4.0. See [MUSIC.md](MUSIC.md) for source, adaptations and attribution, and [MUSIC-LICENSE.txt](MUSIC-LICENSE.txt) for the full terms.

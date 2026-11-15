@@ -1,6 +1,6 @@
 # Morrow
 
-Sunlit illustration behind aged parchment, worn selection edges, warm ink controls and quiet marimba.
+Sunlit illustration behind aged parchment, worn selection edges, warm ink controls and flowing acoustic guitars.
 
 ![Actual Gloam renderer preview](preview.png)
 
@@ -9,7 +9,7 @@ uses an independently illustrated icon set, full-image material surfaces and its
 own focus treatment. DejaVu Serif with a separate italic heading face; the established parchment typography is preserved.
 Morrow's worn edges and translucent parchment remain intact.
 
-Original music and UI cues remain paired with this theme. Select **Audio →
+Licensed background music and original UI cues are paired with this theme. Select **Audio →
 Background music → Theme** to hear the loop. Native game banners keep priority over
 themed fallback icons.
 
@@ -27,3 +27,6 @@ supplied artwork. Other browser views and icon sizes remain selectable.
 See [credits and licenses](CREDITS.md), [authoring](../../docs/AUTHORING.md) and
 the [settings preview](settings-preview.png). Host renderer, asset/bounds and
 packaging checks cover these packs; physical DSi validation is still needed.
+
+Background music: see [MUSIC.md](MUSIC.md) for the selected track, source and
+CC-BY-4.0 attribution. UI-cue and artwork licenses remain separate.

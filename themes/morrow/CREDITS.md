@@ -8,11 +8,11 @@ The paper material was also generated with the built-in image-generation tool;
 its master is `source/materials/morrow-parchment.png`. The authoring tool fits this
 material to the reading surfaces and combines it with the project's component geometry.
 
-Component and icon geometry, musical composition and synthesized sound cues are
-provided by `tools/build_collection.py` and `tools/theme_finishing.py`. No sampled songs or downloaded recordings
-are included. Original asset rights held by this project are dedicated under
+Component geometry and original synthesized UI cues are provided by
+`tools/build_collection.py` and `tools/theme_finishing.py`. Recorded background
+music has its own attribution and license in MUSIC.md. Original asset rights held by this project are dedicated under
 [CC0-1.0](https://creativecommons.org/publicdomain/zero/1.0/); this dedication does
-not imply exclusive copyright in agent-generated imagery or relicense the font.
+not imply exclusive copyright in agent-generated imagery or relicense the fonts or separately credited background music.
 
 Configuration, tools and authored documentation: GPL-3.0-or-later; see the
 repository LICENSE (also supplied in the install ZIP’s licenses directory).
@@ -27,3 +27,7 @@ Full-image materials and individual focus skins: `tools/collection_surfaces.py`;
 
 - Body: DejaVuSerif, 10px; line height 12.
 - Heading: DejaVuSerif-Italic, 12px; line height 15.
+
+## Background music
+
+“Porch Swing Days - slower” by Kevin MacLeod (incompetech.com), CC-BY-4.0. See [MUSIC.md](MUSIC.md) for source, adaptations and attribution, and [MUSIC-LICENSE.txt](MUSIC-LICENSE.txt) for the full terms.

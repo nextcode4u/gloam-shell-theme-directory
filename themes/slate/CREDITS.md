@@ -33,3 +33,7 @@ Full-image materials and individual focus skins: `tools/collection_surfaces.py`;
 
 - Body: SourceSans3, 12px; line height 12.
 - Heading: BarlowSemiCondensed-Bold, 15px; line height 16.
+
+## Background music
+
+“Night on the Docks - Sax” by Kevin MacLeod (incompetech.com), CC-BY-4.0. See [MUSIC.md](MUSIC.md) for source, adaptations and attribution, and [MUSIC-LICENSE.txt](MUSIC-LICENSE.txt) for the full terms.

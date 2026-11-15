@@ -108,13 +108,13 @@ After PNG generation, the build invokes Gloam's `pack_theme_assets.py` to create
 `assets.gfx`. This bundles icons and components into one checked compressed file,
 replacing dozens of PNG opens/decodes. PNGs remain the editable sources and runtime
 fallbacks. **Rebuild after editing PNGs**, or remove `[assets] prepared` temporarily;
-the console does not check source timestamps. Fonts, surfaces and audio are separate.
+the console does not check source timestamps. Fonts and audio remain separate; current bundles also prepare screens and material maps.
 The converter is kept in Gloam beside its reader to keep their format definitions
 aligned. Ordinary users copy the completed folder without authoring tools.
 
-The five illustrated music loops use sixteen beats with circular delay tails;
-the starter packs retain their original audio choices. This reduces sample memory without
-requiring streaming or a runtime audio decoder. Do not remove font/audio notices
+The recorded background music is converted to 16-kHz mono PCM16, with circular
+crossfades and quiet loop boundaries. Every loop stays inside the existing 1-MiB
+limit without streaming or a runtime audio decoder. Do not remove font/audio notices
 to reduce archive size.
 
 ## Comparing resource costs
@@ -187,3 +187,13 @@ Personal wallpaper/blend overrides or changed source sizes bypass the relevant
 prepared screen. Rebuild after every source PNG edit, including same-size edits.
 Older compatible Gloam builds fall back to the retained PNGs; update BOOT.NDS and
 the theme's assets.gfx for the acceleration. No theme.ini changes are required.
+
+## Music
+
+Background music is licensed recorded music, independent of the synthesized UI cues.
+`tools/build_collection.py` and `tools/buuf_theme.py` preserve these WAV files.
+Run `python tools/prepare_theme_music.py` to verify reviewed hashes and runtime
+format, or `--rebuild --download` to obtain pinned original MP3s and reproduce
+the excerpts with the recorded FFmpeg version. Source downloads stay in ignored
+`build/`. The final mono PCM16, 16-kHz loops remain within the existing 1-MiB cap.
+Each pack must retain MUSIC.md and MUSIC-LICENSE.txt.

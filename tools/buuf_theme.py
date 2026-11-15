@@ -240,9 +240,17 @@ def build_buuf(gloam, font_dir, profile, load_tool, compose_audio, download=Fals
         "Public Sans and Delius retain SIL Open Font License 1.1; full notices are in `fonts/LICENSE.txt`.\n"
         + "\n".join(font_notes)
         + "\n\n"
-        "The original synthesized music and UI cues are dedicated under CC0-1.0; no sampled commercial music is used. "
+        "Original synthesized UI cues are CC0-1.0. Background music is separately licensed CC-BY-4.0; see MUSIC.md and MUSIC-LICENSE.txt. "
         "Configuration and build tools use GPL-3.0-or-later. These separate licenses do not relicense BUUF artwork.\n"
     )
+    music = json.loads((ROOT / "config/theme-music.json").read_text())["themes"]["buuf"]
+    with (folder / "CREDITS.md").open("a") as credits:
+        credits.write(
+            "\nBackground music: “"
+            + music["title"]
+            + "” by Kevin MacLeod (incompetech.com), CC-BY-4.0; "
+            "[source and adaptations](MUSIC.md).\n"
+        )
     output = io.StringIO()
     config.write(output, space_around_delimiters=False)
     (folder / "theme.ini").write_text(output.getvalue().rstrip() + "\n")

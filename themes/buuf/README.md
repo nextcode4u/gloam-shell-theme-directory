@@ -4,7 +4,7 @@ A worn notebook filled with mattahan's chunky, hand-drawn BUUF objects: russet
 leather, warm cream paper and moss-green labels. Public Sans keeps the file list
 clear while Delius adds handwritten headings. Original BUUF objects also appear
 in navigation, batteries, checkboxes and arrows; the small robot-gear header mark
-breathes gently. A quiet plucked loop and matching cues complete the pack.
+breathes gently. Pizzicato strings and bassoon, with original UI cues, complete the pack.
 
 ![BUUF rendered in Gloam](preview.png)
 
@@ -31,5 +31,8 @@ nextcode4u / Gloam contributors, with agent-assisted supporting artwork.
 This is a separate adaptation, not an endorsement. The new supporting illustration
 is not mattahan's work. Read [CREDITS.md](CREDITS.md) and
 [BUUF-LICENSE.txt](BUUF-LICENSE.txt); preserve both with the theme. Fonts retain
-their OFL notices; original synthesized sounds are CC0. The standalone `buuf.zip`
+their OFL notices; original synthesized UI cues are CC0. The standalone `buuf.zip`
 keeps these notices and is separate from the original-art collection archives.
+
+Background music: see [MUSIC.md](MUSIC.md) for the selected track, source and
+CC-BY-4.0 attribution. UI-cue and artwork licenses remain separate.

@@ -1,6 +1,6 @@
 # Vesper
 
-Plum velvet, brass corner fittings and moth illustrations, with a chamber-like harp loop.
+Plum velvet, brass corner fittings and moth illustrations, with reflective solo piano.
 
 ![Actual Gloam renderer preview](preview.png)
 
@@ -8,7 +8,7 @@ The `scene` top-screen layout keeps this theme's composition. It
 uses an independently illustrated icon set, full-image material surfaces and its
 own focus treatment. EBGaramond body and CormorantGaramond headings, with Latin-1 coverage.
 
-Original music and UI cues remain paired with this theme. Select **Audio →
+Licensed background music and original UI cues are paired with this theme. Select **Audio →
 Background music → Theme** to hear the loop. Native game banners keep priority over
 themed fallback icons.
 
@@ -26,3 +26,6 @@ supplied artwork. Other browser views and icon sizes remain selectable.
 See [credits and licenses](CREDITS.md), [authoring](../../docs/AUTHORING.md) and
 the [settings preview](settings-preview.png). Host renderer, asset/bounds and
 packaging checks cover these packs; physical DSi validation is still needed.
+
+Background music: see [MUSIC.md](MUSIC.md) for the selected track, source and
+CC-BY-4.0 attribution. UI-cue and artwork licenses remain separate.

@@ -7,10 +7,9 @@ The selected production master is retained at `source/art/koi.png` in this repos
 
 Independent icon illustrations and original material studies are retained under
 `source/art/` and `source/materials/`, with agent assistance. Component geometry,
-musical composition and sound synthesis are authored by the collection tools. No sampled songs or downloaded recordings
-are included. Original asset rights held by this project are dedicated under
+UI sound synthesis is authored by the collection tools. Background music has its own attribution and license in MUSIC.md. Original asset rights held by this project are dedicated under
 [CC0-1.0](https://creativecommons.org/publicdomain/zero/1.0/); this dedication does
-not imply exclusive copyright in agent-generated imagery or relicense the font.
+not imply exclusive copyright in agent-generated imagery or relicense the fonts or separately credited background music.
 
 Configuration, tools and authored documentation: GPL-3.0-or-later; see the
 repository LICENSE (also supplied in the install ZIP’s licenses directory).
@@ -27,3 +26,7 @@ Full-image materials and individual focus skins: `tools/collection_surfaces.py`;
 
 - Body: AtkinsonHyperlegible-Regular, 12px; line height 12.
 - Heading: Cinzel, 11px; line height 16.
+
+## Background music
+
+“Ishikari Lore” by Kevin MacLeod (incompetech.com), CC-BY-4.0. See [MUSIC.md](MUSIC.md) for source, adaptations and attribution, and [MUSIC-LICENSE.txt](MUSIC-LICENSE.txt) for the full terms.

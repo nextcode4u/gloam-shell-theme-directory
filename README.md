@@ -14,7 +14,7 @@ frontends are not directly compatible with Gloam’s format.
 ![Five themes rendered in Gloam](docs/collection-preview.png)
 
 These previews show the actual host renderer with synthetic content. Each theme
-includes original music, UI cues and its own material/icon treatment. The updated
+includes licensed background music, original UI cues and its own material/icon treatment. The updated
 packs use translucent components, separate body/heading faces, independent screen
 opacity and additional top-screen compositions. Image-backed reading surfaces,
 matching control sprites and a small ambient header accent give each pack its

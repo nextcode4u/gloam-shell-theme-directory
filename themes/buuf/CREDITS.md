@@ -20,4 +20,8 @@ Public Sans and Delius retain SIL Open Font License 1.1; full notices are in `fo
 - Body: PublicSans, 11px; line height 12.
 - Heading: Delius-Regular, 14px; line height 16.
 
-The original synthesized music and UI cues are dedicated under CC0-1.0; no sampled commercial music is used. Configuration and build tools use GPL-3.0-or-later. These separate licenses do not relicense BUUF artwork.
+Original synthesized UI cues are CC0-1.0. Background music is separately licensed CC-BY-4.0; see MUSIC.md and MUSIC-LICENSE.txt. Configuration and build tools use GPL-3.0-or-later. These separate licenses do not relicense BUUF artwork.
+
+## Background music
+
+“Sneaky Adventure” by Kevin MacLeod (incompetech.com), CC-BY-4.0. See [MUSIC.md](MUSIC.md) for source, adaptations and attribution, and [MUSIC-LICENSE.txt](MUSIC-LICENSE.txt) for the full terms.

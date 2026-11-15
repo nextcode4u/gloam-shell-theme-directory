@@ -25,3 +25,6 @@ supplied artwork. Other browser views and icon sizes remain selectable.
 See [credits and licenses](CREDITS.md), [authoring](../../docs/AUTHORING.md) and
 the [settings preview](settings-preview.png). Host renderer, asset/bounds and
 packaging checks cover these packs; physical DSi validation is still needed.
+
+Background music: see [MUSIC.md](MUSIC.md) for the selected track, source and
+CC-BY-4.0 attribution. UI-cue and artwork licenses remain separate.

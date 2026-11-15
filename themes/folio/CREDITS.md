@@ -5,7 +5,7 @@ Rebuild with `python tools/make_theme_samples.py` using the pinned Pillow versio
 These original theme assets may be used, modified and redistributed under CC0 1.0:
 https://creativecommons.org/publicdomain/zero/1.0/
 
-Illustrated wallpapers and UI sounds; no background music is included.
+Illustrated wallpapers and original UI sounds; background music has its own terms in MUSIC.md.
 
 The original icons in `icons/` are dedicated to the public domain under CC0-1.0.
 Reproduce them with `tools/make_theme_icons.py`; the artwork is authored for each visual family.
@@ -40,3 +40,7 @@ Full-image materials and individual focus skins: `tools/collection_surfaces.py`;
 
 - Body: Literata, 10px; line height 12.
 - Heading: Kalam-Regular, 15px; line height 16.
+
+## Background music
+
+“Laid Back Guitars” by Kevin MacLeod (incompetech.com), CC-BY-4.0. See [MUSIC.md](MUSIC.md) for source, adaptations and attribution, and [MUSIC-LICENSE.txt](MUSIC-LICENSE.txt) for the full terms.

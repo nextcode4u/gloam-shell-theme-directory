@@ -87,7 +87,7 @@ class ThemeCollectionTests(unittest.TestCase):
                         self.assertEqual(
                             (audio.getnchannels(), audio.getsampwidth()), (1, 2)
                         )
-                        self.assertLessEqual(audio.getnframes() * 2, 512 * 1024)
+                        self.assertLessEqual(audio.getnframes() * 2, 1024 * 1024)
 
     def test_icon_silhouettes_and_font_pairs_are_independent(self):
         silhouettes = set()
