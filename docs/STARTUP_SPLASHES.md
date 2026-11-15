@@ -242,3 +242,34 @@ Run Gloam's `build/host/splash-test /tmp/splash-check` against it. Use a new tem
 folder each time: the native suite writes test preferences inside that fixture.
 Keep generated packages under ignored `build/` or `dist/` while designing; commit
 only intended production `splash.gsp` assets with their theme's source and credits.
+
+## Included theme intros
+
+All nine packs include a short `splash.gsp`. Choose **Startup splash → Theme**
+in Gloam to use the selected pack’s intro. **Preview splash** plays it without
+restarting. Custom overrides, Off, skipping and Reduced motion still apply.
+
+These intros use two still backgrounds and one title layer, not full-screen
+animation sequences. Each lasts 1.2 seconds and stays below 128 KiB. Reveal,
+slide, fade and gentle scale effects vary by theme; the title uses that pack’s
+heading/body faces. They are silent so they do not compete with theme music.
+While loading may finish early; choose Play once to see the complete intro.
+
+Rebuild the collection using its existing artwork and verified font sources:
+
+```sh
+python tools/build_theme_splashes.py --download-fonts --font-dir /path/to/dejavu
+```
+
+`--gloam /path/to/gloam-shell-ndx` also prepares the eleven bundled Gloam themes.
+Omit `--download-fonts` to use the previously verified authoring cache. Morrow
+needs `DejaVuSerif-Italic.ttf` and `DejaVuSans.ttf` in `--font-dir`; their notice
+already ships with the theme. Other font revisions and hashes are pinned in
+each repository’s `config/theme-fonts.json`.
+
+`--check` rebuilds in temporary storage and compares the installed packages
+without writing. The current packages were authored with Pillow 11.3.0;
+font rasterization changes in other Pillow/FreeType versions can change bytes.
+The tool changes only `splash.gsp`; source artwork, previews, music and settings
+are preserved. Splash artwork and type remain covered by the pack’s existing
+credits and licenses, including BUUF’s noncommercial terms.

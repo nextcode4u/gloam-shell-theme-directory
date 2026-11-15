@@ -71,6 +71,10 @@ folder name before replacing it. Do not copy this repository over your SD root.
 Gloam 1.0 displays the alphabetically first 23 valid theme folders plus Built-in;
 keep only the themes you want installed if you reach that limit.
 
+Each pack also includes a lightweight, 1.2-second startup intro using its own
+artwork and typography. Choose **Startup splash → Theme** in Gloam; **Preview
+splash** lets you try it without restarting. See the [splash guide](docs/STARTUP_SPLASHES.md).
+
 ## Splash Builder
 
 Create static or animated startup splashes with images, GIFs, numbered frames,

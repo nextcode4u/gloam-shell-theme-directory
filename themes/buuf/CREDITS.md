@@ -25,3 +25,11 @@ Original synthesized UI cues are CC0-1.0. Background music is separately license
 ## Background music
 
 “Sneaky Adventure” by Kevin MacLeod (incompetech.com), CC-BY-4.0. See [MUSIC.md](MUSIC.md) for source, adaptations and attribution, and [MUSIC-LICENSE.txt](MUSIC-LICENSE.txt) for the full terms.
+
+## Startup splash
+
+The 1.2-second `splash.gsp` adapts this pack’s existing background artwork and
+heading/body typefaces. Artwork and font credits and terms above also apply to
+the splash; BUUF-specific terms remain unchanged. It adds no third-party music.
+Prepared by `tools/build_theme_splashes.py` in the
+[Gloam theme directory](https://github.com/nextcode4u/gloam-shell-theme-directory).
