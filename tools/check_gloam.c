@@ -52,6 +52,7 @@ int main(int argc, char **argv)
         selected++;
     assert(selected < app.themes.count);
     themes_move(&app, selected - app.themes.selected);
+    themes_preview(&app);
     if (!app.themes.ready) {
         fprintf(stderr, "Rejected %s: %s\n", argv[2], app.themes.status);
         return 1;
@@ -60,6 +61,7 @@ int main(int argc, char **argv)
     themes_cancel(&app);
     themes_open(&app);
     themes_move(&app, selected - app.themes.selected);
+    themes_preview(&app);
     assert(app.themes.ready);
     themes_apply(&app);
     assert(!strcmp(app.theme_id, argv[2]));

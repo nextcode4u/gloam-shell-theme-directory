@@ -64,7 +64,7 @@ or use the [original 1.0-compatible collection](https://github.com/nextcode4u/gl
 1. Choose **Code → Download ZIP**, then extract the archive on your computer.
 2. Copy the desired folder from `themes/` to `/_nds/dsi-frontend/themes/` on your SD card.
    For example: `/_nds/dsi-frontend/themes/folio/theme.ini`.
-3. Start Gloam and open **START → Appearance → Theme**. Up/Down previews; A applies.
+3. Start Gloam and open **START → Appearance → Theme**. Up/Down selects; X previews; A applies when ready.
 
 Copy the whole theme folder, including its assets. Back up any theme with the same
 folder name before replacing it. Do not copy this repository over your SD root.
