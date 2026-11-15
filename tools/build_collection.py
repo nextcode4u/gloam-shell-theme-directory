@@ -265,6 +265,7 @@ def audio(spec, folder):
         "Vesper": [0, 8, 5, 7],
         "Tidal": [0, 3, 8, 5],
         "Morrow": [0, 5, 7, 0],
+        "BUUF": [0, 3, 5, 7],
     }
     melody = {
         "Aerial": [0, 2, 3, 1, 2, 1, 3, 2],
@@ -272,6 +273,7 @@ def audio(spec, folder):
         "Vesper": [3, 2, 1, 0, 2, 3, 1, 0],
         "Tidal": [2, 3, 1, 2, 0, 1, 3, 2],
         "Morrow": [0, 1, 2, 3, 2, 1, 3, 0],
+        "BUUF": [0, 2, 1, 3, 2, 1, 0, 2],
     }[spec["name"]]
     for bar, shift in enumerate(progressions[spec["name"]]):
         for interval in (0, 7, 14):
@@ -443,6 +445,8 @@ PROFILES = {
 }
 
 
+PROFILES["buuf"] = dict(layout="gallery", tabs="icons", position="bottom")
+
 # The manifest keeps immutable OFL source pins and exact native glyph metrics.
 _FONT_ROLES = json.loads((ROOT / "config/theme-fonts.json").read_text())["themes"]
 for _id, _roles in _FONT_ROLES.items():
@@ -569,6 +573,19 @@ def main():
     )
     args = parser.parse_args()
     for id in ([args.theme] if args.theme else PROFILES):
+        if id == "buuf":
+            from buuf_theme import build_buuf
+
+            build_buuf(
+                args.gloam,
+                args.font_dir,
+                PROFILES[id],
+                load_tool,
+                audio,
+                args.download_fonts,
+            )
+            print(id)
+            continue
         if id in SPECS:
             build(id)
         refresh_style(id, args.gloam, args.font_dir, args.download_fonts)

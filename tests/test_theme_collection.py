@@ -1,6 +1,7 @@
 """Keep catalog compatibility and distributed assets consistent with each pack."""
 
 import configparser
+import hashlib
 import json
 from pathlib import Path
 import sys
@@ -15,7 +16,7 @@ from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
-from package_collection import package
+from package_collection import package, ART_COLLECTION, STARTER_COLLECTION
 from build_collection import PROFILES
 
 
@@ -133,6 +134,45 @@ class ThemeCollectionTests(unittest.TestCase):
                     ):
                         if key != "strength":
                             self.assertTrue((folder / path).is_file(), path)
+
+    def test_buuf_sources_and_archive_preserve_noncommercial_notices(self):
+        source = ROOT / "source/buuf"
+        manifest = json.loads((source / "UPSTREAM.json").read_text())
+        self.assertEqual(manifest["license"], "CC-BY-NC-SA-2.5")
+        self.assertEqual(manifest["creator"], "mattahan")
+        for name, record in manifest["files"].items():
+            self.assertEqual(
+                hashlib.sha256((source / "icons" / name).read_bytes()).hexdigest(),
+                record["sha256"],
+                name,
+            )
+        license_bytes = (source / "LICENSE.md").read_bytes()
+        self.assertEqual(
+            hashlib.sha256(license_bytes).hexdigest(), manifest["license_sha256"]
+        )
+        self.assertNotIn("buuf", ART_COLLECTION)
+        self.assertNotIn("buuf", STARTER_COLLECTION)
+        with tempfile.TemporaryDirectory() as folder:
+            archive = Path(folder) / "buuf.zip"
+            package(archive, ["buuf"])
+            with zipfile.ZipFile(archive) as zipped:
+                prefix = "_nds/dsi-frontend/themes/buuf/"
+                self.assertEqual(
+                    zipped.read(prefix + "BUUF-LICENSE.txt"), license_bytes
+                )
+                credits = zipped.read(prefix + "CREDITS.md").decode()
+                for credit in (
+                    "mattahan",
+                    "fana-m",
+                    "Hybrid Son Of Oxayotl",
+                    "NonCommercial",
+                    manifest["commit"],
+                ):
+                    self.assertIn(credit, credits)
+                self.assertEqual(
+                    json.loads(zipped.read(prefix + "UPSTREAM.json")), manifest
+                )
+                self.assertIn(prefix + "fonts/LICENSE.txt", zipped.namelist())
 
     def test_install_archives_keep_notices_and_exclude_preview_sources(self):
         with tempfile.TemporaryDirectory() as folder:

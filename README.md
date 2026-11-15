@@ -3,7 +3,8 @@
 A home for community-made themes and original themes for
 [Gloam Shell NDX](https://github.com/nextcode4u/gloam-shell-ndx), the Nintendo DSi SD-card frontend.
 
-The collection includes five new illustrated themes and three Gloam starter themes.
+The directory includes five original illustrated themes, three updated Gloam starter themes,
+and a credited BUUF adaptation.
 Community submissions are welcome;
 there are no community entries yet. Themes from AKMenu, TWiLight Menu++ or other
 frontends are not directly compatible with Gloam’s format.
@@ -34,12 +35,24 @@ Reduced motion holds the ambient accent still.
 | [Slate](themes/slate) | City archive; folded labels and left icon rail | Gloam project |
 | [Folio](themes/folio) | Botanical notebook; translucent tracing paper | Gloam project |
 | [Phosphor](themes/phosphor) | Radar instruments; open brackets and segmented controls | Gloam project |
+| [BUUF](themes/buuf) | Hand-drawn objects, worn paper, leather and moss-green labels | mattahan icons; upstream fana-m / oxayotl; Gloam adaptation |
 
 Each theme page includes wallpaper previews, installation instructions and credits.
 Slate, Folio and Phosphor extend their original Gloam designs with the same new
 capabilities. These revisions are optional packs, separate from Gloam’s bundled themes.
 
 ![Updated starter themes rendered in Gloam](docs/starter-preview.png)
+
+## BUUF
+
+![BUUF rendered in Gloam](themes/buuf/preview.png)
+
+Original icons by [mattahan](https://www.deviantart.com/mattahan), distributed through
+[oxayotl’s BUUF icon theme](https://github.com/oxayotl/buuf-icon-theme).
+The adapted artwork uses **CC-BY-NC-SA-2.5**, with attribution, noncommercial and
+ShareAlike terms. Its standalone pack includes the full notice and source provenance;
+it is separate from the original-art and starter collection ZIPs.
+See [BUUF credits](themes/buuf/CREDITS.md).
 
 ## Install
 

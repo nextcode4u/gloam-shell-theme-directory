@@ -7,6 +7,9 @@ import hashlib
 import zipfile
 from build_collection import ROOT, SPECS, PROFILES
 
+ART_COLLECTION = tuple(SPECS)
+STARTER_COLLECTION = ("slate", "folio", "phosphor")
+
 
 def package(path, ids):
     with zipfile.ZipFile(path, "w", zipfile.ZIP_DEFLATED, compresslevel=9) as z:
@@ -32,10 +35,8 @@ def main():
     out.mkdir(exist_ok=True)
     for id in PROFILES:
         package(out / f"{id}.zip", [id])
-    package(out / "gloam-art-collection.zip", list(SPECS))
-    package(
-        out / "gloam-starter-themes.zip", [id for id in PROFILES if id not in SPECS]
-    )
+    package(out / "gloam-art-collection.zip", ART_COLLECTION)
+    package(out / "gloam-starter-themes.zip", STARTER_COLLECTION)
     names = [f"{id}.zip" for id in PROFILES] + [
         "gloam-art-collection.zip",
         "gloam-starter-themes.zip",
@@ -45,7 +46,7 @@ def main():
             f"{hashlib.sha256((out/n).read_bytes()).hexdigest()}  {n}\n" for n in names
         )
     )
-    print("Packaged eight themes and two collections in dist/")
+    print("Packaged nine themes and two collections in dist/")
 
 
 if __name__ == "__main__":

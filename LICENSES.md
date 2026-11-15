@@ -19,3 +19,17 @@ illustrations, code-authored geometry and original synthesized music. Project-he
 rights in those assets are dedicated under CC0-1.0; their fonts retain the full original notices beside each pack. Updated packs
 use the SIL Open Font License; Morrow retains its DejaVu pairing. Immutable OFL
 source revisions and hashes are recorded in `config/theme-fonts.json`. See individual CREDITS.md files.
+
+## BUUF adaptation
+
+Original BUUF icons are by [mattahan](https://www.deviantart.com/mattahan).
+The upstream theme credits fana-m and Hybrid Son Of Oxayotl. Icons and the
+adapted theme artwork use **CC-BY-NC-SA-2.5**; this includes the new Gloam
+supporting illustration and skins, and overrides any general CC0 wording for
+those BUUF assets. Commercial use is not granted. Preserve the full
+[BUUF license](themes/buuf/BUUF-LICENSE.txt) and [credits](themes/buuf/CREDITS.md).
+Unmodified upstream originals and hashes are retained in `source/buuf/`.
+
+BUUF fonts retain SIL OFL 1.1; original synthesized audio is CC0-1.0;
+configuration/tools are GPL-3.0-or-later. `buuf.zip` is packaged separately and
+is not included in the original-art or starter collection archives.

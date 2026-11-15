@@ -80,9 +80,10 @@ def main():
         if id in SPECS:
             draw.text((i * 256 + 10, 8), SPECS[id]["name"], fill="white")
             gallery.paste(combined, (i * 256, 32))
-        else:
-            starter_draw.text(((i - 5) * 256 + 10, 8), id.title(), fill="white")
-            starters.paste(combined, ((i - 5) * 256, 32))
+        elif id in ("slate", "folio", "phosphor"):
+            column = ("slate", "folio", "phosphor").index(id)
+            starter_draw.text((column * 256 + 10, 8), id.title(), fill="white")
+            starters.paste(combined, (column * 256, 32))
     gallery.save(ROOT / "docs/collection-preview.png", optimize=True)
     starters.save(ROOT / "docs/starter-preview.png", optimize=True)
 

@@ -156,6 +156,28 @@
         "url": "https://raw.githubusercontent.com/google/fonts/cc39c4c2c304bc368c9b7c311ea2bcc6013299fe/ofl/ebgaramond/OFL.txt",
         "sha256": "0985066662eb755ed3683ae5482a81a9195b49ce3f7e165cc2388b3dbece7dd7"
       }
+    },
+    "publicsans": {
+      "name": "PublicSans",
+      "font": {
+        "url": "https://raw.githubusercontent.com/google/fonts/cc39c4c2c304bc368c9b7c311ea2bcc6013299fe/ofl/publicsans/PublicSans%5Bwght%5D.ttf",
+        "sha256": "d75a7dc1a27eb9e336d5b33f55489d2ecb5621bf694d5c43b2415bce2ca830a8"
+      },
+      "license": {
+        "url": "https://raw.githubusercontent.com/google/fonts/cc39c4c2c304bc368c9b7c311ea2bcc6013299fe/ofl/publicsans/OFL.txt",
+        "sha256": "157a9e77f7580246e97c769490e2e977ae94399f9d30f4556015c41fe8c28bac"
+      }
+    },
+    "delius": {
+      "name": "Delius-Regular",
+      "font": {
+        "url": "https://raw.githubusercontent.com/google/fonts/cc39c4c2c304bc368c9b7c311ea2bcc6013299fe/ofl/delius/Delius-Regular.ttf",
+        "sha256": "c0fd66626926b637d64eb13de013b3318dbd72cdf92c33e41a29a03828bab6f6"
+      },
+      "license": {
+        "url": "https://raw.githubusercontent.com/google/fonts/cc39c4c2c304bc368c9b7c311ea2bcc6013299fe/ofl/delius/OFL.txt",
+        "sha256": "d8eb8611f8c98d20cbf18a28425652d6022dc2a5cca15026b920f1f2bc92a612"
+      }
     }
   },
   "themes": {
@@ -275,6 +297,23 @@
       "heading": {
         "family": "spacegrotesk",
         "weight": 650,
+        "size": 14,
+        "baseline": 14,
+        "height": 16,
+        "edge_shift": 2
+      }
+    },
+    "buuf": {
+      "body": {
+        "family": "publicsans",
+        "weight": 500,
+        "size": 11,
+        "baseline": 10,
+        "height": 12,
+        "edge_shift": 2
+      },
+      "heading": {
+        "family": "delius",
         "size": 14,
         "baseline": 14,
         "height": 16,

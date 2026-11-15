@@ -40,7 +40,7 @@ harmony, melodic voices and circular delay tails. Music is 16 kHz, mono PCM16,
 below Gloam’s 1 MiB cap. All cues are also bounded mono PCM16. No recordings from
 commercial games or royalty-free marketplaces are embedded.
 
-Packaging writes eight individual ZIPs, illustrated/starter collection ZIPs and SHA256SUMS under `dist/`.
+Packaging writes nine individual ZIPs, illustrated/starter collection ZIPs and SHA256SUMS under `dist/`.
 Paths are ready for extraction into an SD root. Each archive contains its theme
 credits, font license, GPL notice and licensing summary. Source masters, previews,
 build tools and testing fixtures are excluded from runtime packs.
@@ -161,3 +161,16 @@ fonts. Morrow's existing type pairing still uses `--font-dir`; its notice is
 retained independently under `source/fonts/`. Prepared sprite banks now permit
 up to 64 KiB compressed while retaining Gloam's 192-KiB decoded cap; native sprite
 counts and sizes remain unchanged.
+
+## Rebuilding BUUF
+
+`tools/buuf_theme.py` checks every retained upstream PNG against
+`source/buuf/UPSTREAM.json` before preparing native icons and controls. The
+original files and license remain unchanged. Its full-image fields, translucent
+labels, Public Sans/Delius typography, original synthesized audio and bounded
+ambient mark use the same runtime contracts as the other packs.
+
+Build with `--theme buuf` after obtaining the verified OFL font inputs. The
+standalone `buuf.zip` includes its full CC-BY-NC-SA-2.5 license, credits and
+provenance. It is excluded from both CC0-art collection archives. See
+[BUUF credits](../themes/buuf/CREDITS.md) before adapting or redistributing it.

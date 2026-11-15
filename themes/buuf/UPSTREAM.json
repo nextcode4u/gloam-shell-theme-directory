@@ -1,0 +1,157 @@
+{
+  "repository": "https://github.com/oxayotl/buuf-icon-theme",
+  "commit": "ab183bb466524b73201711b89f5dcd64a5643b3c",
+  "license": "CC-BY-NC-SA-2.5",
+  "license_sha256": "610085a7a1a70477c326bba8c13276121680539d82fcb5444b5adcfbc2d05036",
+  "creator": "mattahan",
+  "creator_url": "https://www.deviantart.com/mattahan",
+  "upstream_credit": "Created by fana-m. Icons by mattahan. Modified by Hybrid Son Of Oxayotl.",
+  "adaptations": "Original source PNGs are unchanged. Runtime adaptations trim alpha bounds and reduce to 32px, rotate arrows, add a checkbox tick and unknown/disconnected marks, and vary ambient gear brightness.",
+  "icons": [
+    "folder.png",
+    "document-gamepad.png",
+    "box-full.png",
+    "speaker.png",
+    "film-roll.png",
+    "book-red.png",
+    "document-fountainpen.png",
+    "document-image-leaf.png",
+    "floppy.png",
+    "wheel-wrench.png",
+    "package.png",
+    "round-arrow-right.png",
+    "wheel-buuf.png",
+    "camera.png",
+    "globe-speechbubble.png",
+    "house.png"
+  ],
+  "controls": {
+    "battery-empty": "battery-warning-sign.png",
+    "battery-low": "battery-red.png",
+    "battery-half": "battery-yellow.png",
+    "battery-high": "battery-green-high.png",
+    "battery-full": "battery-green-full.png",
+    "battery-charging": "battery-green-full-plugged.png",
+    "battery-unknown": "battery-blue.png",
+    "wireless-idle": "globe-parabolic-antenna.png",
+    "update-available": "package-downarrow-big.png",
+    "check-off": "checkbox.png",
+    "check-on": "checkbox-green.png",
+    "arrow-left": "round-arrow-left.png",
+    "arrow-right": "round-arrow-right.png"
+  },
+  "files": {
+    "battery-blue.png": {
+      "path": "128x128/battery-blue.png",
+      "sha256": "fdfd6bed6560d27bcbd8300ed2c7ac6d9a348b89e6b1c16dbc80231e89727cfd"
+    },
+    "battery-green-full-plugged.png": {
+      "path": "128x128/battery-green-full-plugged.png",
+      "sha256": "b0e2e9d9ef1bf3d106e8d1e3dd5431720e3953163f86d3e8ee62181abf800e1c"
+    },
+    "battery-green-full.png": {
+      "path": "128x128/battery-green-full.png",
+      "sha256": "f1f5193c1f40a4db09a836043ad880c6a7232aff18546f33bcd582ae5c1e62b4"
+    },
+    "battery-green-high.png": {
+      "path": "128x128/battery-green-high.png",
+      "sha256": "3298a9c5bfececccf6e361b1a4ebd436fb53eeaeeea30cd06b07b52fb197c0d2"
+    },
+    "battery-red.png": {
+      "path": "128x128/battery-red.png",
+      "sha256": "351b6132a099755aa6c1afd12028a987e8fccee0f63620036829e05d1b47459c"
+    },
+    "battery-warning-sign.png": {
+      "path": "128x128/battery-warning-sign.png",
+      "sha256": "243c35de740fcbcbbaaa85f9dccf94c6d74151c69d6c7908afedc7e0849ad247"
+    },
+    "battery-yellow.png": {
+      "path": "128x128/battery-yellow.png",
+      "sha256": "96152979b09262d1854e9febedfa68eb2d21cb9db8c557cdf86a34a377e79722"
+    },
+    "book-red.png": {
+      "path": "128x128/book-red.png",
+      "sha256": "093bff1e93eddddccecd20f0c04bece59a7d97a4629363c481fa3e0c17286c5b"
+    },
+    "box-full.png": {
+      "path": "128x128/box-full.png",
+      "sha256": "e5651708c2afa16c0d2b7feb1bb207c574a2ca6cb63a076715554c8bb701e527"
+    },
+    "camera.png": {
+      "path": "128x128/camera.png",
+      "sha256": "1c1f61b43a0482c7abfa281dc1b952400e043ffb65fbb35b8d5b1094403ab2ad"
+    },
+    "checkbox-green.png": {
+      "path": "128x128/checkbox-green.png",
+      "sha256": "1f6e9e9adb5bb809309110d52004078cc3dce2df80f138985f647dea26a20644"
+    },
+    "checkbox.png": {
+      "path": "128x128/checkbox.png",
+      "sha256": "ef67eea5e70625c66bcdfb8d8974060cbc300a2abbab8ee88b6a682f12516ff9"
+    },
+    "document-fountainpen.png": {
+      "path": "128x128/document-fountainpen.png",
+      "sha256": "b6d13d21b010eab6f81cdf0e55b63ee1d03f2d4117cfb34ef2d5eae3259ff7dc"
+    },
+    "document-gamepad.png": {
+      "path": "128x128/document-gamepad.png",
+      "sha256": "6dd42f6db94fe04b6144a149e41cd8d048bc5fc548691f434197e45c977fe1cd"
+    },
+    "document-image-leaf.png": {
+      "path": "128x128/document-image-leaf.png",
+      "sha256": "46adb9b205f476da54235b1830b5dc4ca25c94d4565acb0fe946fc3c92bb82a8"
+    },
+    "film-roll.png": {
+      "path": "128x128/film-roll.png",
+      "sha256": "b76690045bf700d7f6c20cd5f86ab90687635bdbfbedad691e7aa819cd4c704b"
+    },
+    "floppy.png": {
+      "path": "128x128/floppy.png",
+      "sha256": "ca7dd0fb751a3bf94f54639d4462959b0ee183c023715d25516c65cd591923a0"
+    },
+    "folder.png": {
+      "path": "128x128/folder.png",
+      "sha256": "2ac0e0eb583ff09065e326bea818db539edaf0afad97f19b1a54a72ca19dbd2d"
+    },
+    "globe-parabolic-antenna.png": {
+      "path": "128x128/globe-parabolic-antenna.png",
+      "sha256": "0be12380b2cc858103d79b26daf1c0484955d5b9cca7954fbb2dcdfea83c06c9"
+    },
+    "globe-speechbubble.png": {
+      "path": "128x128/globe-speechbubble.png",
+      "sha256": "ec7d27cb9d51a59173b9acdc42bf4a38cf751e81738e6f680094548c2a207ec9"
+    },
+    "house.png": {
+      "path": "128x128/house.png",
+      "sha256": "2171e1cd1b75f449582b5c1b234c6292c78f37fb7d19b48cd0c4d2b55186826d"
+    },
+    "package-downarrow-big.png": {
+      "path": "128x128/package-downarrow-big.png",
+      "sha256": "27adfbc0d27600a6bb6ce2e70af4d99620f51eec2b0ce46b1a41af3241fe43ef"
+    },
+    "package.png": {
+      "path": "128x128/package.png",
+      "sha256": "643624544575698b9d6324f6e325cbee156c31111ffb1ecc6eaee496b8122d11"
+    },
+    "round-arrow-left.png": {
+      "path": "128x128/round-arrow-left.png",
+      "sha256": "f098e019929f490f29ff49161a48cc0db50cee63a15a003c06ae3714a01dfc02"
+    },
+    "round-arrow-right.png": {
+      "path": "128x128/round-arrow-right.png",
+      "sha256": "2de669283577b7c07df2655b1b19b4f4142fa0960ede8236c98a86b9d5d7d968"
+    },
+    "speaker.png": {
+      "path": "128x128/speaker.png",
+      "sha256": "f62909749ab66f02103d91eb24cef46f3d8f81908708a1ab7ddc38b59a9fed1a"
+    },
+    "wheel-buuf.png": {
+      "path": "128x128/wheel-buuf.png",
+      "sha256": "b1ed2dbb761d242fc0093abc46ec006104fbf730202d172411b191cd14999a5f"
+    },
+    "wheel-wrench.png": {
+      "path": "128x128/wheel-wrench.png",
+      "sha256": "286adbe5acb8117754ed5539d94403571c8215d039c17cd7a52b21935c74eae4"
+    }
+  }
+}

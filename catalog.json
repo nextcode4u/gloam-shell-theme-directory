@@ -123,6 +123,22 @@
       "preview": "themes/morrow/preview.png",
       "requires_gloam": "Gloam development build with theme format 2 and full-image material fields",
       "minimum_gloam_commit": "6aacad1e965ddcf36553637ab17ccd475936602c"
+    },
+    {
+      "id": "buuf",
+      "name": "BUUF",
+      "author": "mattahan (original icons); fana-m / Hybrid Son Of Oxayotl (upstream theme); nextcode4u / Gloam contributors (adaptation)",
+      "description": "Hand-drawn BUUF objects, worn cream paper, russet leather and moss-green labels.",
+      "path": "themes/buuf",
+      "theme_format": 2,
+      "origin": "BUUF icon theme adaptation",
+      "source": "https://github.com/oxayotl/buuf-icon-theme/tree/ab183bb466524b73201711b89f5dcd64a5643b3c",
+      "configuration_license": "GPL-3.0-or-later",
+      "asset_license": "CC-BY-NC-SA-2.5 artwork; CC0-1.0 synthesized sounds; SIL Open Font License 1.1 fonts",
+      "credits": "themes/buuf/CREDITS.md",
+      "requires_gloam": "Gloam development build with theme format 2 and full-image material fields",
+      "preview": "themes/buuf/preview.png",
+      "minimum_gloam_commit": "6aacad1e965ddcf36553637ab17ccd475936602c"
     }
   ]
 }
