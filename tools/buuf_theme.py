@@ -179,7 +179,14 @@ def build_buuf(gloam, font_dir, profile, load_tool, compose_audio, download=Fals
         backdrop.save(folder / "backgrounds" / (screen + ".png"), optimize=True)
         # A complete image-backed reading veil; illustration stays visible beneath it.
         paper = tint("buuf", COLORS["background"], amplitude=4).convert("RGBA")
-        paper.putalpha(85 if screen == "top" else 100)
+        coverage = Image.new("L", paper.size, 85 if screen == "top" else 100)
+        # Minimal chrome omits the footer component. Keep the legend readable
+        # through the full-screen reading surface, above the dark leather edge.
+        ImageDraw.Draw(coverage).rectangle((0, 174, 255, 191), fill=255)
+        paper.putalpha(coverage)
+        ImageDraw.Draw(paper).line(
+            (8, 174, 247, 174), fill=(*ImageColor.getrgb(COLORS["line"]), 255)
+        )
         paper.save(
             folder / "backgrounds" / ("material-" + screen + ".png"), optimize=True
         )
