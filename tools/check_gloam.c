@@ -10,6 +10,8 @@
 #include "settings.h"
 #include "theme_motion.h"
 #include "themes.h"
+#include "theme_assets.h"
+#include <stdlib.h>
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
@@ -65,6 +67,21 @@ int main(int argc, char **argv)
     assert(app.themes.ready);
     themes_apply(&app);
     assert(!strcmp(app.theme_id, argv[2]));
+    /* Assert the acceleration actually matches this installed pack; a parity
+     * comparison alone could silently exercise PNG fallback on both sides. */
+    theme_assets_begin(&app.themes.active);
+    static uint16_t prepared_screen[256 * 192];
+    static uint8_t prepared_field[256 * 192 / 2];
+    for (unsigned screen = 0; screen < 2; screen++) {
+        uint16_t *scene = NULL;
+        bool wallpaper;
+        assert(theme_assets_background(&app.themes.active, screen, prepared_screen, &scene,
+                                        &wallpaper));
+        free(scene);
+        if (*app.themes.active.component_material[screen])
+            assert(theme_assets_material(&app.themes.active, screen, prepared_field));
+    }
+    theme_assets_end();
     for (int i = 0; i < THEME_ICON_COUNT; i++)
         assert(themes_icon(&app.themes.active, i));
     for (int i = 0; i < THEME_COMPONENT_COUNT; i++)
@@ -105,6 +122,7 @@ int main(int argc, char **argv)
     char prepared_path[PATH_CAP];
     snprintf(prepared_path, sizeof prepared_path, "%s", app.themes.active.prepared_assets);
     app.themes.active.prepared_assets[0] = 0;
+    themes_background_load(&app.themes.active, false);
     themes_icons_load(&app.themes.active, false);
     themes_components_load(&app.themes.active, false);
     draw();

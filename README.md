@@ -20,7 +20,7 @@ opacity and additional top-screen compositions. Image-backed reading surfaces,
 matching control sprites and a small ambient header accent give each pack its
 own material treatment. Each pack now has independently illustrated icons and
 a distinct font pairing. Full-image material masks preserve continuous detail
-across rows and panels; selections use complete themed skins. Prepared sprite bundles reduce small-file loading;
+across rows and panels; selections use complete themed skins. Prepared bundles include preblended screens and material fields, reducing PNG decoding and small-file loading;
 Reduced motion holds the ambient accent still.
 
 ## Browse themes

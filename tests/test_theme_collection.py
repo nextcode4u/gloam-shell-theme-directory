@@ -34,21 +34,31 @@ class ThemeCollectionTests(unittest.TestCase):
                         self.assertEqual(material.size, (256, 192))
                         self.assertFalse(material.info.get("transparency"))
                 data = (folder / config.get("assets", "prepared")).read_bytes()
-                self.assertEqual(data[:8], b"GLMART01")
+                self.assertEqual(data[:8], b"GLMART02")
                 raw_size, count = struct.unpack_from("<II", data, 8)
                 raw = zlib.decompress(data[16:])
                 self.assertEqual(len(raw), raw_size)
-                self.assertLessEqual(raw_size, 192 * 1024)
-                self.assertLessEqual(len(data), 64 * 1024)
+                self.assertLessEqual(raw_size, 512 * 1024)
+                self.assertLessEqual(len(data), 256 * 1024)
                 seen, offset = set(), 0
                 for _ in range(count):
                     group, reserved, index, length = struct.unpack_from(
                         "<BBHI", raw, offset
                     )
                     self.assertEqual(reserved, 0)
-                    self.assertIn(group, (0, 1))
-                    self.assertLess(index, 30 if group else 29)
-                    self.assertEqual(length, 2304 if group else 2048)
+                    self.assertIn(group, (0, 1, 2, 3))
+                    self.assertLess(index, {0: 29, 1: 30, 2: 2, 3: 2}[group])
+                    if group < 2:
+                        self.assertEqual(length, 2304 if group else 2048)
+                    elif group == 2:
+                        flags = struct.unpack_from("<I", raw, offset + 12)[0]
+                        self.assertEqual(flags & ~7, 0)
+                        self.assertEqual(
+                            length,
+                            8 + 256 * 192 * 2 + (256 * 94 * 2 if flags & 4 else 0),
+                        )
+                    else:
+                        self.assertEqual(length, 4 + 256 * 192 // 2)
                     self.assertNotIn((group, index), seen)
                     seen.add((group, index))
                     offset += 8 + length

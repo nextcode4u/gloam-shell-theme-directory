@@ -159,7 +159,7 @@ build command to populate the ignored font cache. Subsequent builds work offline
 Normal theme installation needs only the prepared packs, not Python or source
 fonts. Morrow's existing type pairing still uses `--font-dir`; its notice is
 retained independently under `source/fonts/`. Prepared sprite banks now permit
-up to 64 KiB compressed while retaining Gloam's 192-KiB decoded cap; native sprite
+up to 256 KiB compressed with a bounded 512-KiB decoded cap; native sprite
 counts and sizes remain unchanged.
 
 ## Rebuilding BUUF
@@ -174,3 +174,16 @@ Build with `--theme buuf` after obtaining the verified OFL font inputs. The
 standalone `buuf.zip` includes its full CC-BY-NC-SA-2.5 license, credits and
 provenance. It is excluded from both CC0-art collection archives. See
 [BUUF credits](../themes/buuf/CREDITS.md) before adapting or redistributing it.
+
+## Prepared screens and material fields
+
+Repacking with the current Gloam converter writes `GLMART02`. It combines icons,
+components, preblended RGB555 screens, optional scene strips and four-bit material
+fields in one compressed bundle. Rendering is pixel-equivalent to the PNG path;
+fonts and audio remain separate. Temporary decode memory is bounded to 512 KiB
+plus the compressed input and released after filling the existing banks.
+
+Personal wallpaper/blend overrides or changed source sizes bypass the relevant
+prepared screen. Rebuild after every source PNG edit, including same-size edits.
+Older compatible Gloam builds fall back to the retained PNGs; update BOOT.NDS and
+the theme's assets.gfx for the acceleration. No theme.ini changes are required.
