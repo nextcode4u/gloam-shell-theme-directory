@@ -6,6 +6,7 @@ baked into PNGs. Cards use four coverage levels; modal panels remain opaque.
 """
 
 from PIL import Image, ImageColor, ImageDraw
+from collection_surfaces import focus_skin
 
 # Reading-surface alpha is independent of the 2-bit sprite coverage. A quieter
 # browser supports small labels; the upper illustration gets more open space.
@@ -54,6 +55,8 @@ def corners(draw, bounds, color, length=5):
 
 def component_skin(theme, name, colors):
     """Return a nine-slice material, or None for a shared status pictogram."""
+    if name in ("row-selected", "card-selected"):
+        return focus_skin(theme, colors)
     if name.startswith("battery-") or name in ("wireless-idle", "update-available"):
         return None
     image = Image.new("RGBA", (32, 32))

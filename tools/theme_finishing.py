@@ -3,6 +3,7 @@
 import math
 from PIL import Image, ImageColor, ImageDraw
 from theme_materials import STYLES, control_skin, reading_surface_skin
+from collection_surfaces import prepare_materials, reading_material
 
 CONTROLS = "check-off check-on toggle-off toggle-on arrow-left arrow-right arrow-up arrow-down scroll-track scroll-thumb busy".split()
 
@@ -151,10 +152,12 @@ def finish(theme, folder, config, packer):
             screen == "bottom",
             folder.parents[1] / "source/materials",
         )
+        image = reading_material(theme, image, colors)
         name = f"material-{screen}.png"
         image.save(folder / "backgrounds" / name, optimize=True)
         config["backgrounds"][screen + "_surface"] = "backgrounds/" + name
         config["layout"][screen + "_content_opacity"] = "100"
+    prepare_materials(theme, folder, config)
     (folder / "motion").mkdir(exist_ok=True)
     frames = [packer.sprite(ambient_frame(theme, colors, frame)) for frame in range(8)]
     (folder / "motion/ambient.gtm").write_bytes(
@@ -163,6 +166,6 @@ def finish(theme, folder, config, packer):
     config["motion"] = {
         "ambient": "motion/ambient.gtm",
         "ambient_ticks": str(STYLES[theme]["ticks"]) if theme in STYLES else "12",
-        "focus": "pulse",
+        "focus": "off",
     }
     config["assets"] = {"prepared": "assets.gfx"}

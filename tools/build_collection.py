@@ -15,9 +15,11 @@ from pathlib import Path
 import wave
 
 import numpy as np
-from PIL import Image, ImageColor, ImageDraw, ImageFont, ImageOps
+from PIL import Image, ImageColor, ImageDraw, ImageFont, ImageOps, ImageStat
 from theme_finishing import finish, parchment_coverage
 from theme_materials import component_skin
+from theme_icons import prepare_icons
+from theme_typography import prepare_fonts
 
 ROOT = Path(__file__).resolve().parents[1]
 SPECS = {
@@ -149,176 +151,6 @@ def mix(a, b, t):
     )
 
 
-def icon(kind, spec):
-    # Draw at 4x: smooth interiors survive RGB555, alpha edges remain binary on DS.
-    image = Image.new("RGBA", (128, 128))
-    d = ImageDraw.Draw(image)
-    c = dict(zip(COLOR_KEYS, spec["colors"]))
-    fill = rgb(c["accent"])
-    ink = rgb(c["background"])
-    edge = rgb(c["text"])
-    scale = 4
-
-    def line(points, color=ink, w=2):
-        d.line(
-            [(int(x * scale), int(y * scale)) for x, y in points],
-            fill=color,
-            width=int(w * scale),
-            joint="curve",
-        )
-
-    def box(bounds, color=fill, r=3, outline=None):
-        d.rounded_rectangle(
-            tuple(int(v * scale) for v in bounds),
-            radius=r * scale,
-            fill=color,
-            outline=outline,
-            width=scale,
-        )
-
-    def oval(bounds, color=fill):
-        d.ellipse(tuple(int(v * scale) for v in bounds), fill=color)
-
-    def poly(points, color=fill):
-        d.polygon([(int(x * scale), int(y * scale)) for x, y in points], fill=color)
-
-    kind = {
-        "tab-home": "system-menu",
-        "tab-games": "game",
-        "tab-apps": "application",
-        "tab-media": "audio",
-        "tab-system": "settings",
-        "tab-files": "folder",
-        "tab-folder": "folder",
-        "config": "settings",
-        "system": "settings",
-        "sound": "audio",
-        "shortcut": "system-menu",
-    }.get(kind, kind)
-    if kind == "folder":
-        if spec["name"] == "Koi":
-            poly(
-                [(3, 5), (13, 5), (17, 10), (29, 10), (29, 27), (3, 27)],
-                mix(fill, ink, 0.3),
-            )
-            poly([(2, 12), (30, 12), (26, 28), (6, 28)], fill)
-            line([(5, 14), (16, 23), (27, 14)], ink, 1)
-            oval((14, 19, 18, 23), edge)
-        elif spec["name"] == "Vesper":
-            box((3, 9, 29, 27), fill, r=1)
-            box((5, 5, 15, 12), fill, r=1)
-            box((6, 12, 26, 24), mix(fill, ink, 0.6), r=2)
-            poly([(16, 13), (20, 18), (16, 23), (12, 18)], edge)
-            for x in (5, 27):
-                for y in (11, 25):
-                    oval((x - 1, y - 1, x + 1, y + 1), edge)
-        elif spec["name"] == "Tidal":
-            box((3, 7, 16, 16), mix(fill, edge, 0.2), r=5)
-            box((2, 12, 30, 27), fill, r=7)
-            line([(6, 17), (11, 15), (18, 18), (25, 15)], ink, 1)
-            line([(6, 21), (12, 19), (20, 22), (26, 19)], edge, 1)
-        elif spec["name"] == "Morrow":
-            poly([(3, 6), (13, 6), (16, 10), (29, 10), (29, 27), (3, 27)], fill)
-            poly([(4, 12), (29, 12), (25, 28), (1, 28)], mix(fill, edge, 0.35))
-            line([(7, 18), (14, 18), (14, 23), (7, 23), (7, 18)], ink, 1)
-            line([(4, 26), (23, 26)], ink, 1)
-        else:
-            box((3, 7, 15, 15), mix(fill, edge, 0.24), r=2)
-            box((3, 11, 29, 27), fill, r=4)
-            line([(5, 13), (26, 13)], edge, 1)
-            line([(6, 24), (25, 24)], mix(fill, ink, 0.25), 1)
-    elif kind in ("settings",):
-        points = []
-        for i in range(48):
-            r = 13 if i % 6 in (1, 2, 3, 4) else 10
-            a = i * math.tau / 48
-            points.append((16 + r * math.cos(a), 16 + r * math.sin(a)))
-        poly(points)
-        oval((10, 10, 22, 22), ink)
-        oval((13, 13, 19, 19), rgb(c["surface"]))
-    elif kind in ("game", "slot1"):
-        box((4, 7, 28, 26), fill, r=5 if kind == "game" else 2)
-        line([(8, 16), (15, 16)], ink)
-        line([(11.5, 12.5), (11.5, 19.5)], ink)
-        oval((21, 12, 24, 15), ink)
-        oval((18, 18, 21, 21), ink)
-    elif kind == "application":
-        for x, y in [(4, 4), (18, 4), (4, 18), (18, 18)]:
-            box((x, y, x + 10, y + 10), fill, r=spec["radius"] // 2)
-    elif kind == "audio":
-        line([(11, 24), (11, 8), (25, 5), (25, 21)], fill, 3)
-        line([(12, 11), (24, 8)], edge, 1)
-        oval((4, 21, 12, 27))
-        oval((18, 18, 26, 24))
-    elif kind == "book":
-        poly(
-            [
-                (3, 5),
-                (14, 7),
-                (16, 10),
-                (18, 7),
-                (29, 5),
-                (29, 25),
-                (18, 26),
-                (16, 29),
-                (14, 26),
-                (3, 25),
-            ]
-        )
-        line([(16, 10), (16, 25)], ink, 1)
-        line([(6, 11), (12, 12)], ink, 1)
-        line([(20, 12), (26, 11)], ink, 1)
-    elif kind == "system-menu":
-        poly([(2, 15), (16, 3), (30, 15), (26, 15), (26, 28), (6, 28), (6, 15)])
-        box((13, 18, 19, 28), ink, r=1)
-        line([(8, 14), (16, 7), (24, 14)], edge, 1)
-    elif kind == "camera":
-        box((4, 10, 28, 26))
-        box((10, 6, 21, 12))
-        oval((10, 12, 23, 25), ink)
-        oval((13, 15, 20, 22), edge)
-        oval((6, 12, 8, 14), edge)
-    elif kind in ("image", "video"):
-        box((3, 5, 29, 27), fill, r=2)
-        box((6, 8, 26, 24), ink, r=1)
-        if kind == "video":
-            poly([(13, 11), (13, 22), (23, 16)], edge)
-        else:
-            oval((20, 10, 24, 14), edge)
-            poly([(6, 23), (12, 14), (17, 20), (21, 16), (26, 23)], edge)
-    elif kind == "pictochat":
-        box((3, 5, 28, 23), fill, r=6)
-        poly([(8, 20), (8, 29), (17, 21)])
-        for x in (9, 15, 21):
-            oval((x, 12, x + 2, 14), ink)
-    elif kind == "download-play":
-        line([(16, 4), (16, 21)], fill, 4)
-        poly([(7, 16), (25, 16), (16, 25)])
-        line([(4, 23), (4, 28), (28, 28), (28, 23)], edge, 2)
-    else:
-        poly([(6, 3), (21, 3), (27, 9), (27, 29), (6, 29)])
-        poly([(21, 3), (21, 9), (27, 9)], mix(fill, ink, 0.35))
-        line([(9, 6), (18, 6)], edge, 1)
-        if kind == "archive":
-            for y in range(10, 26, 4):
-                box((15, y, 18, y + 2), ink, r=0)
-        elif kind == "save":
-            box((10, 15, 23, 25), ink, r=1)
-            box((12, 4, 19, 10), ink, r=0)
-        elif kind == "missing":
-            line([(12, 12), (21, 22)], ink)
-            line([(21, 12), (12, 22)], ink)
-        else:
-            for y in (13, 17, 21):
-                line([(10, y), (22 if y < 21 else 18, y)], ink, 1)
-    # Material-specific detail rather than a common surrounding badge.
-    if spec["name"] == "Vesper":
-        line([(5, 29), (16, 31), (27, 29)], fill, 1)
-    if spec["name"] == "Morrow":
-        line([(4, 30), (28, 30)], mix(fill, ink, 0.3), 1)
-    return image.resize((32, 32), Image.Resampling.LANCZOS)
-
-
 def paper_component(name, spec):
     """Aged edges stay in the corner slices; the center stays calm behind labels."""
     colors = dict(zip(COLOR_KEYS, spec["colors"]))
@@ -330,8 +162,17 @@ def paper_component(name, spec):
     if name in ("row-selected", "card-selected", "card"):
         parchment_coverage(image, 170, border=3, fade=3)
     d = ImageDraw.Draw(image)
+    if name in ("row-selected", "card-selected", "card", "panel"):
+        average = tuple(
+            round(value)
+            for value in ImageStat.Stat(image.crop((8, 8, 24, 24)).convert("RGB")).mean
+        )
+        pixels = image.load()
+        for y in range(6, 26):
+            for x in range(6, 26):
+                pixels[x, y] = average + (pixels[x, y][3],)
     if name in ("row-selected", "card-selected"):
-        d.line((2, 5, 2, 26), fill=colors["accent"], width=1)
+        d.polygon([(26, 2), (30, 6), (26, 6)], fill="#c6b58a")
     if name == "tab-selected":
         d.rectangle((4, 4, 27, 27), fill=colors["accent"])
     if name == "artwork-frame":
@@ -498,8 +339,6 @@ def build(id):
     tone = Image.new("RGB", (256, 192), spec["colors"][0])
     bottom = Image.blend(art, tone, 0.18)
     bottom.save(p / "backgrounds/bottom.png", optimize=True)
-    for kind in ICONS:
-        icon(kind, spec).save(p / "icons" / f"{kind}.png", optimize=True)
     for name in COMPONENTS:
         component(name, spec).save(p / "components" / f"{name}.png", optimize=True)
     length = audio(spec, p / "sounds")
@@ -604,6 +443,19 @@ PROFILES = {
 }
 
 
+# The manifest keeps immutable OFL source pins and exact native glyph metrics.
+_FONT_ROLES = json.loads((ROOT / "config/theme-fonts.json").read_text())["themes"]
+for _id, _roles in _FONT_ROLES.items():
+    if _id in PROFILES:
+        for _role, _spec in _roles.items():
+            PROFILES[_id][_role] = (
+                _spec["family"],
+                _spec["size"],
+                _spec["baseline"],
+                _spec["height"],
+            )
+
+
 def load_tool(path, name):
     module_spec = importlib.util.spec_from_file_location(name, path)
     module = importlib.util.module_from_spec(module_spec)
@@ -611,7 +463,7 @@ def load_tool(path, name):
     return module
 
 
-def refresh_style(id, gloam, font_dir):
+def refresh_style(id, gloam, font_dir, download_fonts=False):
     """Use Gloam's authoritative font packer; do not duplicate its binary format."""
     profile = PROFILES[id]
     folder = ROOT / "themes" / id
@@ -627,6 +479,8 @@ def refresh_style(id, gloam, font_dir):
         layout["tabs_position"] = profile["position"]
     elif "tabs_position" in layout:
         del layout["tabs_position"]
+    if id == "phosphor":
+        config["theme"]["header"] = "Phosphor"
     if id == "morrow":
         # Library index remains a personal option; start with the illustrated journal.
         layout["view"] = "extended"
@@ -654,21 +508,10 @@ def refresh_style(id, gloam, font_dir):
             layout.update(view="classic", row_padding="2", tab_highlight="outline")
     packer = load_tool(gloam / "tools/pack_theme_font.py", "gloam_font_packer")
     (folder / "fonts").mkdir(exist_ok=True)
-    font_notes = []
-    for role, key in (("body", "ui"), ("heading", "heading")):
-        name, size, baseline, height = profile[role]
-        ttf = font_dir / f"{name}.ttf"
-        data = packer.pack_font(
-            ttf, size, baseline, latin1=True, proportional=True, height=height
-        )
-        (folder / "fonts" / f"{key}.dsfont").write_bytes(data)
-        config["fonts"][key] = f"fonts/{key}.dsfont"
-        font_notes.append(
-            f"- {role.title()}: {name}, {size} px; line height {height}; "
-            f"SHA-256 `{hashlib.sha256(ttf.read_bytes()).hexdigest()}`."
-        )
-    license_text = (ROOT / "themes/aerial/fonts/LICENSE.txt").read_text()
-    (folder / "fonts/LICENSE.txt").write_text(license_text)
+    font_notes = prepare_fonts(id, folder, packer, profile, font_dir, download_fonts)
+    for role, filename in (("body", "ui"), ("heading", "heading")):
+        config["fonts"][filename] = f"fonts/{filename}.dsfont"
+    prepare_icons(id, folder)
     credits = (folder / "CREDITS.md").read_text()
     # Replace the previous generated font paragraph without losing asset provenance.
     start = credits.find("Font: DejaVu")
@@ -686,13 +529,17 @@ def refresh_style(id, gloam, font_dir):
         "`tools/build_collection.py` and `tools/theme_finishing.py` in this repository. "
         "The latter also authors the controls and ambient accents. Fonts use Gloam's "
         "DSFONT03 converter, four grayscale coverage levels and independent "
-        "body/heading faces. DejaVu terms remain in `fonts/LICENSE.txt`.\n"
-        "Source: https://dejavu-fonts.github.io/\n\n"
+        "body/heading faces. Original font notices remain in `fonts/LICENSE.txt`;\n"
+        "OFL source pins are in `config/theme-fonts.json`. Morrow retains its DejaVu pairing.\n\n"
     )
     if id != "morrow":
         credits += (
             "Material shapes and control silhouettes: `tools/theme_materials.py`.\n\n"
         )
+    credits += (
+        "Independent illustrated icon masters: `source/art/" + id + "-icons.png`.\n"
+    )
+    credits += "Full-image materials and individual focus skins: `tools/collection_surfaces.py`; no repeated patches.\n\n"
     credits += "\n".join(font_notes) + "\n"
     (folder / "CREDITS.md").write_text(credits)
     asset_packer = load_tool(gloam / "tools/pack_theme_assets.py", "gloam_asset_packer")
@@ -715,11 +562,16 @@ def main():
         "--font-dir", type=Path, required=True, help="DejaVu TTF directory"
     )
     parser.add_argument("--theme", choices=PROFILES)
+    parser.add_argument(
+        "--download-fonts",
+        action="store_true",
+        help="Fetch verified OFL authoring inputs",
+    )
     args = parser.parse_args()
     for id in ([args.theme] if args.theme else PROFILES):
         if id in SPECS:
             build(id)
-        refresh_style(id, args.gloam, args.font_dir)
+        refresh_style(id, args.gloam, args.font_dir, args.download_fonts)
         print(id)
 
 

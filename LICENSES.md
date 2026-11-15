@@ -16,5 +16,6 @@ permission to redistribute it.
 
 The Aerial, Koi, Vesper, Tidal and Morrow collection includes agent-assisted wallpaper
 illustrations, code-authored geometry and original synthesized music. Project-held
-rights in those assets are dedicated under CC0-1.0; their DejaVu fonts retain the
-full notices included beside each font. See individual CREDITS.md files.
+rights in those assets are dedicated under CC0-1.0; their fonts retain the full original notices beside each pack. Updated packs
+use the SIL Open Font License; Morrow retains its DejaVu pairing. Immutable OFL
+source revisions and hashes are recorded in `config/theme-fonts.json`. See individual CREDITS.md files.

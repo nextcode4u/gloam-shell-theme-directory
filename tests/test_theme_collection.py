@@ -27,13 +27,18 @@ class ThemeCollectionTests(unittest.TestCase):
                 config = configparser.ConfigParser()
                 config.read(folder / "theme.ini")
                 self.assertEqual(config.get("components", "controls"), "on")
+                self.assertEqual(config.get("components", "fill"), "stretch")
+                for key in ("material", "focus_material"):
+                    with Image.open(folder / config.get("components", key)) as material:
+                        self.assertEqual(material.size, (256, 192))
+                        self.assertFalse(material.info.get("transparency"))
                 data = (folder / config.get("assets", "prepared")).read_bytes()
                 self.assertEqual(data[:8], b"GLMART01")
                 raw_size, count = struct.unpack_from("<II", data, 8)
                 raw = zlib.decompress(data[16:])
                 self.assertEqual(len(raw), raw_size)
                 self.assertLessEqual(raw_size, 192 * 1024)
-                self.assertLessEqual(len(data), 16 * 1024)
+                self.assertLessEqual(len(data), 64 * 1024)
                 seen, offset = set(), 0
                 for _ in range(count):
                     group, reserved, index, length = struct.unpack_from(
@@ -72,6 +77,34 @@ class ThemeCollectionTests(unittest.TestCase):
                             (audio.getnchannels(), audio.getsampwidth()), (1, 2)
                         )
                         self.assertLessEqual(audio.getnframes() * 2, 512 * 1024)
+
+    def test_icon_silhouettes_and_font_pairs_are_independent(self):
+        silhouettes = set()
+        for theme in PROFILES:
+            with Image.open(ROOT / "themes" / theme / "icons/folder.png") as icon:
+                self.assertEqual(icon.size, (32, 32))
+                silhouettes.add(icon.getchannel("A").tobytes())
+        self.assertEqual(len(silhouettes), len(PROFILES))
+        for face in ("ui", "heading"):
+            packs = {
+                (ROOT / "themes" / theme / "fonts" / (face + ".dsfont")).read_bytes()
+                for theme in PROFILES
+            }
+            self.assertEqual(len(packs), len(PROFILES))
+
+    def test_material_fields_are_full_images_not_repeated_patches(self):
+        for theme in PROFILES:
+            with Image.open(
+                ROOT / "themes" / theme / "components/material.png"
+            ) as image:
+                self.assertEqual(image.size, (256, 192))
+                original = image.tobytes()
+                repeat = Image.new(image.mode, image.size)
+                patch = image.crop((0, 0, 16, 16))
+                for y in range(0, 192, 16):
+                    for x in range(0, 256, 16):
+                        repeat.paste(patch, (x, y))
+                self.assertNotEqual(original, repeat.tobytes(), theme)
 
     def test_catalog_and_pack_requirements_agree(self):
         catalog = json.loads((ROOT / "catalog.json").read_text())

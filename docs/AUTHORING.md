@@ -27,8 +27,9 @@ category screens, the item inspector, Reduced motion, settings and audio assets.
 Leak checking is disabled for process-exit global caches; address and undefined
 behavior checks remain enabled. These are host tests, not hardware certification.
 
-Keep the DejaVu license beside every font when rebuilding. The font source hash
-is recorded in each theme’s credits. Gloam’s authoritative DSFONT03 packer measures every glyph and rejects
+Keep each font’s own complete notice beside its prepared pack. OFL source hashes
+and immutable revisions are recorded in `config/theme-fonts.json`; Morrow retains
+its original DejaVu notices. Gloam’s authoritative DSFONT03 packer measures every glyph and rejects
 ink outside its advance or line height. The body remains 12 pixels high; headings
 use independent faces at up to 16 pixels. The profile records size and baseline
 for reproducible glyph placement. Coverage uses four grayscale levels, never RGB
@@ -68,8 +69,8 @@ binary transparency. No blur is applied. Illustration masters are unchanged;
 lower-screen images receive a small base tint before Gloam's reading surface.
 
 The five illustrated themes are regenerated entirely by this repository's tool.
-Starter themes keep their original illustrations, icons and audio choices, with
-material shapes and controls generated locally. Gloam provides the authoritative
+Starter themes keep their original illustrations and audio choices; all packs
+use independent illustrated icon masters with locally authored materials and controls. Gloam provides the authoritative
 font and prepared-sprite packers.
 Each pack retains asset provenance and a copy of the applicable font license.
 Do not label format-2 packs as compatible with Gloam 1.0.0.
@@ -78,16 +79,16 @@ Every pack uses `[backgrounds] top_surface` and `bottom_surface` for separate
 256×192 RGBA reading surfaces, blended once during loading. The material generator
 keeps edge decoration outside live text. Morrow's aged parchment master lives in
 `source/materials/`; Folio uses a lighter procedural tracing-paper surface.
-Morrow's `paper_component()` also fits its parchment to
-selections and cards, with darkened worn edges and a quiet text area. Keep detail
+Morrow's `paper_component()` retains the darkened worn outlines on selections and cards;
+its calm flat center receives continuous detail from the full-image material field. Keep detail
 inside the six-pixel slice border. Surface alpha is multiplied by screen opacity;
 these packs use 100 to preserve the authored coverage.
 
 Morrow's parchment uses a feathered alpha profile: the interior is about 42%
 opaque on top and 62% on the bottom, increasing toward its worn perimeter.
 Selections and cards retain two-thirds center coverage; modal panels stay opaque.
-`parchment_coverage()` applies this during asset generation. No extra console
-buffer, animation work or per-frame background blending is required.
+`parchment_coverage()` applies this during asset generation. The reading surface is blended once without an extra framebuffer. Optional
+material fields use the separate bounded cache described below.
 
 ## Controls, motion and prepared assets
 
@@ -98,8 +99,8 @@ standard controls. Their images never change touch targets or input behavior.
 
 Each pack supplies eight 32×32 ambient frames in `motion/ambient.gtm`. Gloam draws
 them at 16×16 in reserved header space, loads them after browsing is usable and
-pauses them during navigation/modal work. Reduced motion holds the first frame
-and disables the brief selection-margin gleam. The complete accent is 18 KiB
+pauses them during navigation/modal work. Reduced motion holds the first frame.
+The shared selection-margin pulse is disabled in this collection. The complete accent is 18 KiB
 decoded, with no frame-by-frame file reads. Do not expand it into a background
 movie. Frame count, dimensions, duration and coverage follow the upstream guide.
 
@@ -133,3 +134,30 @@ heap samples. These are host CPU/filesystem comparisons, **not DSi boot times**.
 Heap samples do not measure transient peaks or static application/frame buffers.
 Check cold boot, theme switching, rapid input and music on a physical DSi before
 claiming a hardware performance improvement. No personal SD card is accessed.
+
+## Full-image materials and illustrated icons
+
+The current packs require Gloam `6aacad1` or later. Their ordinary/focus material
+PNGs are complete 256×192 shade fields, sampled without tiling. The optional
+fields add up to 48 KiB per active/preview theme bank; Morrow shares one 24-KiB
+field while retaining its complete translucent parchment composition. Headers
+and body reading surfaces use full images prepared on the PC. Trim stays in
+32×32 component PNGs, with live artwork kept clear. Focus skins use distinct
+fills and silhouettes rather than a common margin stripe. The shared margin
+pulse is disabled; the small per-theme ambient accent remains available.
+
+`source/art/*-icons.png` contains each theme's independently illustrated 4×4
+icon atlas. `theme_icons.py` fits each object into a 28×28 envelope inside the
+native 32×32 PNG. Native DS/DSi banners and associated application icons retain
+priority. `collection_surfaces.py` owns full-image materials and focus shapes;
+it uses the original material studies in `source/materials/collection.png`.
+Keep broad text areas quiet and put corner details inside the six-pixel border.
+
+OFL font families, immutable source URLs, hashes and native metrics live in
+`config/theme-fonts.json`. First-time authors can add `--download-fonts` to the
+build command to populate the ignored font cache. Subsequent builds work offline.
+Normal theme installation needs only the prepared packs, not Python or source
+fonts. Morrow's existing type pairing still uses `--font-dir`; its notice is
+retained independently under `source/fonts/`. Prepared sprite banks now permit
+up to 64 KiB compressed while retaining Gloam's 192-KiB decoded cap; native sprite
+counts and sizes remain unchanged.
