@@ -189,6 +189,17 @@
         "url": "https://raw.githubusercontent.com/google/fonts/cc39c4c2c304bc368c9b7c311ea2bcc6013299fe/ofl/archivoblack/OFL.txt",
         "sha256": "3173acd82f8c6159b5b1037b539fcbd4edff68e65c2ea8b9412b5a5ca97b08ff"
       }
+    },
+    "arimo": {
+      "name": "Arimo",
+      "font": {
+        "url": "https://raw.githubusercontent.com/google/fonts/cc39c4c2c304bc368c9b7c311ea2bcc6013299fe/ofl/arimo/Arimo%5Bwght%5D.ttf",
+        "sha256": "e43898b143ec826ac8cb4034816458a7047fbe0836558de2a1f8c6223ae3e0ca"
+      },
+      "license": {
+        "url": "https://raw.githubusercontent.com/google/fonts/cc39c4c2c304bc368c9b7c311ea2bcc6013299fe/ofl/arimo/OFL.txt",
+        "sha256": "11cce536cd2f3864d767003af5dcd739e2e15818cf2279b6175edeadd3960992"
+      }
     }
   },
   "themes": {
@@ -333,20 +344,20 @@
     },
     "luna": {
       "body": {
-        "family": "publicsans",
-        "weight": 500,
+        "family": "arimo",
         "size": 11,
         "baseline": 10,
         "height": 12,
-        "edge_shift": 2
+        "edge_shift": 2,
+        "weight": 400
       },
       "heading": {
-        "family": "sourcesans3",
-        "weight": 500,
-        "size": 14,
-        "baseline": 14,
+        "family": "arimo",
+        "size": 13,
+        "baseline": 12,
         "height": 16,
-        "edge_shift": 2
+        "edge_shift": 2,
+        "weight": 700
       }
     },
     "desktop-98": {

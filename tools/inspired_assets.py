@@ -7,6 +7,7 @@ from pathlib import Path
 import wave
 import numpy as np
 from PIL import Image, ImageColor, ImageDraw
+from luna_assets import skin as luna_skin
 
 ROOT = Path(__file__).resolve().parents[1]
 SPECS = json.loads((ROOT / "config/inspired-themes.json").read_text(encoding="utf-8"))[
@@ -57,6 +58,8 @@ def material(theme, focused=False):
 
 
 def skin(theme, name):
+    if theme == "luna":
+        return luna_skin(name)
     s = SPECS[theme]
     c = dict(zip(KEYS, s["colors"]))
     im = Image.new("RGBA", (32, 32))
@@ -85,14 +88,6 @@ def skin(theme, name):
         d.line([(2, 29), (29, 29), (29, 2)], fill=color("#808080"), width=1)
         if selected:
             d.rectangle((3, 3, 28, 28), outline=color("#d3d3ff"), width=1)
-    elif theme == "luna":
-        d.rounded_rectangle((1, 1, 30, 30), radius=4, outline=color("#ffffff", 170))
-        d.line((5, 2, 26, 2), fill=color("#a3ceff" if selected else "#ffffff"), width=1)
-        d.line(
-            (4, 29, 27, 29), fill=color("#17448a" if selected else "#b8c5cd"), width=2
-        )
-        if name == "tab-selected":
-            d.line((5, 4, 26, 4), fill=color("#f7d46a"), width=2)
     elif theme == "classic-ds":
         if name == "header":
             d.rectangle((0, 0, 31, 31), fill=color("#c9d8df"))
@@ -163,8 +158,19 @@ def control(theme, name):
     c = dict(zip(KEYS, s["colors"]))
     im = Image.new("RGBA", (32, 32))
     d = ImageDraw.Draw(im)
-    ink = color(c["text"])
-    a = color(c["accent"])
+    ink = (
+        color("#ffffff")
+        if theme == "luna"
+        and (
+            name.startswith("battery-") or name in ("wireless-idle", "update-available")
+        )
+        else color(c["text"])
+    )
+    a = (
+        color("#82cf67")
+        if theme == "luna" and name.startswith("battery-")
+        else color(c["accent"])
+    )
     surface = color(c["surface"])
     if name.startswith("battery-"):
         d.rounded_rectangle(
@@ -259,7 +265,7 @@ def ambient(theme, frame):
     c = dict(zip(KEYS, s["colors"]))
     im = Image.new("RGBA", (32, 32))
     d = ImageDraw.Draw(im)
-    a = color(c["accent"], 170)
+    a = color("#ffffff" if theme == "luna" else c["accent"], 170)
     if theme == "portal-terminal":
         d.ellipse((3, 3, 29, 29), outline=a, width=2)
         r = 4 + frame % 4 * 2

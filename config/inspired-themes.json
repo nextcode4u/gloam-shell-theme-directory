@@ -4,30 +4,38 @@
     "luna": {
       "name": "Luna XP",
       "inspiration": "Windows XP Luna",
-      "description": "Fresh green hills, cobalt window trim, amber folders and rounded enamel controls.",
+      "description": "Cobalt Luna title bars, cream Explorer windows, pale-blue navigation, green enamel controls and compact shell icons.",
       "colors": [
-        "#dce9fc",
-        "#f1f4ed",
-        "#5378a8",
-        "#172a4a",
-        "#536378",
-        "#235ed4",
-        "#fffdf1"
+        "#ece9d8",
+        "#fffefb",
+        "#7f9db9",
+        "#152943",
+        "#536b86",
+        "#245edb",
+        "#ffffff"
       ],
-      "layout": "spotlight",
+      "layout": "sidebar",
       "tabs": "labels",
-      "position": "bottom",
-      "view": "extended",
-      "size": "large",
-      "radius": 5,
+      "view": "classic",
+      "size": "small",
+      "radius": 2,
       "opacity": [
-        74,
-        205
+        0,
+        0
       ],
-      "body": "publicsans",
-      "heading": "sourcesans3",
+      "body": "arimo",
+      "heading": "arimo",
       "pitch": 740,
-      "chrome": "full"
+      "chrome": "full",
+      "body_size": 11,
+      "body_weight": 400,
+      "heading_size": 13,
+      "heading_baseline": 12,
+      "heading_weight": 700,
+      "row_padding": 0,
+      "header_text": "#ffffff",
+      "footer_text": "#ffffff",
+      "header_link_text": "#ffffff"
     },
     "desktop-98": {
       "name": "Desktop 98",

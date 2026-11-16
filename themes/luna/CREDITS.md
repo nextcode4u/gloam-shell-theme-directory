@@ -1,7 +1,7 @@
 # Luna XP — credits
 
 Original Gloam interpretation of Windows XP Luna, by nextcode4u / Gloam project
-(agent-assisted). Fresh green hills, cobalt window trim, amber folders and rounded enamel controls.
+(agent-assisted). Cobalt Luna title bars, cream Explorer windows, pale-blue navigation, green enamel controls and compact shell icons.
 
 ## Artwork and controls
 
@@ -21,8 +21,8 @@ are included. The CC0 dedication covers project-held rights only.
 
 ## Fonts
 
-- Body: PublicSans, 11px; line height 12.
-- Heading: SourceSans3, 14px; line height 16.
+- Body: Arimo, 11px; line height 12.
+- Heading: Arimo, 13px; line height 16.
 
 Full original font notices are in `fonts/LICENSE.txt`. Font source revisions and
 hashes are pinned in `config/theme-fonts.json`; font licenses are separate from

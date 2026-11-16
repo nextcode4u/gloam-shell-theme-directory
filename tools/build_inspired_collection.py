@@ -15,6 +15,7 @@ from PIL import Image, ImageDraw, ImageOps
 from build_collection import load_tool
 from theme_icons import CELLS, native_icon
 from theme_typography import prepare_fonts
+from luna_assets import reading_surface as luna_reading_surface
 from build_theme_splashes import build_theme
 from inspired_assets import (
     ROOT,
@@ -52,11 +53,17 @@ def update_font_manifest(gloam):
                 {"family": family},
             )
             existing.update(
-                size=11 if role == "body" else s.get("heading_size", 14),
+                size=(
+                    s.get("body_size", 11)
+                    if role == "body"
+                    else s.get("heading_size", 14)
+                ),
                 baseline=10 if role == "body" else s.get("heading_baseline", 14),
                 height=12 if role == "body" else 16,
                 edge_shift=2,
             )
+            if role + "_weight" in s:
+                existing["weight"] = s[role + "_weight"]
             roles[role] = existing
         m["themes"][theme] = roles
     path.write_text(json.dumps(m, indent=2) + "\n", encoding="utf-8")
@@ -112,6 +119,8 @@ def build(theme, gloam, font_dir, download):
         surface = Image.new(
             "RGBA", (256, 192), color(colors["surface"], s["opacity"][index])
         )
+        if theme == "luna":
+            surface = luna_reading_surface(screen)
         surface.save(
             folder / "backgrounds" / ("material-" + screen + ".png"), optimize=True
         )
@@ -128,6 +137,9 @@ def build(theme, gloam, font_dir, download):
     }
     if theme == "classic-ds":
         config["colors"].update(selection_text=colors["text"], tab_text=colors["text"])
+    for key in ("header_text", "footer_text", "header_link_text"):
+        if key in s:
+            config["colors"][key] = s[key]
     config["fonts"] = {"ui": "fonts/ui.dsfont", "heading": "fonts/heading.dsfont"}
     config["layout"] = {
         "top_layout": s["layout"],
@@ -141,7 +153,7 @@ def build(theme, gloam, font_dir, download):
         "tab_gap": "4",
         "view": s["view"],
         "icon_size": s["size"],
-        "row_padding": "2",
+        "row_padding": str(s.get("row_padding", 2)),
         "large_grid_columns": "3",
     }
     if "position" in s:
@@ -247,6 +259,18 @@ Reduced motion uses a still frame. The pack adds no splash audio.
             "are original code-authored assets from `tools/classic_ds_assets.py`.",
         )
     (folder / "CREDITS.md").write_text(credit, encoding="utf-8")
+    compatibility = (
+        "Requires a **Gloam source build with header/footer theme colors** "
+        "(commit `99a5fab` or later). The original 1.1.0 binary rejects these new keys."
+        if theme == "luna"
+        else "Requires **Gloam 1.1.0 or later**."
+    )
+    preview_note = (
+        "Previews use the matching Gloam source build with separate chrome inks."
+        if theme == "luna"
+        else "Previews use the current Gloam source with selection-ink fixes for menus and "
+        "settings. The original 1.1.0 binary accepts the pack format but lacks those fixes."
+    )
     (folder / "README.md").write_text(
         f"""# {s['name']}
 
@@ -258,7 +282,7 @@ Reduced motion uses a still frame. The pack adds no splash audio.
 
 ## Install
 
-Requires **Gloam 1.1.0 or later**. Copy this whole folder to
+{compatibility} Copy this whole folder to
 `/_nds/dsi-frontend/themes/{theme}/`. Open START → Appearance → Theme:
 Up/Down selects, X previews and A applies when ready. Existing personal view,
 wallpaper or accent overrides can alter the supplied defaults.
@@ -271,8 +295,7 @@ recorded music and a startup splash are included. Reduced motion is respected.
 
 See [credits](CREDITS.md), [music attribution](MUSIC.md) and original notices.
 Illustrations interpret {s['inspiration']}; this is not an official theme.
-Previews use the current Gloam source with selection-ink fixes for menus and
-settings. The original 1.1.0 binary accepts the pack format but lacks those fixes.
+{preview_note}
 These are renderer captures, not photographs of a DSi LCD.
 """,
         encoding="utf-8",

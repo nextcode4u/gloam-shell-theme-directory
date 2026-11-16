@@ -43,7 +43,7 @@ Reduced motion holds the ambient accent still.
 
 | Theme | Personality |
 | --- | --- |
-| [Luna XP](themes/luna) | Green hills, cobalt window trim, amber folders and rounded enamel |
+| [Luna XP](themes/luna) | Cobalt title bars, cream Explorer windows, pale-blue navigation and compact shell icons |
 | [Desktop 98](themes/desktop-98) | Teal desktop, raised gray controls, navy selections and pixel icons |
 | [Classic DS](themes/classic-ds) | Gray grid, silver panels, flat monochrome icons and blue-gray selection corners |
 | [Portal Terminal](themes/portal-terminal) | Rick and Morty-inspired garage, inked lab props and goo-green selections |
@@ -53,8 +53,9 @@ Reduced motion holds the ambient accent still.
 
 These are original, unofficial interpretations with separate icon sets, controls,
 font pairs, recorded music, UI cues and short startup splashes. No extracted
-operating-system/franchise artwork or audio is included. Each pack requires
-**Gloam 1.1.0 or later**; names and marks remain with their respective owners.
+operating-system/franchise artwork or audio is included. Luna requires a source build with the new header/footer theme colors
+(commit `99a5fab` or later); the other six support **Gloam 1.1.0 or later**.
+Names and marks remain with their respective owners.
 Previews use the current source build, which also fixes selection-text contrast
 in settings and other menus; that fix is not present in the original 1.1.0 binary.
 

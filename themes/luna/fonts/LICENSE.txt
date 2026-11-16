@@ -1,10 +1,10 @@
-Body: PublicSans
+Body: Arimo
 
-Copyright 2015 The Public Sans Project Authors (https://github.com/uswds/public-sans)
+Copyright 2026 The Arimo Project Authors (https://github.com/googlefonts/arimo)
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
 This license is copied below, and is also available with a FAQ at:
-https://scripts.sil.org/OFL
+https://openfontlicense.org
 
 
 -----------------------------------------------------------
@@ -94,13 +94,13 @@ DAMAGES, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM
 OTHER DEALINGS IN THE FONT SOFTWARE.
 
-Heading: SourceSans3
+Heading: Arimo
 
-Copyright 2010-2020 Adobe (http://www.adobe.com/), with Reserved Font Name 'Source'. All Rights Reserved. Source is a trademark of Adobe in the United States and/or other countries.
+Copyright 2026 The Arimo Project Authors (https://github.com/googlefonts/arimo)
 
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
-
-This license is copied below, and is also available with a FAQ at: http://scripts.sil.org/OFL
+This license is copied below, and is also available with a FAQ at:
+https://openfontlicense.org
 
 
 -----------------------------------------------------------
