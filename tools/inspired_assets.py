@@ -8,6 +8,7 @@ import wave
 import numpy as np
 from PIL import Image, ImageColor, ImageDraw
 from luna_assets import skin as luna_skin
+from portal_assets import skin as portal_skin
 
 ROOT = Path(__file__).resolve().parents[1]
 SPECS = json.loads((ROOT / "config/inspired-themes.json").read_text(encoding="utf-8"))[
@@ -35,7 +36,7 @@ def material(theme, focused=False):
             elif theme == "classic-ds":
                 v = 136 - (10 if y % 3 == 0 else 0) - (5 if x % 16 == 0 else 0)
             elif theme == "portal-terminal":
-                v = 125 + noise + round(9 * math.sin(x / 53 + y / 39))
+                v = 130  # Flat cel fill; do not add metallic/grunge noise.
             elif theme == "aero-glass":
                 v = (
                     125
@@ -60,6 +61,8 @@ def material(theme, focused=False):
 def skin(theme, name):
     if theme == "luna":
         return luna_skin(name)
+    if theme == "portal-terminal":
+        return portal_skin(name)
     s = SPECS[theme]
     c = dict(zip(KEYS, s["colors"]))
     im = Image.new("RGBA", (32, 32))
@@ -106,22 +109,6 @@ def skin(theme, name):
                     fill=color(c["accent"]),
                     width=2,
                 )
-    elif theme == "portal-terminal":
-        d.polygon(
-            [(4, 1), (27, 0), (31, 5), (30, 28), (26, 31), (2, 30), (0, 24), (1, 5)],
-            outline=color("#111c20"),
-            width=2,
-        )
-        for x, y in ((4, 4), (27, 27)):
-            d.ellipse((x - 1, y - 1, x + 1, y + 1), fill=color("#deb67a"))
-            d.line((x - 1, y, x + 1, y), fill=color("#29263b"))
-        if selected:
-            d.line([(6, 3), (23, 3), (27, 6)], fill=color("#f1ffb8"), width=2)
-            d.line(
-                [(5, 29), (17, 29), (20, 27), (25, 28)], fill=color("#5c8730"), width=2
-            )
-        else:
-            d.line((5, 3, 24, 3), fill=color("#a58cbd", 170))
     elif theme == "aero-glass":
         d.rounded_rectangle((1, 1, 30, 30), radius=6, outline=color("#ffffff", 220))
         d.rounded_rectangle((2, 2, 29, 29), radius=5, outline=color("#e6f9ff", 85))
@@ -273,7 +260,7 @@ def ambient(theme, frame):
             (16 - r, 16 - r, 16 + r, 16 + r),
             frame * 45,
             frame * 45 + 210,
-            fill=color("#e6ffba"),
+            fill=color("#c8ef65"),
             width=2,
         )
     elif theme == "pokedex":

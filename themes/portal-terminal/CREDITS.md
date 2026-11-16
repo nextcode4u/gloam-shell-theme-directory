@@ -1,7 +1,7 @@
 # Portal Terminal — credits
 
 Original Gloam interpretation of Rick and Morty, by nextcode4u / Gloam project
-(agent-assisted). An interdimensional garage, hand-inked lab props, goo-green selections and purple instrument housings.
+(agent-assisted). Flat inked alien landscapes, lavender skies, peach paper panels, lime portal highlights and colorful cartoon props.
 
 ## Artwork and controls
 
@@ -22,7 +22,7 @@ are included. The CC0 dedication covers project-held rights only.
 ## Fonts
 
 - Body: BarlowSemiCondensed-Bold, 11px; line height 12.
-- Heading: Kalam-Regular, 14px; line height 16.
+- Heading: Nunito, 13px; line height 16.
 
 Full original font notices are in `fonts/LICENSE.txt`. Font source revisions and
 hashes are pinned in `config/theme-fonts.json`; font licenses are separate from

@@ -24,7 +24,7 @@ PROFILES = {
     "luna": ("fade", "slide-up", "#e5effa", "#2157b5"),
     "desktop-98": ("none", "reveal", "#c0c0c0", "#000080"),
     "classic-ds": ("fade", "fade", "#f0f2f1", "#35434d"),
-    "portal-terminal": ("reveal", "fade-zoom", "#182e2c", "#c8f970"),
+    "portal-terminal": ("reveal", "fade-zoom", "#fff4d6", "#50316b"),
     "aero-glass": ("fade", "zoom-out", "#d6e9ef", "#285873"),
     "pokedex": ("reveal-down", "slide-left", "#e8f2dd", "#245d60"),
     "synthwave": ("fade", "slide-up", "#272540", "#ffb99f"),

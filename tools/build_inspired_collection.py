@@ -137,7 +137,13 @@ def build(theme, gloam, font_dir, download):
     }
     if theme == "classic-ds":
         config["colors"].update(selection_text=colors["text"], tab_text=colors["text"])
-    for key in ("header_text", "footer_text", "header_link_text"):
+    for key in (
+        "header_text",
+        "footer_text",
+        "header_link_text",
+        "selection_text",
+        "tab_text",
+    ):
         if key in s:
             config["colors"][key] = s[key]
     config["fonts"] = {"ui": "fonts/ui.dsfont", "heading": "fonts/heading.dsfont"}

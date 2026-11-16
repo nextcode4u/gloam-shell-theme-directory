@@ -97,29 +97,34 @@
     "portal-terminal": {
       "name": "Portal Terminal",
       "inspiration": "Rick and Morty",
-      "description": "An interdimensional garage, hand-inked lab props, goo-green selections and purple instrument housings.",
+      "description": "Flat inked alien landscapes, lavender skies, peach paper panels, lime portal highlights and colorful cartoon props.",
       "colors": [
-        "#152c2c",
-        "#203c3b",
-        "#749873",
-        "#eff9cf",
-        "#adcbaf",
-        "#b8ec4b",
-        "#172521"
+        "#fff4d6",
+        "#fff4d6",
+        "#373247",
+        "#252838",
+        "#57485e",
+        "#50316b",
+        "#fff4d6"
       ],
-      "layout": "poster",
-      "tabs": "icons",
+      "layout": "scene",
+      "tabs": "labels",
       "view": "extended",
       "size": "large",
       "radius": 3,
       "opacity": [
-        90,
-        205
+        235,
+        235
       ],
       "body": "barlowsemicondensed",
-      "heading": "kalam",
+      "heading": "nunito",
       "pitch": 330,
-      "chrome": "full"
+      "chrome": "full",
+      "heading_size": 13,
+      "heading_baseline": 12,
+      "heading_weight": 800,
+      "selection_text": "#252838",
+      "tab_text": "#252838"
     },
     "aero-glass": {
       "name": "Aero Glass",

@@ -11,7 +11,7 @@ import unittest
 import zipfile
 import zlib
 
-from PIL import Image
+from PIL import Image, ImageColor
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
@@ -66,6 +66,33 @@ class InspiredCollectionTests(unittest.TestCase):
                 self.assertLess(runtime, 2 * 1024 * 1024, name)
         self.assertEqual(len(font_pairs), 7)
         self.assertEqual(len(silhouettes), 7)
+
+    def test_portal_text_contrast_on_actual_control_surfaces(self):
+        folder = ROOT / "themes/portal-terminal"
+        config = configparser.ConfigParser()
+        config.read(folder / "theme.ini", encoding="utf-8")
+
+        def luminance(rgb):
+            # Check the colors the DS can actually display, after RGB555 packing.
+            values = [(channel >> 3) / 31 for channel in rgb]
+            linear = [
+                v / 12.92 if v <= 0.04045 else ((v + 0.055) / 1.055) ** 2.4
+                for v in values
+            ]
+            return sum(a * b for a, b in zip(linear, (0.2126, 0.7152, 0.0722)))
+
+        for component in ("header", "footer", "panel", "row", "row-selected"):
+            with Image.open(folder / "components" / (component + ".png")) as surface:
+                background = luminance(surface.getpixel((16, 16))[:3])
+            keys = (
+                ("selection_text",)
+                if component == "row-selected"
+                else ("text", "muted", "accent")
+            )
+            for key in keys:
+                ink = luminance(ImageColor.getrgb(config["colors"][key]))
+                ratio = (max(ink, background) + 0.05) / (min(ink, background) + 0.05)
+                self.assertGreaterEqual(ratio, 4.5, (component, key, ratio))
 
     def test_intros_use_three_still_layers_not_full_screen_movies(self):
         for name in SPECS:

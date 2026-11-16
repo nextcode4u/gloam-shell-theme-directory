@@ -46,7 +46,7 @@ Reduced motion holds the ambient accent still.
 | [Luna XP](themes/luna) | Cobalt title bars, cream Explorer windows, pale-blue navigation and compact shell icons |
 | [Desktop 98](themes/desktop-98) | Teal desktop, raised gray controls, navy selections and pixel icons |
 | [Classic DS](themes/classic-ds) | Gray grid, silver panels, flat monochrome icons and blue-gray selection corners |
-| [Portal Terminal](themes/portal-terminal) | Rick and Morty-inspired garage, inked lab props and goo-green selections |
+| [Portal Terminal](themes/portal-terminal) | Flat cartoon alien landscape, lavender skies, peach panels and lime portal highlights |
 | [Aero Glass](themes/aero-glass) | Blue-green ribbons, pearl glass cards and luminous shell objects |
 | [Pokédex](themes/pokedex) | Red/ivory research-device casing, celadon screens and blue sensors |
 | [Synthwave](themes/synthwave) | Airbrushed coastal sunset, chrome props and warm neon selection rails |

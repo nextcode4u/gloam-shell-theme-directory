@@ -401,9 +401,10 @@
         "edge_shift": 2
       },
       "heading": {
-        "family": "kalam",
-        "size": 14,
-        "baseline": 14,
+        "family": "nunito",
+        "weight": 800,
+        "size": 13,
+        "baseline": 12,
         "height": 16,
         "edge_shift": 2
       }

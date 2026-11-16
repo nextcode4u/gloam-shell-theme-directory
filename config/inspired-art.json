@@ -24,10 +24,10 @@
       "authoring": "tools/classic_ds_assets.py"
     },
     "source/art/portal-terminal.png": {
-      "sha256": "98f1c2ec4d3893550ecd08bbaabc6b5ebf33c1386c383b3579ea2a6ea6cf9242"
+      "sha256": "6579e493e48fa96f3478f077f9bd1ead8f11e3b6012e4761b0ec1d28243b738c"
     },
     "source/art/portal-terminal-icons.png": {
-      "sha256": "c01ed1ca7af421943599b3d3732b0994dda4870f129282aea3c6db8b1cd07630"
+      "sha256": "d4f6d3033a23aeb17b487330973a08cbe9d516349e0ae9e5eeb656662217b917"
     },
     "source/art/aero-glass.png": {
       "sha256": "d2218a185f16eb21d0342922ba549a7a3cf60711a5b57c906079db88cd898836"
