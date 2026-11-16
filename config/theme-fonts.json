@@ -412,17 +412,17 @@
     "aero-glass": {
       "body": {
         "family": "sourcesans3",
-        "weight": 500,
+        "weight": 400,
         "size": 11,
         "baseline": 10,
         "height": 12,
         "edge_shift": 2
       },
       "heading": {
-        "family": "quicksand",
-        "weight": 500,
-        "size": 14,
-        "baseline": 14,
+        "family": "sourcesans3",
+        "weight": 600,
+        "size": 13,
+        "baseline": 12,
         "height": 16,
         "edge_shift": 2
       }

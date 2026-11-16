@@ -1,7 +1,7 @@
 # Aero Glass — credits
 
-Original Gloam interpretation of the Windows Vista/7 Aero era, by nextcode4u / Gloam project
-(agent-assisted). Blue-green light ribbons, translucent pearl glass cards, chrome fittings and luminous shell icons.
+Original Gloam interpretation of Windows Vista Aero, by nextcode4u / Gloam project
+(agent-assisted). Dark green Aurora ribbons, smoky glass window trim, neutral Explorer interiors, pale-blue selections and angular shell icons.
 
 ## Artwork and controls
 
@@ -22,7 +22,7 @@ are included. The CC0 dedication covers project-held rights only.
 ## Fonts
 
 - Body: SourceSans3, 11px; line height 12.
-- Heading: Quicksand, 14px; line height 16.
+- Heading: SourceSans3, 13px; line height 16.
 
 Full original font notices are in `fonts/LICENSE.txt`. Font source revisions and
 hashes are pinned in `config/theme-fonts.json`; font licenses are separate from

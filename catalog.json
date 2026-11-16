@@ -204,16 +204,16 @@
       "id": "aero-glass",
       "name": "Aero Glass",
       "author": "nextcode4u / Gloam project (agent-assisted)",
-      "description": "Blue-green light ribbons, translucent pearl glass cards, chrome fittings and luminous shell icons.",
+      "description": "Dark green Aurora ribbons, smoky glass window trim, neutral Explorer interiors, pale-blue selections and angular shell icons.",
       "path": "themes/aero-glass",
       "theme_format": 2,
-      "origin": "Original Gloam interpretation of the Windows Vista/7 Aero era",
+      "origin": "Original Gloam interpretation of Windows Vista Aero",
       "configuration_license": "GPL-3.0-or-later",
       "asset_license": "CC0-1.0 project-held artwork/UI cues; SIL OFL 1.1 fonts; CC-BY-4.0 recorded music; third-party marks excluded",
       "credits": "themes/aero-glass/CREDITS.md",
-      "requires_gloam": "Gloam 1.1.0 or later with theme format 2 and prepared full-image materials",
-      "minimum_gloam_version": "1.1.0",
-      "preview": "themes/aero-glass/preview.png"
+      "requires_gloam": "Gloam source build with theme format 2 and header/footer theme colors (99a5fab or later)",
+      "preview": "themes/aero-glass/preview.png",
+      "minimum_gloam_commit": "99a5fab1dd929822ca06c828ff95431a55518019"
     },
     {
       "id": "pokedex",

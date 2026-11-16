@@ -67,7 +67,7 @@ class InspiredCollectionTests(unittest.TestCase):
         self.assertEqual(len(font_pairs), 7)
         self.assertEqual(len(silhouettes), 7)
 
-    def test_neon_theme_text_contrast_on_actual_control_surfaces(self):
+    def test_text_contrast_on_actual_control_surfaces(self):
         def luminance(rgb):
             # Check the colors the DS can actually display, after RGB555 packing.
             values = [(channel >> 3) / 31 for channel in rgb]
@@ -77,26 +77,61 @@ class InspiredCollectionTests(unittest.TestCase):
             ]
             return sum(a * b for a, b in zip(linear, (0.2126, 0.7152, 0.0722)))
 
-        for theme in ("portal-terminal", "synthwave"):
+        for theme in ("portal-terminal", "synthwave", "aero-glass"):
             folder = ROOT / "themes" / theme
             config = configparser.ConfigParser()
             config.read(folder / "theme.ini", encoding="utf-8")
-            for component in ("header", "footer", "panel", "row", "row-selected"):
+            for component in (
+                "header",
+                "footer",
+                "panel",
+                "row",
+                "row-selected",
+                "card-selected",
+                "tab-selected",
+            ):
                 with Image.open(
                     folder / "components" / (component + ".png")
                 ) as surface:
-                    background = luminance(surface.getpixel((16, 16))[:3])
-                keys = (
-                    ("selection_text",)
-                    if component == "row-selected"
-                    else ("text", "muted", "accent")
-                )
+                    pixel = surface.getpixel((16, 16))
+                    base = ImageColor.getrgb(config["colors"]["surface"])
+                    blended = tuple(
+                        round(c * pixel[3] / 255 + b * (1 - pixel[3] / 255))
+                        for c, b in zip(pixel[:3], base)
+                    )
+                    background = luminance(blended)
+                if component in ("row-selected", "card-selected"):
+                    keys = ("selection_text",)
+                elif component == "tab-selected":
+                    keys = ("tab_text",)
+                elif component in ("header", "footer") and config.has_option(
+                    "colors", component + "_text"
+                ):
+                    keys = (component + "_text",)
+                else:
+                    keys = ("text", "muted", "accent")
                 for key in keys:
                     ink = luminance(ImageColor.getrgb(config["colors"][key]))
                     ratio = (max(ink, background) + 0.05) / (
                         min(ink, background) + 0.05
                     )
-                    self.assertGreaterEqual(ratio, 4.5, (component, key, ratio))
+                    self.assertGreaterEqual(ratio, 4.5, (theme, component, key, ratio))
+
+        # Aero's upper pane is translucent: also check the composed wallpaper,
+        # not just the isolated component centers, where actual labels appear.
+        folder = ROOT / "themes/aero-glass"
+        with Image.open(folder / "backgrounds/top.png") as background, Image.open(
+            folder / "backgrounds/material-top.png"
+        ) as surface:
+            composed = Image.alpha_composite(background.convert("RGBA"), surface)
+        config.read(folder / "theme.ini", encoding="utf-8")
+        for box in ((12, 28, 244, 44), (120, 51, 244, 138)):
+            for key in ("text", "muted", "accent"):
+                ink = luminance(ImageColor.getrgb(config["colors"][key]))
+                for rgb in composed.crop(box).getdata():
+                    paper = luminance(rgb[:3])
+                    ratio = (max(ink, paper) + 0.05) / (min(ink, paper) + 0.05)
+                    self.assertGreaterEqual(ratio, 4.5, ("aero-glass", box, key))
 
     def test_pokedex_uses_the_device_art_without_white_panel_fills(self):
         folder = ROOT / "themes/pokedex"

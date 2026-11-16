@@ -11,6 +11,7 @@ from luna_assets import skin as luna_skin
 from portal_assets import skin as portal_skin
 from synthwave_assets import skin as synthwave_skin
 from pokedex_assets import skin as pokedex_skin
+from aero_assets import skin as aero_skin
 
 ROOT = Path(__file__).resolve().parents[1]
 SPECS = json.loads((ROOT / "config/inspired-themes.json").read_text(encoding="utf-8"))[
@@ -71,6 +72,8 @@ def skin(theme, name):
         return synthwave_skin(name)
     if theme == "pokedex":
         return pokedex_skin(name)
+    if theme == "aero-glass":
+        return aero_skin(name)
     s = SPECS[theme]
     c = dict(zip(KEYS, s["colors"]))
     im = Image.new("RGBA", (32, 32))
@@ -117,11 +120,6 @@ def skin(theme, name):
                     fill=color(c["accent"]),
                     width=2,
                 )
-    elif theme == "aero-glass":
-        d.rounded_rectangle((1, 1, 30, 30), radius=6, outline=color("#ffffff", 220))
-        d.rounded_rectangle((2, 2, 29, 29), radius=5, outline=color("#e6f9ff", 85))
-        d.line((7, 3, 24, 3), fill=color("#ffffff", 230), width=2)
-        d.line((6, 28, 25, 28), fill=color("#5a9bbd", 170), width=2)
     if frame:
         d.rectangle((6, 6, 25, 25), fill=(0, 0, 0, 0))
     if name in ("header", "footer"):
@@ -138,7 +136,7 @@ def control(theme, name):
     d = ImageDraw.Draw(im)
     ink = (
         color("#ffffff")
-        if theme in ("luna", "pokedex")
+        if theme in ("luna", "pokedex", "aero-glass")
         and (
             name.startswith("battery-") or name in ("wireless-idle", "update-available")
         )
@@ -250,7 +248,7 @@ def ambient(theme, frame):
     c = dict(zip(KEYS, s["colors"]))
     im = Image.new("RGBA", (32, 32))
     d = ImageDraw.Draw(im)
-    a = color("#ffffff" if theme == "luna" else c["accent"], 170)
+    a = color("#ffffff" if theme in ("luna", "aero-glass") else c["accent"], 170)
     if theme == "portal-terminal":
         d.ellipse((3, 3, 29, 29), outline=a, width=2)
         r = 4 + frame % 4 * 2

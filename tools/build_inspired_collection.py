@@ -16,6 +16,7 @@ from build_collection import load_tool
 from theme_icons import CELLS, native_icon
 from theme_typography import prepare_fonts
 from luna_assets import reading_surface as luna_reading_surface
+from aero_assets import reading_surface as aero_reading_surface
 from build_theme_splashes import build_theme
 from inspired_assets import (
     ROOT,
@@ -123,6 +124,8 @@ def build(theme, gloam, font_dir, download):
         )
         if theme == "luna":
             surface = luna_reading_surface(screen)
+        elif theme == "aero-glass":
+            surface = aero_reading_surface(screen)
         surface.save(
             folder / "backgrounds" / ("material-" + screen + ".png"), optimize=True
         )
