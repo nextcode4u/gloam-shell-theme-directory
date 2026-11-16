@@ -291,6 +291,13 @@ def check(root, config, metadata=None):
     if not config.get("theme", {}).get("name", "Theme"):
         error("Theme name cannot be empty.")
     minimum = config.get("theme", {}).get("min_frontend")
+    prepared = config.get("assets", {}).get("prepared", "assets.gfx")
+    if not prepared.lower().endswith(".gfx") or re.search(
+        "license|copying|notice|credits|ofl", Path(prepared).name, re.I
+    ):
+        error(
+            "Export requires a separate .gfx prepared-asset destination, not source artwork or a notice."
+        )
     if minimum is not None and not VERSION.fullmatch(minimum):
         error("Minimum frontend must be vX.Y.Z or a numeric preview/rc tag.")
     layout = config.get("layout", {})

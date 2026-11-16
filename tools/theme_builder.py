@@ -25,7 +25,7 @@ from urllib.parse import parse_qs, unquote, urlsplit
 
 from PIL import Image
 from splash_project import atomic_write
-from theme_project import ThemeProject, MAX_FILE
+from theme_project import ThemeProject, MAX_FILE, recover_project
 from theme_schema import SCHEMA, PALETTES, ICONS, COMPONENTS
 from theme_validate import inside
 import theme_media
@@ -42,6 +42,15 @@ def choose(kind="directory", title="Choose a folder"):
     splash_builder.tk = tk
     root = splash_builder.create_root()
     try:
+        if kind == "recover":
+            from tkinter import messagebox
+
+            return messagebox.askyesno(
+                "Recover Theme Studio project?",
+                title
+                + "\n\nRestore saved project metadata? Current metadata is backed up under imports/recovery-*. Artwork files are kept.",
+                parent=root,
+            )
         if kind == "file":
             return filedialog.askopenfilename(title=title, parent=root)
         return filedialog.askdirectory(title=title, parent=root)
@@ -144,17 +153,27 @@ class Studio:
         elif action == "import":
             p.import_theme(request["path"])
         elif action == "upload":
-            p.write_asset(request["path"], decode(request["data"]), request.get("name"))
+            data = decode(request["data"])
+            if request.get("format") == "font":
+                from theme_validate import font_info
+
+                font_info(data, request.get("heading", False))
+            p.write_asset(
+                request["path"], data, request.get("name"), request.get("binding")
+            )
         elif action == "image":
             p.image_asset(
-                request["path"], decode(request["data"]), request.get("options", {})
+                request["path"],
+                decode(request["data"]),
+                request.get("options", {}),
+                request.get("binding"),
             )
         elif action == "artboard-load":
             inside(p.theme, request["path"])
             name = hashlib.sha256(request["path"].encode()).hexdigest() + ".json"
             file = inside(p.root, "artboards/" + name)
             result = (
-                json.loads(file.read_text())
+                json.loads(file.read_text("utf-8"))
                 if file.is_file() and file.stat().st_size <= MAX_FILE
                 else None
             )
@@ -192,7 +211,7 @@ class Studio:
             if len(encoded) > MAX_FILE:
                 raise ValueError("Artboard project is oversized.")
             name = hashlib.sha256(request["path"].encode()).hexdigest() + ".json"
-            p.write_asset(request["path"], data)
+            p.write_asset(request["path"], data, binding=request.get("binding"))
             atomic_write(inside(p.root, "artboards/" + name), encoded)
         elif action == "remove":
             p.remove_asset(request["path"])
@@ -212,6 +231,7 @@ class Studio:
             p.write_asset(
                 request["path"],
                 theme_media.png(theme_media.material(request["options"])),
+                binding=request.get("binding"),
             )
         elif action == "generate":
             result = theme_media.generate_set(
@@ -246,9 +266,7 @@ class Studio:
                 weight=float(options["weight"]) if options.get("weight") else None,
             )
             relative = "fonts/" + role + ".dsfont"
-            p.write_asset(relative, converted)
-            p.data["config"].setdefault("fonts", {})[role] = relative
-            p.save()
+            p.write_asset(relative, converted, binding=dict(section="fonts", key=role))
         elif action == "audio":
             role = request.get("role", "music")
             if role not in ("music", "cursor", "confirm", "back"):
@@ -260,16 +278,16 @@ class Studio:
                 source, music=role == "music", **request.get("options", {})
             )
             relative = "sounds/" + ("loop" if role == "music" else role) + ".wav"
-            p.write_asset(relative, data)
-            p.data["config"].setdefault("audio", {})[role] = relative
-            p.save()
+            p.write_asset(relative, data, binding=dict(section="audio", key=role))
         elif action == "ambient":
             data = decode(request["data"])
             converted = theme_media.ambient(data, int(request.get("count", 8)))
             p.record_source(request.get("name", "accent.gif"), data)
-            p.write_asset("motion/ambient.gtm", converted)
-            p.data["config"].setdefault("motion", {})["ambient"] = "motion/ambient.gtm"
-            p.save()
+            p.write_asset(
+                "motion/ambient.gtm",
+                converted,
+                binding=dict(section="motion", key="ambient"),
+            )
         elif action == "splash-open":
             if self.splash_process is None or self.splash_process.poll() is not None:
                 folder = inside(p.root, "splash")
@@ -337,12 +355,19 @@ class Studio:
         return dict(state=self.state(), result=result)
 
 
+class ProjectOpenError(ValueError):
+    pass
+
+
 class Server(ThreadingHTTPServer):
     daemon_threads = True
     allow_reuse_address = False
 
     def __init__(self, workspace, port=0):
-        self.studio = Studio(workspace)
+        try:
+            self.studio = Studio(workspace)
+        except Exception as error:
+            raise ProjectOpenError(str(error)) from error
         self.token = secrets.token_urlsafe(32)
         super().__init__(("127.0.0.1", port), Handler)
 
@@ -364,8 +389,12 @@ class Handler(BaseHTTPRequestHandler):
             "Content-Security-Policy",
             "default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; media-src 'self' blob:; object-src 'none'; frame-ancestors 'none'",
         )
-        self.end_headers()
-        self.wfile.write(data)
+        try:
+            self.end_headers()
+            self.wfile.write(data)
+        except ConnectionError:
+            # Navigation cancels obsolete preview requests; this is not a save failure.
+            pass
 
     def allowed(self, api=False):
         origin = f"http://127.0.0.1:{self.server.server_port}"
@@ -391,7 +420,7 @@ class Handler(BaseHTTPRequestHandler):
             if name == "/":
                 html = (
                     (ROOT / "theme_studio/index.html")
-                    .read_text()
+                    .read_text("utf-8")
                     .replace("__TOKEN__", self.server.token)
                 )
                 self.send(html.encode(), "text/html; charset=utf-8")
@@ -479,11 +508,19 @@ class Handler(BaseHTTPRequestHandler):
 
 
 def main(argv=None):
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(errors="backslashreplace")
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--workspace", type=Path)
     parser.add_argument("--no-browser", action="store_true")
+    parser.add_argument(
+        "--recover",
+        action="store_true",
+        help="Restore saved project metadata, retaining the damaged originals",
+    )
     parser.add_argument("--port", type=int, default=0)
-    parser.add_argument("--dialog", choices=("file", "directory"))
+    parser.add_argument("--dialog", choices=("file", "directory", "recover"))
     parser.add_argument("--title", default="Choose a folder")
     args = parser.parse_args(argv)
     if args.dialog:
@@ -495,7 +532,28 @@ def main(argv=None):
     if not folder:
         return
     Path(folder).mkdir(parents=True, exist_ok=True)
-    with Server(folder, args.port) as server:
+    try:
+        if args.recover:
+            recover_project(folder)
+        server = Server(folder, args.port)
+    except (ProjectOpenError, ValueError) as error:
+        if args.no_browser or args.recover:
+            parser.exit(
+                1,
+                "Project not opened: "
+                + str(error)
+                + "\nUse --recover with this working folder if saved metadata is available.\n",
+            )
+        if not dialog("recover", "The project could not open: " + str(error)):
+            return
+        try:
+            recover_project(folder)
+            server = Server(folder, args.port)
+        except Exception as retry_error:
+            parser.exit(1, "Recovery could not complete: " + str(retry_error) + "\n")
+    except (OSError, OverflowError) as error:
+        parser.exit(1, "Could not start the local editor: " + str(error) + "\n")
+    with server:
         url = f"http://127.0.0.1:{server.server_port}/"
         print("Gloam Theme Studio: " + url, flush=True)
         print("Working folder: " + str(server.studio.project.root), flush=True)
