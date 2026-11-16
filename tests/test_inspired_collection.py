@@ -77,7 +77,7 @@ class InspiredCollectionTests(unittest.TestCase):
             ]
             return sum(a * b for a, b in zip(linear, (0.2126, 0.7152, 0.0722)))
 
-        for theme in ("portal-terminal", "synthwave", "aero-glass"):
+        for theme in ("portal-terminal", "synthwave", "aero-glass", "desktop-98"):
             folder = ROOT / "themes" / theme
             config = configparser.ConfigParser()
             config.read(folder / "theme.ini", encoding="utf-8")
@@ -132,6 +132,19 @@ class InspiredCollectionTests(unittest.TestCase):
                     paper = luminance(rgb[:3])
                     ratio = (max(ink, paper) + 0.05) / (min(ink, paper) + 0.05)
                     self.assertGreaterEqual(ratio, 4.5, ("aero-glass", box, key))
+
+    def test_desktop98_has_pixel_icons_and_no_hidden_wallpaper(self):
+        folder = ROOT / "themes/desktop-98"
+        config = configparser.ConfigParser()
+        config.read(folder / "theme.ini", encoding="utf-8")
+        for screen in ("top", "bottom"):
+            self.assertFalse(config.has_option("backgrounds", screen))
+            self.assertFalse(config.has_option("backgrounds", screen + "_surface"))
+        self.assertFalse(list((folder / "backgrounds").glob("*.png")))
+        for path in (folder / "icons").glob("*.png"):
+            with Image.open(path) as icon:
+                self.assertTrue(set(icon.getchannel("A").getdata()) <= {0, 255})
+                self.assertLessEqual(len(icon.getcolors()), 32, path.name)
 
     def test_pokedex_uses_the_device_art_without_white_panel_fills(self):
         folder = ROOT / "themes/pokedex"

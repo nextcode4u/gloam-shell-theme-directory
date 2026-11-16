@@ -159,16 +159,16 @@
       "id": "desktop-98",
       "name": "Desktop 98",
       "author": "nextcode4u / Gloam project (agent-assisted)",
-      "description": "Teal desktop, raised gray windows, navy selections and individually illustrated pixel icons.",
+      "description": "A solid gray workspace, navy title bars, raised controls and native pixel-grid shell icons.",
       "path": "themes/desktop-98",
       "theme_format": 2,
       "origin": "Original Gloam interpretation of Windows 98",
       "configuration_license": "GPL-3.0-or-later",
       "asset_license": "CC0-1.0 project-held artwork/UI cues; SIL OFL 1.1 fonts; CC-BY-4.0 recorded music; third-party marks excluded",
       "credits": "themes/desktop-98/CREDITS.md",
-      "requires_gloam": "Gloam 1.1.0 or later with theme format 2 and prepared full-image materials",
-      "minimum_gloam_version": "1.1.0",
-      "preview": "themes/desktop-98/preview.png"
+      "requires_gloam": "Gloam source build with theme format 2 and header/footer theme colors (99a5fab or later)",
+      "preview": "themes/desktop-98/preview.png",
+      "minimum_gloam_commit": "99a5fab1dd929822ca06c828ff95431a55518019"
     },
     {
       "id": "classic-ds",

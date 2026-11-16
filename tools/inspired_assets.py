@@ -95,6 +95,8 @@ def skin(theme, name):
     bounds = (0, 0, 31, 31)
     d.rounded_rectangle(bounds, radius=radius, fill=fill, outline=edge, width=1)
     if theme == "desktop-98":
+        if name == "header":
+            d.rectangle((0, 0, 31, 31), fill="#000080")
         light = color("#ffffff")
         dark = color("#404040")
         d.line([(0, 31), (0, 0), (31, 0)], fill=light, width=2)
@@ -136,7 +138,7 @@ def control(theme, name):
     d = ImageDraw.Draw(im)
     ink = (
         color("#ffffff")
-        if theme in ("luna", "pokedex", "aero-glass")
+        if theme in ("luna", "pokedex", "aero-glass", "desktop-98")
         and (
             name.startswith("battery-") or name in ("wireless-idle", "update-available")
         )
@@ -248,7 +250,9 @@ def ambient(theme, frame):
     c = dict(zip(KEYS, s["colors"]))
     im = Image.new("RGBA", (32, 32))
     d = ImageDraw.Draw(im)
-    a = color("#ffffff" if theme in ("luna", "aero-glass") else c["accent"], 170)
+    a = color(
+        "#ffffff" if theme in ("luna", "aero-glass", "desktop-98") else c["accent"], 170
+    )
     if theme == "portal-terminal":
         d.ellipse((3, 3, 29, 29), outline=a, width=2)
         r = 4 + frame % 4 * 2
@@ -277,7 +281,7 @@ def ambient(theme, frame):
                 fill=color(("#f92aad", "#36f9f6", "#72f1b8", "#fede5d")[i]),
             )
     elif theme == "desktop-98":
-        d.rectangle((7, 8, 24, 24), outline=color(c["text"], 170), width=2)
+        d.rectangle((7, 8, 24, 24), outline=color("#ffffff", 170), width=2)
         d.rectangle((10, 11, 21, 20), fill=a if frame < 4 else color(c["line"], 170))
     else:
         r = 2 + round(2 * math.sin(frame * math.pi / 4) ** 2)

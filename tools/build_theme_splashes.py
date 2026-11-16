@@ -124,17 +124,21 @@ def build_theme(repo: Path, folder: Path, *, download=False, font_dir: Path):
         temporary = Path(temporary)
         # Whole artwork, without browser panels. The lower wash protects the title.
         for screen in ("top", "bottom"):
-            with Image.open(folder / config["backgrounds"][screen]) as original:
-                image = original.convert("RGB")
-                if image.size != (256, 192):
-                    raise ValueError(f"{folder.name}: {screen} artwork must be 256x192")
-                if screen == "bottom":
-                    image = Image.blend(
-                        image.filter(ImageFilter.GaussianBlur(1.2)),
-                        Image.new("RGB", image.size, ImageColor.getrgb(paper)),
-                        0.76,
-                    )
-                image.save(temporary / f"{screen}.png")
+            wallpaper = config["backgrounds"].get(screen)
+            if wallpaper:
+                with Image.open(folder / wallpaper) as original:
+                    image = original.convert("RGB")
+            else:
+                image = Image.new("RGB", (256, 192), config["colors"]["background"])
+            if image.size != (256, 192):
+                raise ValueError(f"{folder.name}: {screen} artwork must be 256x192")
+            if screen == "bottom":
+                image = Image.blend(
+                    image.filter(ImageFilter.GaussianBlur(1.2)),
+                    Image.new("RGB", image.size, ImageColor.getrgb(paper)),
+                    0.76,
+                )
+            image.save(temporary / f"{screen}.png")
         title_layer(
             config["theme"]["name"], source, weight, body_source, body_weight, ink
         ).save(temporary / "title.png")

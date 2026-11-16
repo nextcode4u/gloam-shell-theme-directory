@@ -44,7 +44,7 @@ Reduced motion holds the ambient accent still.
 | Theme | Personality |
 | --- | --- |
 | [Luna XP](themes/luna) | Cobalt title bars, cream Explorer windows, pale-blue navigation and compact shell icons |
-| [Desktop 98](themes/desktop-98) | Teal desktop, raised gray controls, navy selections and pixel icons |
+| [Desktop 98](themes/desktop-98) | Solid gray workspace, navy title bars, raised controls and native pixel-grid icons |
 | [Classic DS](themes/classic-ds) | Gray grid, silver panels, flat monochrome icons and blue-gray selection corners |
 | [Portal Terminal](themes/portal-terminal) | Flat cartoon alien landscape, lavender skies, peach panels and lime portal highlights |
 | [Aero Glass](themes/aero-glass) | Green Aurora desktop, smoky glass trim, neutral Explorer windows and angular shell icons |
@@ -53,13 +53,13 @@ Reduced motion holds the ambient accent still.
 
 These are original, unofficial interpretations with separate icon sets, controls,
 font pairs, recorded music, UI cues and short startup splashes. No extracted
-operating-system/franchise artwork or audio is included. Luna, Aero Glass and Pokédex require a source build with the new header/footer theme colors
-(commit `99a5fab` or later); the other four support **Gloam 1.1.0 or later**.
+operating-system/franchise artwork or audio is included. Luna, Desktop 98, Aero Glass and Pokédex require a source build with the new header/footer theme colors
+(commit `99a5fab` or later); the other three support **Gloam 1.1.0 or later**.
 Names and marks remain with their respective owners.
 Previews use the current source build, which also fixes selection-text contrast
 in settings and other menus; that fix is not present in the original 1.1.0 binary.
 
-Each theme page includes wallpaper previews, installation instructions and credits.
+Each theme page includes renderer previews, installation instructions and credits.
 Slate, Folio and Phosphor extend their original Gloam designs with the same new
 capabilities. These revisions are optional packs, separate from Gloam’s bundled themes.
 

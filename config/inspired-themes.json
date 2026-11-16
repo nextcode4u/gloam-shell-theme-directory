@@ -40,7 +40,7 @@
     "desktop-98": {
       "name": "Desktop 98",
       "inspiration": "Windows 98",
-      "description": "Teal desktop, raised gray windows, navy selections and individually illustrated pixel icons.",
+      "description": "A solid gray workspace, navy title bars, raised controls and native pixel-grid shell icons.",
       "colors": [
         "#c0c0c0",
         "#c0c0c0",
@@ -62,7 +62,10 @@
       "body": "ibmplexsanscondensed",
       "heading": "barlowsemicondensed",
       "pitch": 620,
-      "chrome": "full"
+      "chrome": "full",
+      "solid_background": true,
+      "header_text": "#ffffff",
+      "header_link_text": "#ffffff"
     },
     "classic-ds": {
       "name": "Classic DS",

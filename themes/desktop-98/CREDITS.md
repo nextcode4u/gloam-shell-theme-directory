@@ -1,12 +1,11 @@
 # Desktop 98 — credits
 
 Original Gloam interpretation of Windows 98, by nextcode4u / Gloam project
-(agent-assisted). Teal desktop, raised gray windows, navy selections and individually illustrated pixel icons.
+(agent-assisted). A solid gray workspace, navy title bars, raised controls and native pixel-grid shell icons.
 
 ## Artwork and controls
 
-Wallpaper and icon masters in `source/art/desktop-98.png` and
-`source/art/desktop-98-icons.png` are original agent-assisted illustrations.
+Icons are original code-authored pixel artwork from `tools/desktop98_assets.py`; the atlas is `source/art/desktop-98-icons.png`. The background is a solid palette color, with no wallpaper bitmap installed.
 Frames, material maps, status/control assets, ambient animation, UI cues and the
 startup splash are prepared by `tools/build_inspired_collection.py` and the
 shared splash converter. Project-held rights in this original artwork and

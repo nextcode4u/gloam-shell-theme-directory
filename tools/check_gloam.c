@@ -75,9 +75,15 @@ int main(int argc, char **argv)
     for (unsigned screen = 0; screen < 2; screen++) {
         uint16_t *scene = NULL;
         bool wallpaper;
+        bool expected_background = *app.themes.active.backgrounds[screen] != 0;
         assert(theme_assets_background(&app.themes.active, screen, prepared_screen, &scene,
-                                        &wallpaper));
+                                        &wallpaper) == expected_background);
         free(scene);
+        if (!expected_background) {
+            themes_background_draw(&app.themes.active, screen, prepared_screen);
+            for (int pixel = 0; pixel < 256 * 192; pixel++)
+                assert(prepared_screen[pixel] == app.themes.active.palette.bg);
+        }
         if (*app.themes.active.component_material[screen])
             assert(theme_assets_material(&app.themes.active, screen, prepared_field));
     }

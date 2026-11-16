@@ -47,7 +47,8 @@ the prepared WAVs. No theme build regenerates placeholder music over these track
 
 Luna XP, Desktop 98, Classic DS, Portal Terminal, Aero Glass, Pokédex and
 Synthwave use original illustrations and code-authored UI assets. Classic DS
-uses a code-authored gray grid and monochrome glyphs; the other six use
+uses a code-authored gray grid and monochrome glyphs; Desktop 98 uses a solid
+palette background and original code-authored pixel icons. The other five use
 agent-assisted wallpaper/icon illustrations. Project-held rights in these artworks, original UI cues
 and splash compositions are dedicated under CC0-1.0. Fonts retain SIL OFL 1.1;
 recorded music by Kevin MacLeod retains CC-BY-4.0 and per-pack attribution.

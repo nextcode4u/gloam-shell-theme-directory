@@ -75,7 +75,12 @@ def build(theme, gloam, font_dir, download):
     sources = json.loads(
         (ROOT / "config/inspired-art.json").read_text(encoding="utf-8")
     )["sources"]
-    for name in (theme + ".png", theme + "-icons.png"):
+    artwork_names = (
+        (theme + "-icons.png",)
+        if s.get("solid_background")
+        else (theme + ".png", theme + "-icons.png")
+    )
+    for name in artwork_names:
         relative = "source/art/" + name
         if (
             hashlib.sha256((ROOT / relative).read_bytes()).hexdigest()
@@ -88,15 +93,16 @@ def build(theme, gloam, font_dir, download):
     folder = ROOT / "themes" / theme
     for part in ("backgrounds", "components", "icons", "fonts", "sounds", "motion"):
         (folder / part).mkdir(parents=True, exist_ok=True)
-    with Image.open(ROOT / "source/art" / (theme + ".png")) as source:
-        art = ImageOps.fit(
-            source.convert("RGB"), (256, 192), method=Image.Resampling.LANCZOS
+    if not s.get("solid_background"):
+        with Image.open(ROOT / "source/art" / (theme + ".png")) as source:
+            art = ImageOps.fit(
+                source.convert("RGB"), (256, 192), method=Image.Resampling.LANCZOS
+            )
+        art.save(folder / "backgrounds/top.png", optimize=True)
+        bottom = Image.blend(
+            art, Image.new("RGB", art.size, s["colors"][0]), s.get("bottom_tint", 0.14)
         )
-    art.save(folder / "backgrounds/top.png", optimize=True)
-    bottom = Image.blend(
-        art, Image.new("RGB", art.size, s["colors"][0]), s.get("bottom_tint", 0.14)
-    )
-    bottom.save(folder / "backgrounds/bottom.png", optimize=True)
+        bottom.save(folder / "backgrounds/bottom.png", optimize=True)
     with Image.open(ROOT / "source/art" / (theme + "-icons.png")) as source:
         if source.width < 256 or source.height < 256:
             raise ValueError("The 4x4 source atlas needs at least 64px per cell")
@@ -110,7 +116,11 @@ def build(theme, gloam, font_dir, download):
                 round((column + 1) * source.width / 4),
                 round((row + 1) * source.height / 4),
             )
-            icon = native_icon(source.crop(bounds))
+            icon = (
+                source.crop(bounds).resize((32, 32), Image.Resampling.NEAREST)
+                if theme == "desktop-98"
+                else native_icon(source.crop(bounds))
+            )
             if name == "missing":
                 ImageDraw.Draw(icon).line((21, 21, 29, 29), fill="#bd3b40", width=3)
             icon.save(folder / "icons" / (name + ".png"), optimize=True)
@@ -183,6 +193,15 @@ def build(theme, gloam, font_dir, download):
         "top_surface": "backgrounds/material-top.png",
         "bottom_surface": "backgrounds/material-bottom.png",
     }
+    if s.get("solid_background"):
+        config["backgrounds"] = {"strength": "100"}
+        for filename in (
+            "top.png",
+            "bottom.png",
+            "material-top.png",
+            "material-bottom.png",
+        ):
+            (folder / "backgrounds" / filename).unlink(missing_ok=True)
     config["icons"] = {"directory": "icons"}
     config["components"] = {
         "directory": "components",
@@ -269,6 +288,14 @@ Reduced motion uses a still frame. The pack adds no splash audio.
             "are original agent-assisted illustrations.",
             "are original code-authored assets from `tools/classic_ds_assets.py`.",
         )
+    if theme == "desktop-98":
+        credit = credit.replace(
+            "Wallpaper and icon masters in `source/art/desktop-98.png` and\n"
+            "`source/art/desktop-98-icons.png` are original agent-assisted illustrations.",
+            "Icons are original code-authored pixel artwork from `tools/desktop98_assets.py`; "
+            "the atlas is `source/art/desktop-98-icons.png`. The background is a solid "
+            "palette color, with no wallpaper bitmap installed.",
+        )
     if theme == "synthwave":
         credit += """
 ## Palette reference
@@ -312,8 +339,9 @@ wallpaper or accent overrides can alter the supplied defaults.
 
 Defaults: {s['layout'].title()} top composition, {s['view'].title()} browser,
 {s['size']} icons and {s['tabs']} tabs. Native DS/DSi banner icons keep priority;
-theme file/system/category icons cover other entries. Both reading surfaces,
-all control skins, eight ambient frames, body/heading fonts, three UI cues,
+theme file/system/category icons cover other entries.
+{"The workspace uses a solid palette color without wallpaper bitmaps." if s.get("solid_background") else "Both reading surfaces are included."}
+All control skins, eight ambient frames, body/heading fonts, three UI cues,
 recorded music and a startup splash are included. Reduced motion is respected.
 
 See [credits](CREDITS.md), [music attribution](MUSIC.md) and original notices.

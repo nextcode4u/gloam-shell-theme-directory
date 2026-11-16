@@ -9,11 +9,8 @@
     "source/art/luna-icons.png": {
       "sha256": "e39b48d7676696c7360731a25e2dbc341d62f830a8955cb005fa2520d1f53857"
     },
-    "source/art/desktop-98.png": {
-      "sha256": "42aa7800cda9e79acafd4849f23c90b49ed2dace33d90dc0019922cdf825adec"
-    },
     "source/art/desktop-98-icons.png": {
-      "sha256": "f56609ce73b240b5310244456b26e8c9b285cf6aed60b4150c811fec6cc0b9f4"
+      "sha256": "d681492c95b7f7b23477715976f23ebd2bc683f986debc2c038018ab62b581ea"
     },
     "source/art/classic-ds.png": {
       "sha256": "770357b4ddc5f29d448252181db3ea85d08bc798f6857e6cc0d4907c5006b29d",
