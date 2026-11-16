@@ -1,7 +1,7 @@
 # Classic DS — credits
 
 Original Gloam interpretation of the original Nintendo DS, by nextcode4u / Gloam project
-(agent-assisted). Classic DS gray grid, silver square panels, flat monochrome icons and blue-gray selection corners.
+(agent-assisted). Original DS gray grid, a full-width blue-gray status strip, boxed battery/wireless glyphs and separate blue selection brackets.
 
 ## Artwork and controls
 

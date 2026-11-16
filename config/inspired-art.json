@@ -13,7 +13,7 @@
       "sha256": "d681492c95b7f7b23477715976f23ebd2bc683f986debc2c038018ab62b581ea"
     },
     "source/art/classic-ds.png": {
-      "sha256": "770357b4ddc5f29d448252181db3ea85d08bc798f6857e6cc0d4907c5006b29d",
+      "sha256": "84ebebef3f2d608ad898f85ac4669be98f1910c80a587e558da503972a277aaf",
       "authoring": "tools/classic_ds_assets.py"
     },
     "source/art/classic-ds-icons.png": {

@@ -45,7 +45,7 @@ Reduced motion holds the ambient accent still.
 | --- | --- |
 | [Luna XP](themes/luna) | Cobalt title bars, cream Explorer windows, pale-blue navigation and compact shell icons |
 | [Desktop 98](themes/desktop-98) | Solid gray workspace, navy title bars, raised controls and native pixel-grid icons |
-| [Classic DS](themes/classic-ds) | Gray grid, silver panels, flat monochrome icons and blue-gray selection corners |
+| [Classic DS](themes/classic-ds) | Gray grid, blue-gray status strip, boxed indicators and separate selection brackets |
 | [Portal Terminal](themes/portal-terminal) | Flat cartoon alien landscape, lavender skies, peach panels and lime portal highlights |
 | [Aero Glass](themes/aero-glass) | Green Aurora desktop, smoky glass trim, neutral Explorer windows and angular shell icons |
 | [Pokédex](themes/pokedex) | Red illustrated casing, an unobstructed celadon display and teal selection frames |
@@ -53,8 +53,8 @@ Reduced motion holds the ambient accent still.
 
 These are original, unofficial interpretations with separate icon sets, controls,
 font pairs, recorded music, UI cues and short startup splashes. No extracted
-operating-system/franchise artwork or audio is included. Luna, Desktop 98, Aero Glass and Pokédex require a source build with the new header/footer theme colors
-(commit `99a5fab` or later); the other three support **Gloam 1.1.0 or later**.
+operating-system/franchise artwork or audio is included. Luna, Desktop 98, Classic DS, Aero Glass and Pokédex require a source build with the new header/footer theme colors
+(commit `99a5fab` or later); the other two support **Gloam 1.1.0 or later**.
 Names and marks remain with their respective owners.
 Previews use the current source build, which also fixes selection-text contrast
 in settings and other menus; that fix is not present in the original 1.1.0 binary.

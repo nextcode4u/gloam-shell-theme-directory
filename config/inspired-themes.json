@@ -70,14 +70,14 @@
     "classic-ds": {
       "name": "Classic DS",
       "inspiration": "the original Nintendo DS",
-      "description": "Classic DS gray grid, silver square panels, flat monochrome icons and blue-gray selection corners.",
+      "description": "Original DS gray grid, a full-width blue-gray status strip, boxed battery/wireless glyphs and separate blue selection brackets.",
       "colors": [
         "#f0f1ee",
         "#eff1ee",
         "#636b6e",
         "#252b2d",
         "#61696d",
-        "#547e92",
+        "#3e6478",
         "#fbfcfa"
       ],
       "layout": "journal",
@@ -87,15 +87,19 @@
       "size": "large",
       "radius": 0,
       "opacity": [
-        35,
-        50
+        0,
+        0
       ],
       "body": "ibmplexsanscondensed",
       "heading": "ibmplexsanscondensed",
       "pitch": 920,
       "chrome": "full",
       "heading_size": 12,
-      "heading_baseline": 12
+      "heading_baseline": 12,
+      "bottom_tint": 0,
+      "header_text": "#ffffff",
+      "header_link_text": "#ffffff",
+      "footer_text": "#252b2d"
     },
     "portal-terminal": {
       "name": "Portal Terminal",

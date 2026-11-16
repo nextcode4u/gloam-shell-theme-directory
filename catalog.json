@@ -174,16 +174,16 @@
       "id": "classic-ds",
       "name": "Classic DS",
       "author": "nextcode4u / Gloam project (agent-assisted)",
-      "description": "Classic DS gray grid, silver square panels, flat monochrome icons and blue-gray selection corners.",
+      "description": "Original DS gray grid, a full-width blue-gray status strip, boxed battery/wireless glyphs and separate blue selection brackets.",
       "path": "themes/classic-ds",
       "theme_format": 2,
       "origin": "Original Gloam interpretation of the original Nintendo DS",
       "configuration_license": "GPL-3.0-or-later",
       "asset_license": "CC0-1.0 project-held artwork/UI cues; SIL OFL 1.1 fonts; CC-BY-4.0 recorded music; third-party marks excluded",
       "credits": "themes/classic-ds/CREDITS.md",
-      "requires_gloam": "Gloam 1.1.0 or later with theme format 2 and prepared full-image materials",
-      "minimum_gloam_version": "1.1.0",
-      "preview": "themes/classic-ds/preview.png"
+      "requires_gloam": "Gloam source build with theme format 2 and header/footer theme colors (99a5fab or later)",
+      "preview": "themes/classic-ds/preview.png",
+      "minimum_gloam_commit": "99a5fab1dd929822ca06c828ff95431a55518019"
     },
     {
       "id": "portal-terminal",

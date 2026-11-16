@@ -77,7 +77,13 @@ class InspiredCollectionTests(unittest.TestCase):
             ]
             return sum(a * b for a, b in zip(linear, (0.2126, 0.7152, 0.0722)))
 
-        for theme in ("portal-terminal", "synthwave", "aero-glass", "desktop-98"):
+        for theme in (
+            "portal-terminal",
+            "synthwave",
+            "aero-glass",
+            "desktop-98",
+            "classic-ds",
+        ):
             folder = ROOT / "themes" / theme
             config = configparser.ConfigParser()
             config.read(folder / "theme.ini", encoding="utf-8")
@@ -132,6 +138,31 @@ class InspiredCollectionTests(unittest.TestCase):
                     paper = luminance(rgb[:3])
                     ratio = (max(ink, paper) + 0.05) / (min(ink, paper) + 0.05)
                     self.assertGreaterEqual(ratio, 4.5, ("aero-glass", box, key))
+
+    def test_classic_ds_full_width_status_and_separate_cursor_corners(self):
+        folder = ROOT / "themes/classic-ds"
+        with Image.open(folder / "backgrounds/top.png") as wallpaper:
+            left, right = wallpaper.getpixel((0, 12)), wallpaper.getpixel((255, 12))
+            self.assertEqual(left, right)
+            self.assertGreater(left[2], left[0])
+        for name in ("row-selected", "card-selected", "tab-selected"):
+            with Image.open(folder / "components" / (name + ".png")) as cursor:
+                # The cursor is four brackets, with open space between them.
+                self.assertEqual(cursor.getpixel((16, 0))[3], 0)
+                self.assertEqual(cursor.getpixel((0, 16))[3], 0)
+                corner = cursor.getpixel((1, 1))
+                self.assertGreater(corner[2], corner[0])
+                self.assertEqual(corner[3], 255)
+        for name, dominant in (("battery-low", 0), ("battery-full", 1)):
+            with Image.open(folder / "components" / (name + ".png")) as status:
+                pixels = [p for p in status.getdata() if p[3] == 255]
+                self.assertTrue(
+                    any(
+                        p[dominant]
+                        > max(p[(dominant + 1) % 3], p[(dominant + 2) % 3]) + 40
+                        for p in pixels
+                    )
+                )
 
     def test_desktop98_has_pixel_icons_and_no_hidden_wallpaper(self):
         folder = ROOT / "themes/desktop-98"

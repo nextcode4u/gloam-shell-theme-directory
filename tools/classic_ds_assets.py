@@ -13,6 +13,107 @@ PAPER = "#f3f4f1"
 MID = "#9da5a8"
 
 
+def status_color(y, height):
+    t = y / max(1, height - 1)
+    return tuple(
+        round(a * (1 - t) + b * t) for a, b in zip((90, 121, 138), (48, 79, 99))
+    )
+
+
+def skin(name):
+    image = Image.new("RGBA", (32, 32))
+    draw = ImageDraw.Draw(image)
+    if name == "icon-frame":
+        return image
+    if name == "header":
+        for y in range(32):
+            draw.line((0, y, 31, y), fill=status_color(y, 32) + (255,))
+        draw.line((0, 0, 31, 0), fill="#a6bdc5")
+        draw.line((0, 31, 31, 31), fill="#263d4a")
+        return image
+    if name == "footer":
+        draw.rectangle((0, 0, 31, 31), fill="#d8dddc")
+        draw.line((0, 0, 31, 0), fill="#ffffff")
+        draw.line((0, 31, 31, 31), fill="#717b7d")
+        return image
+    selected = name in ("row-selected", "card-selected", "tab-selected")
+    draw.rectangle(
+        (2, 2, 29, 29),
+        fill=(247, 248, 245, 170) if name == "card" else PAPER,
+        outline="#777e80",
+    )
+    draw.line((3, 28, 3, 3, 28, 3), fill="#ffffff")
+    draw.line((4, 28, 28, 28, 28, 4), fill="#c3c9c9")
+    if selected:
+        # Arms remain inside the fixed six-pixel nine-slice corners, so they
+        # stay compact instead of stretching across the entire selection edge.
+        for x, y, dx, dy in (
+            (1, 1, 1, 1),
+            (30, 1, -1, 1),
+            (1, 30, 1, -1),
+            (30, 30, -1, -1),
+        ):
+            points = [(x, y + dy * 4), (x, y), (x + dx * 4, y)]
+            draw.line(points, fill="#ffffff", width=3)
+            draw.line(points, fill="#466778", width=2)
+    if name == "artwork-frame":
+        draw.rectangle((6, 6, 25, 25), fill=(0, 0, 0, 0))
+    return image
+
+
+def status_icon(name):
+    image = Image.new("RGBA", (32, 32))
+    draw = ImageDraw.Draw(image)
+    if name.startswith("battery-"):
+        draw.rectangle((2, 10, 27, 23), fill="#20292a", outline="#ffffff")
+        draw.rectangle((28, 14, 30, 19), fill="#20292a")
+        draw.rectangle((4, 12, 25, 21), fill="#c6cfca")
+        level = {
+            "empty": 0,
+            "low": 1,
+            "half": 2,
+            "high": 3,
+            "full": 4,
+            "charging": 4,
+            "unknown": 0,
+        }[name[8:]]
+        for index in range(level):
+            draw.rectangle(
+                (5 + index * 5, 13, 8 + index * 5, 20),
+                fill="#cf5147" if level == 1 else "#60d448",
+            )
+        if name.endswith("charging"):
+            draw.polygon(
+                [(18, 8), (11, 17), (16, 17), (13, 25), (23, 14), (17, 14)],
+                fill="#f7dc70",
+                outline="#243a2e",
+            )
+        if name.endswith("unknown"):
+            draw.line((12, 14, 18, 14, 18, 16, 15, 18), fill=INK, width=2)
+            draw.rectangle((15, 20, 16, 21), fill=INK)
+    else:
+        draw.rectangle((6, 3, 25, 28), fill="#edf0ec", outline=INK, width=2)
+        if name == "wireless-idle":
+            # Inactive wireless glyph, rather than invented signal strength.
+            for radius in (5, 9):
+                draw.arc(
+                    (16 - radius, 18 - radius, 16 + radius, 18 + radius),
+                    210,
+                    330,
+                    fill="#818d90",
+                    width=2,
+                )
+            draw.rectangle((15, 21, 17, 23), fill="#818d90")
+            draw.line((10, 23, 22, 8), fill="#a0abad", width=2)
+        else:
+            draw.polygon(
+                [(11, 13), (16, 7), (22, 13), (19, 13), (19, 23), (13, 23), (13, 13)],
+                fill="#e7c84e",
+                outline=INK,
+            )
+    return image
+
+
 def wallpaper():
     image = Image.new("RGB", (256, 192), "#f6f6f3")
     draw = ImageDraw.Draw(image)
@@ -21,6 +122,12 @@ def wallpaper():
     for x in range(0, 256, 16):
         draw.line((x, 0, x, 191), fill="#d4d6d5")
         draw.line((x + 2, 0, x + 2, 191), fill="#e5e6e3")
+    # The strip extends to the LCD edges behind Gloam's bounded header skin.
+    for y in range(24):
+        draw.line((0, y, 255, y), fill=status_color(y, 24))
+    draw.line((0, 24, 255, 24), fill="#344955")
+    draw.rectangle((0, 176, 255, 191), fill="#d8dddc")
+    draw.line((0, 176, 255, 176), fill="#ffffff")
     return image
 
 

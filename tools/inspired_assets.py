@@ -12,6 +12,7 @@ from portal_assets import skin as portal_skin
 from synthwave_assets import skin as synthwave_skin
 from pokedex_assets import skin as pokedex_skin
 from aero_assets import skin as aero_skin
+from classic_ds_assets import skin as classic_skin, status_icon as classic_status_icon
 
 ROOT = Path(__file__).resolve().parents[1]
 SPECS = json.loads((ROOT / "config/inspired-themes.json").read_text(encoding="utf-8"))[
@@ -74,6 +75,8 @@ def skin(theme, name):
         return pokedex_skin(name)
     if theme == "aero-glass":
         return aero_skin(name)
+    if theme == "classic-ds":
+        return classic_skin(name)
     s = SPECS[theme]
     c = dict(zip(KEYS, s["colors"]))
     im = Image.new("RGBA", (32, 32))
@@ -104,24 +107,6 @@ def skin(theme, name):
         d.line([(2, 29), (29, 29), (29, 2)], fill=color("#808080"), width=1)
         if selected:
             d.rectangle((3, 3, 28, 28), outline=color("#d3d3ff"), width=1)
-    elif theme == "classic-ds":
-        if name == "header":
-            d.rectangle((0, 0, 31, 31), fill=color("#c9d8df"))
-        d.rectangle((0, 0, 31, 31), outline=color("#343a3c"))
-        d.line([(1, 29), (1, 1), (29, 1)], fill=color("#ffffff"))
-        d.line([(2, 30), (30, 30), (30, 2)], fill=color("#929b9e"))
-        if selected:
-            for x, y, dx, dy in (
-                (0, 0, 1, 1),
-                (31, 0, -1, 1),
-                (0, 31, 1, -1),
-                (31, 31, -1, -1),
-            ):
-                d.line(
-                    [(x, y + dy * 5), (x, y), (x + dx * 5, y)],
-                    fill=color(c["accent"]),
-                    width=2,
-                )
     if frame:
         d.rectangle((6, 6, 25, 25), fill=(0, 0, 0, 0))
     if name in ("header", "footer"):
@@ -132,6 +117,10 @@ def skin(theme, name):
 
 
 def control(theme, name):
+    if theme == "classic-ds" and (
+        name.startswith("battery-") or name in ("wireless-idle", "update-available")
+    ):
+        return classic_status_icon(name)
     s = SPECS[theme]
     c = dict(zip(KEYS, s["colors"]))
     im = Image.new("RGBA", (32, 32))
@@ -251,7 +240,12 @@ def ambient(theme, frame):
     im = Image.new("RGBA", (32, 32))
     d = ImageDraw.Draw(im)
     a = color(
-        "#ffffff" if theme in ("luna", "aero-glass", "desktop-98") else c["accent"], 170
+        (
+            "#ffffff"
+            if theme in ("luna", "aero-glass", "desktop-98", "classic-ds")
+            else c["accent"]
+        ),
+        170,
     )
     if theme == "portal-terminal":
         d.ellipse((3, 3, 29, 29), outline=a, width=2)
