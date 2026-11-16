@@ -29,6 +29,7 @@
         <nav id="navigation"></nav>
         <div class="nav-bottom">
           <button id="open-project">Open / new project…</button
+          ><button id="reload-project">Reload project</button
           ><span id="workspace-path"></span
           ><button id="open-folder">Open working folder ↗</button>
         </div>
@@ -135,6 +136,13 @@
             </div>
           </div>
           <div class="canvas-footer">
+            <label
+              >Save as
+              <select
+                id="asset-assignment"
+                aria-label="Artwork assignment"
+              ></select
+            ></label>
             <span id="artboard-name"
               >Select an asset slot or create a canvas.</span
             ><label><input type="checkbox" id="pixel-grid" /> Pixel grid</label

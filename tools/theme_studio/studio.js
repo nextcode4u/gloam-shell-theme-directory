@@ -8,6 +8,14 @@ let state,
   section = "project",
   activeStage = "preview",
   activeAsset = "icons/folder.png",
+  selectedSlot = "icons/folder.png",
+  assetBinding = null,
+  rawDraft = null,
+  fontRole = "ui",
+  audioRole = "music",
+  loadedAsset = "icons/folder.png",
+  installRoot = "",
+  nativeExecutable = "",
   serial = 0,
   previewTimer,
   savedTimer;
@@ -146,11 +154,77 @@ async function guard(fn) {
   try {
     return await fn();
   } catch (error) {
+    if (error instanceof CanceledEdit) {
+      saveStatus();
+      return null;
+    }
     log(error.message, "error");
     toast(error.message);
     $("save-state").textContent = "Action needs attention";
     return null;
   }
+}
+class CanceledEdit extends Error {}
+function saveStatus() {
+  $("save-state").textContent = dirtyArt
+    ? "Unsaved artwork"
+    : rawDraft !== null
+      ? "Unsaved manifest"
+      : "Saved locally";
+}
+function editDecision(message) {
+  return new Promise((resolve) => {
+    const modal = el(
+      "dialog",
+      { class: "edit-decision" },
+      el("h2", { text: "Unsaved changes" }),
+      el("p", { text: message }),
+    );
+    const finish = (value) => {
+      modal.close();
+      modal.remove();
+      resolve(value);
+    };
+    modal.append(
+      row(
+        button("Save and continue", () => finish("save"), true),
+        button("Discard changes", () => finish("discard")),
+        button("Cancel", () => finish("cancel")),
+      ),
+    );
+    modal.addEventListener("cancel", (event) => {
+      event.preventDefault();
+      finish("cancel");
+    });
+    document.body.append(modal);
+    modal.showModal();
+  });
+}
+async function settleEdits(art = true, manifest = false) {
+  if (!(art && dirtyArt) && !(manifest && rawDraft !== null)) return;
+  const choice = await editDecision(
+    "Save your current edits before continuing, discard them, or keep editing.",
+  );
+  if (choice === "cancel") throw new CanceledEdit();
+  if (choice === "save") {
+    if (art && dirtyArt) await saveArtwork();
+    if (manifest && rawDraft !== null) await saveManifest();
+  } else {
+    if (art && dirtyArt) {
+      dirtyArt = false;
+      layers = [];
+      setStage("preview");
+    }
+    if (manifest) rawDraft = null;
+  }
+  saveStatus();
+}
+async function saveManifest() {
+  if (rawDraft === null) return;
+  const text = rawDraft;
+  await api("save", { raw: text }, false);
+  rawDraft = null;
+  saveStatus();
 }
 function url(endpoint, params = {}) {
   return endpoint + "?" + new URLSearchParams({ ...params, token, v: serial });
@@ -159,6 +233,44 @@ function assetUrl(path) {
   return url("/api/asset", { path });
 }
 async function api(action, data = {}, refresh = true) {
+  const mutations = [
+    "image",
+    "material",
+    "generate",
+    "atlas",
+    "remove",
+    "copy",
+    "upload",
+    "undo",
+    "redo",
+    "workspace",
+    "import",
+  ];
+  if (mutations.includes(action))
+    await settleEdits(
+      true,
+      ["undo", "redo", "workspace", "import"].includes(action),
+    );
+  if (["export", "install", "native", "prepare"].includes(action)) {
+    if (dirtyArt) await saveArtwork();
+    await saveManifest();
+  }
+  const shouldReload =
+    layers.length &&
+    mutations.includes(action) &&
+    (["undo", "redo"].includes(action) ||
+      data.path === activeAsset ||
+      data.targets?.includes(activeAsset) ||
+      (data.kind &&
+        activeAsset.startsWith(
+          (state.config[data.kind]?.directory || data.kind) + "/",
+        )));
+  const reload = {
+    path: activeAsset,
+    width: artWidth,
+    height: artHeight,
+    binding: assetBinding,
+  };
   const task = async () => {
     $("save-state").textContent = "Working…";
     const response = await fetch("/api/action", {
@@ -169,6 +281,7 @@ async function api(action, data = {}, refresh = true) {
     const result = await response.json();
     if (!response.ok) throw Error(result.error || "Action failed");
     if (result.state) {
+      if (action === "workspace") installRoot = "";
       state = result.state;
       serial++;
       updateShell();
@@ -176,12 +289,17 @@ async function api(action, data = {}, refresh = true) {
       renderAssets();
       refreshPreview();
     }
-    $("save-state").textContent = "Saved locally";
+    saveStatus();
     return result.result;
   };
   const current = pending.then(task);
   pending = current.catch(() => {});
-  return current;
+  const result = await current;
+  if (shouldReload) {
+    dirtyArt = false;
+    await editAsset(reload.path, reload.width, reload.height, reload.binding);
+  }
+  return result;
 }
 function updateShell() {
   $("project-name").textContent = state.config.theme?.name || state.id;
@@ -222,17 +340,20 @@ function setStage(name) {
   if (name === "assets") renderAssets();
 }
 function selectSection(name) {
-  section = name;
-  if (
-    ["icons", "components"].includes(name) &&
-    !activeAsset.startsWith((state.config[name]?.directory || name) + "/")
-  )
-    activeAsset =
-      (state.config[name]?.directory || name) + "/" + state[name][0] + ".png";
-  document
-    .querySelectorAll("[data-section]")
-    .forEach((b) => b.classList.toggle("active", b.dataset.section === name));
-  inspect();
+  return guard(async () => {
+    if (name !== section && rawDraft !== null) await settleEdits(false, true);
+    section = name;
+    if (
+      ["icons", "components"].includes(name) &&
+      !selectedSlot.startsWith((state.config[name]?.directory || name) + "/")
+    )
+      selectedSlot =
+        (state.config[name]?.directory || name) + "/" + state[name][0] + ".png";
+    document
+      .querySelectorAll("[data-section]")
+      .forEach((b) => b.classList.toggle("active", b.dataset.section === name));
+    inspect();
+  });
 }
 function field(label, input, help = "") {
   const target = ["INPUT", "SELECT", "TEXTAREA"].includes(input.tagName)
@@ -315,7 +436,10 @@ function pathPicker(value = "", kind = "directory") {
           kind,
           "Choose " + (kind === "file" ? "a file" : "a folder"),
         );
-        if (path) input.value = path;
+        if (path) {
+          input.value = path;
+          input.dispatchEvent(new Event("input"));
+        }
       }),
     ),
   };
@@ -354,7 +478,11 @@ function renderFields(container, name, keys = null) {
       control = input;
     }
     const save = (value) =>
-      guard(() => api("field", { section: name, key, value }, false));
+      guard(async () => {
+        await api("field", { section: name, key, value }, false);
+        const inherit = input.closest(".field").querySelector(".inherit input");
+        if (inherit) inherit.checked = false;
+      });
     input.onchange = () => save(input.value);
     input.id = "control-" + ++controlId;
     const children = [
@@ -419,12 +547,24 @@ function inspect() {
   else if (section === "manifest") {
     const raw = el("textarea", {
       class: "raw mono",
-      value: state.raw,
+      value: rawDraft ?? state.raw,
       spellcheck: false,
     });
+    raw.oninput = () => {
+      rawDraft = raw.value;
+      saveStatus();
+    };
     host.append(
       field("theme.ini", raw),
-      button("Apply INI", () => api("save", { raw: raw.value }), true),
+      button(
+        "Apply INI",
+        async () => {
+          rawDraft = raw.value;
+          await saveManifest();
+          inspect();
+        },
+        true,
+      ),
       note(
         "Applying visual edits rewrites the INI in canonical form. Keep prose and licensing notes in credits files.",
       ),
@@ -432,7 +572,6 @@ function inspect() {
   } else if (section === "publish") publishInspector(host);
 }
 async function importTheme(path) {
-  if (dirtyArt) await saveArtwork();
   await api("import", { path });
   layers = [];
   dirtyArt = false;
@@ -588,7 +727,9 @@ function backgroundInspector(host) {
         label,
         assetThumb(path),
         row(
-          button("Edit / draw", () => editAsset(path, 256, 192)),
+          button("Edit / draw", () =>
+            editAsset(path, 256, 192, { section: "backgrounds", key }),
+          ),
           button("Import image…", () =>
             importImage(path, 256, 192, "backgrounds", key),
           ),
@@ -634,12 +775,16 @@ function spriteInspector(host, kind) {
         class:
           "slot " +
           (exists ? "" : "missing ") +
-          (activeAsset === path ? "active" : ""),
+          (selectedSlot === path ? "active" : ""),
         title: path,
         onclick: () =>
-          guard(() => {
-            activeAsset = path;
-            editAsset(path, 32, 32);
+          guard(async () => {
+            await editAsset(path, 32, 32, {
+              section: kind,
+              key: "directory",
+              value: directory,
+            });
+            selectedSlot = path;
             inspect();
           }),
       });
@@ -655,14 +800,18 @@ function spriteInspector(host, kind) {
     grid,
     group(
       "Selected asset",
-      el("div", { class: "mono", text: activeAsset }),
+      el("div", { class: "mono", text: selectedSlot }),
       row(
-        button("Import image…", () => importImage(activeAsset, 32, 32)),
-        button("Material recipe", () => materialInspector(activeAsset, 32, 32)),
-        button("Copy to slots…", copySlots),
+        button("Import image…", () =>
+          importImage(selectedSlot, 32, 32, kind, "directory", null, directory),
+        ),
+        button("Material recipe", () =>
+          materialInspector(selectedSlot, 32, 32, kind, "directory", directory),
+        ),
+        button("Copy to slots…", () => copySlots(selectedSlot)),
         button("Remove", async () => {
-          if (confirm("Remove " + activeAsset + "?"))
-            await api("remove", { path: activeAsset });
+          if (confirm("Remove " + selectedSlot + "?"))
+            await api("remove", { path: selectedSlot });
         }),
       ),
     ),
@@ -744,8 +893,7 @@ async function exportAtlas(kind) {
   const ctx = c.getContext("2d");
   for (let i = 0; i < names.length; i++) {
     const path = dir + "/" + names[i] + ".png";
-    if (state.assets.some((a) => a.path === path)) {
-      const image = await loadImage(assetUrl(path));
+    if (image) {
       ctx.drawImage(image, (i % 8) * 32, Math.floor(i / 8) * 32, 32, 32);
     }
   }
@@ -761,6 +909,7 @@ function materialInspector(
   height,
   bindSection = null,
   key = null,
+  bindingValue = null,
 ) {
   const host = $("inspector-content"),
     style = select(
@@ -800,6 +949,9 @@ function materialInspector(
           );
           await api("material", {
             path,
+            binding: bindSection
+              ? { section: bindSection, key, value: bindingValue ?? path }
+              : null,
             options: {
               style: style.value,
               color: color.value,
@@ -809,9 +961,14 @@ function materialInspector(
               ...values,
             },
           });
-          if (bindSection)
-            await api("field", { section: bindSection, key, value: path });
-          await editAsset(path, width, height);
+          await editAsset(
+            path,
+            width,
+            height,
+            bindSection
+              ? { section: bindSection, key, value: bindingValue ?? path }
+              : null,
+          );
         },
         true,
       ),
@@ -828,6 +985,7 @@ async function importImage(
   bindSection = null,
   key = null,
   droppedFile = null,
+  bindingValue = null,
 ) {
   const file = droppedFile || (await upload("image/*"));
   if (!file) return;
@@ -853,6 +1011,9 @@ async function importImage(
           await api("image", {
             path,
             data,
+            binding: bindSection
+              ? { section: bindSection, key, value: bindingValue ?? path }
+              : null,
             options: {
               width,
               height,
@@ -864,23 +1025,28 @@ async function importImage(
               source_name: file.name,
             },
           });
-          if (bindSection)
-            await api("field", { section: bindSection, key, value: path });
-          await editAsset(path, width, height);
+          await editAsset(
+            path,
+            width,
+            height,
+            bindSection
+              ? { section: bindSection, key, value: bindingValue ?? path }
+              : null,
+          );
         },
         true,
       ),
     ),
   );
 }
-async function copySlots() {
+async function copySlots(source = activeAsset) {
   const text = prompt(
     "Destination theme-relative PNG paths, separated by commas:",
-    activeAsset,
+    source,
   );
   if (text)
     await api("copy", {
-      source: activeAsset,
+      source,
       targets: text
         .split(",")
         .map((t) => t.trim())
@@ -889,12 +1055,17 @@ async function copySlots() {
 }
 function fontInspector(host) {
   renderFields(host, "fonts");
-  const role = select(["ui", "heading"], "ui"),
+  const role = select(["ui", "heading"], fontRole),
     [sf, size] = number("Font size", 10, 5, 24),
     [bf, baseline] = number("Baseline", 10, 0, 20),
     [hf, height] = number("Heading line height", 16, 12, 16),
     [ef, edge] = number("Allowed vertical bearing shift", 0, 0, 2),
     weight = el("input", { placeholder: "Optional variable font weight" });
+  role.onchange = () => {
+    fontRole = role.value;
+    height.disabled = role.value === "ui";
+  };
+  height.disabled = role.value === "ui";
   host.append(
     group(
       "Convert TTF / OTF",
@@ -933,8 +1104,10 @@ function fontInspector(host) {
           path,
           data: await fileData(file),
           name: file.name,
+          format: "font",
+          heading: role.value === "heading",
+          binding: { section: "fonts", key: role.value },
         });
-        await api("field", { section: "fonts", key: role.value, value: path });
       }),
       note(
         "Overflow is rejected, never cropped. Body height stays 12 px; headings use 12–16 px. Add the complete source-font license under Project. Authoring text preview is approximate; use the native renderer for final typography.",
@@ -943,18 +1116,34 @@ function fontInspector(host) {
   );
 }
 function audioInspector(host) {
-  const role = select(["music", "cursor", "confirm", "back"], "music"),
+  const role = select(["music", "cursor", "confirm", "back"], audioRole),
     rate = select(
       ["8000", "12000", "16000", "22050", "24000", "32000", "44100", "48000"],
       "16000",
     );
   const inputs = [
     ["Start seconds", 0, 0, 36000, 0.1],
-    ["Length seconds", 12, 0.01, 65, 0.1],
+    ["Length seconds", audioRole === "music" ? 12 : 0.5, 0.01, 65, 0.1],
     ["Gain", 1, 0, 4, 0.05],
     ["Edge fade seconds", 0.05, 0, 5, 0.01],
     ["Loop crossfade seconds", 0, 0, 5, 0.05],
   ].map(([n, v, a, b, s]) => [n, ...number(n, v, a, b, s)]);
+  const updateCap = () => {
+    const limit =
+      (role.value === "music" ? 1048576 : 65536) / (Number(rate.value) * 2);
+    const input = inputs[1][2];
+    input.max = String(limit);
+    input.value = String(
+      Math.min(Number(input.value), Math.floor(limit * 100) / 100),
+    );
+  };
+  role.onchange = () => {
+    audioRole = role.value;
+    inputs[1][2].value = role.value === "music" ? "12" : "0.5";
+    updateCap();
+  };
+  rate.onchange = updateCap;
+  updateCap();
   host.append(
     group(
       "Prepare recording",
@@ -1103,7 +1292,7 @@ function publishInspector(host) {
       api("open-folder", { path: "exports" }),
     ),
   );
-  const sd = pathPicker(""),
+  const sd = pathPicker(installRoot),
     replace = el("input", { type: "checkbox" });
   host.append(
     group(
@@ -1135,7 +1324,13 @@ function publishInspector(host) {
       }),
     ),
   );
-  const native = pathPicker("", "file");
+  sd.input.oninput = () => {
+    installRoot = sd.input.value;
+  };
+  const native = pathPicker(nativeExecutable, "file");
+  native.input.oninput = () => {
+    nativeExecutable = native.input.value;
+  };
   host.append(
     group(
       "Native renderer check",
@@ -1160,10 +1355,6 @@ function publishInspector(host) {
   );
 }
 async function exportTheme() {
-  if (dirtyArt) {
-    if (!confirm("Save the current artwork before exporting?")) return;
-    await saveArtwork();
-  }
   const file = await api("export");
   log("Exported " + file);
   toast("Theme ZIP exported");
@@ -1187,7 +1378,6 @@ function renderAssets() {
       onclick: () =>
         guard(async () => {
           if (image) {
-            activeAsset = item.path;
             await editAsset(item.path, item.width || 32, item.height || 32);
           } else {
             toast(item.path + " · " + item.bytes.toLocaleString() + " bytes");
@@ -1239,9 +1429,16 @@ function snapshotPaint() {
 }
 function checkpointPaint() {
   paintHistory.push(snapshotPaint());
-  if (paintHistory.length > 30) paintHistory.shift();
+  while (
+    paintHistory.length > 30 ||
+    (paintHistory.length > 1 &&
+      paintHistory.reduce((n, s) => n + JSON.stringify(s).length, 0) >
+        32 * 1024 * 1024)
+  )
+    paintHistory.shift();
   paintFuture = [];
   dirtyArt = true;
+  saveStatus();
 }
 async function restorePaint(s) {
   artWidth = s.width;
@@ -1256,19 +1453,23 @@ async function restorePaint(s) {
   dirtyArt = true;
   paintRender();
 }
-async function editAsset(path, width = 32, height = 32) {
-  if (dirtyArt && !confirm("Discard unsaved artwork changes?")) return;
+async function editAsset(path, width = 32, height = 32, binding = null) {
+  await settleEdits(true, false);
+  const doc = await api("artboard-load", { path }, false);
+  let image = null;
+  if (!doc && state.assets.some((a) => a.path === path))
+    image = await loadImage(assetUrl(path));
   activeAsset = path;
+  loadedAsset = path;
+  assetBinding = binding;
   artWidth = width;
   artHeight = height;
-  const doc = await api("artboard-load", { path }, false);
   if (doc) {
     await restorePaint(doc);
     dirtyArt = false;
   } else {
     const c = canvas();
-    if (state.assets.some((a) => a.path === path)) {
-      const image = await loadImage(assetUrl(path));
+    if (image) {
       artWidth = image.naturalWidth;
       artHeight = image.naturalHeight;
       c.width = artWidth;
@@ -1303,6 +1504,54 @@ function composite() {
   }
   return c;
 }
+function renderAssignment() {
+  const select = $("asset-assignment");
+  select.replaceChildren();
+  const choices = [
+    { label: "Current file path", path: activeAsset, binding: assetBinding },
+  ];
+  for (const key of [
+    "top",
+    "bottom",
+    ...(artWidth === 256 && artHeight === 192
+      ? ["top_surface", "bottom_surface"]
+      : []),
+  ]) {
+    choices.push({
+      label: "Background / " + key,
+      path: state.config.backgrounds?.[key] || "backgrounds/" + key + ".png",
+      binding: { section: "backgrounds", key },
+    });
+  }
+  if (artWidth === 256 && artHeight === 192) {
+    for (const key of ["material", "focus_material"])
+      choices.push({
+        label: "Components / " + key,
+        path: state.config.components?.[key] || "components/" + key + ".png",
+        binding: { section: "components", key },
+      });
+  }
+  if (artWidth === 32 && artHeight === 32) {
+    for (const kind of ["icons", "components"]) {
+      const directory = state.config[kind]?.directory || kind;
+      for (const name of state[kind])
+        choices.push({
+          label: kind + " / " + name,
+          path: directory + "/" + name + ".png",
+          binding: { section: kind, key: "directory", value: directory },
+        });
+    }
+  }
+  for (const [i, choice] of choices.entries())
+    select.append(el("option", { text: choice.label, value: String(i) }));
+  select.onchange = () => {
+    const choice = choices[Number(select.value)];
+    activeAsset = choice.path;
+    assetBinding = choice.binding;
+    dirtyArt = true;
+    paintRender();
+  };
+}
 function paintRender() {
   const c = $("paint");
   c.width = artWidth;
@@ -1325,6 +1574,8 @@ function paintRender() {
     artHeight +
     (dirtyArt ? " · unsaved" : "");
   $("artboard-name").classList.toggle("draft", dirtyArt);
+  saveStatus();
+  renderAssignment();
   const host = $("layer-list");
   host.replaceChildren();
   layers.forEach((l, i) => {
@@ -1583,12 +1834,20 @@ $("paint-redo").onclick = () =>
   });
 async function saveArtwork() {
   if (!layers.length) return;
+  if (
+    activeAsset !== loadedAsset &&
+    state.assets.some((a) => a.path === activeAsset) &&
+    !confirm("Replace existing artwork at " + activeAsset + "?")
+  )
+    throw new CanceledEdit();
   await api("artboard-save", {
     path: activeAsset,
+    binding: assetBinding,
     data: composite().toDataURL("image/png"),
     document: snapshotPaint(),
   });
   dirtyArt = false;
+  loadedAsset = activeAsset;
   paintRender();
   toast("Artwork and editable layers saved");
 }
@@ -1768,12 +2027,9 @@ $("undo").onclick = () => guard(() => api("undo"));
 $("redo").onclick = () => guard(() => api("redo"));
 async function saveProject() {
   document.activeElement.blur();
-  const raw =
-    section === "manifest"
-      ? document.querySelector("textarea.raw")?.value
-      : null;
   if (dirtyArt) await saveArtwork();
-  await api("save", raw === null ? {} : { raw });
+  await saveManifest();
+  await api("save");
   toast("Project saved in " + state.workspace);
 }
 $("save").onclick = () => guard(saveProject);
@@ -1788,11 +2044,6 @@ $("validate").onclick = () =>
 $("export").onclick = () => guard(exportTheme);
 $("open-project").onclick = () =>
   guard(async () => {
-    if (
-      dirtyArt &&
-      !confirm("Discard unsaved artwork before switching projects?")
-    )
-      return;
     const path = await pick(
       "directory",
       "Create or reopen a Theme Studio working folder",
@@ -1806,6 +2057,17 @@ $("open-project").onclick = () =>
     }
   });
 $("open-folder").onclick = () => guard(() => api("open-folder", { path: "." }));
+$("reload-project").onclick = () =>
+  guard(async () => {
+    await api("workspace", { path: state.workspace });
+    rawDraft = null;
+    layers = [];
+    dirtyArt = false;
+    assetBinding = null;
+    setStage("preview");
+    selectSection("project");
+    saveStatus();
+  });
 $("toggle-log").onclick = () =>
   document.querySelector(".activity").classList.toggle("open");
 $("asset-search").oninput = renderAssets;
@@ -1845,7 +2107,7 @@ for (const [id, icon, label] of sections)
   );
 window.addEventListener("resize", () => $("zoom").onchange());
 window.addEventListener("beforeunload", (e) => {
-  if (dirtyArt) {
+  if (dirtyArt || rawDraft !== null) {
     e.preventDefault();
     e.returnValue = "";
   }

@@ -14,6 +14,25 @@
     system-ui,
     sans-serif;
 }
+.edit-decision {
+  max-width: 440px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--text);
+  padding: 24px;
+  box-shadow: 0 15px 70px #0009;
+}
+.edit-decision::backdrop {
+  background: #0009;
+}
+.edit-decision p {
+  color: var(--muted);
+}
+#asset-assignment {
+  max-width: 185px;
+  font-size: 11px;
+}
 * {
   box-sizing: border-box;
 }
@@ -144,6 +163,8 @@ a {
   height: calc(100vh - 62px);
 }
 .navigation {
+  min-height: 0;
+  overflow-y: auto;
   border-right: 1px solid var(--line);
   background: var(--panel);
   display: flex;
@@ -550,6 +571,7 @@ h3 {
   image-rendering: pixelated;
 }
 .canvas-footer {
+  flex-wrap: wrap;
   display: flex;
   gap: 10px;
   align-items: center;
