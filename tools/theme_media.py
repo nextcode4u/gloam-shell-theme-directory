@@ -324,6 +324,8 @@ def convert_audio(
                     "-y",
                     "-ss",
                     str(start),
+                    "-protocol_whitelist",
+                    "file,pipe",
                     "-i",
                     str(source),
                     "-t",
