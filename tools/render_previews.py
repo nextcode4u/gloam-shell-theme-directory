@@ -9,11 +9,35 @@ import subprocess
 import os
 from PIL import Image, ImageDraw, ImageFont
 from build_collection import ROOT, SPECS, PROFILES
+from inspired_assets import SPECS as INSPIRED_SPECS
+
+
+def collection_gallery(items):
+    columns = min(4, len(items))
+    image = Image.new(
+        "RGB", (256 * columns, 428 * ((len(items) + columns - 1) // columns)), "#12171d"
+    )
+    draw = ImageDraw.Draw(image)
+    for index, (theme, preview) in enumerate(items):
+        x, y = index % columns * 256, index // columns * 428
+        draw.text(
+            (x + 10, y + 8),
+            INSPIRED_SPECS.get(theme, {}).get("name", theme.title()),
+            fill="white",
+        )
+        image.paste(preview, (x, y + 28))
+    return image
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--gloam", type=Path, required=True)
+    parser.add_argument(
+        "--only", nargs="+", choices=tuple(PROFILES) + tuple(INSPIRED_SPECS)
+    )
+    parser.add_argument(
+        "--gallery", type=Path, help="Optional combined preview destination"
+    )
     args = parser.parse_args()
     build = ROOT / "build"
     sd = build / "preview-sd"
@@ -62,7 +86,13 @@ def main():
     draw = ImageDraw.Draw(gallery)
     starters = Image.new("RGB", (256 * 3, 428), "#12171d")
     starter_draw = ImageDraw.Draw(starters)
-    for i, id in enumerate(PROFILES):
+    chosen = args.only or (tuple(PROFILES) + tuple(INSPIRED_SPECS))
+    inspired = []
+    selected_gallery = Image.new(
+        "RGB", (256 * min(4, len(chosen)), 428 * ((len(chosen) + 3) // 4)), "#12171d"
+    )
+    selected_draw = ImageDraw.Draw(selected_gallery)
+    for i, id in enumerate(chosen):
         # Each process starts clean: no preference state leaks between themes.
         for state in (sd / "_nds/dsi-frontend").glob("state.*"):
             state.unlink()
@@ -77,6 +107,19 @@ def main():
         Image.open(renders / f"{id}-settings.ppm").save(
             ROOT / "themes" / id / "settings-preview.png", optimize=True
         )
+        x, y = i % 4 * 256, i // 4 * 428
+        selected_draw.text(
+            (x + 10, y + 8),
+            INSPIRED_SPECS.get(id, {}).get("name", id.title()),
+            fill="white",
+        )
+        selected_gallery.paste(combined, (x, y + 28))
+        if id in INSPIRED_SPECS:
+            inspired.append((id, combined))
+            home = Image.new("RGB", (256, 396), "#12171d")
+            home.paste(Image.open(renders / f"{id}-home-top.ppm"), (0, 0))
+            home.paste(Image.open(renders / f"{id}-home-bottom.ppm"), (0, 204))
+            home.save(ROOT / "themes" / id / "home-preview.png", optimize=True)
         if id in SPECS:
             draw.text((i * 256 + 10, 8), SPECS[id]["name"], fill="white")
             gallery.paste(combined, (i * 256, 32))
@@ -84,8 +127,18 @@ def main():
             column = ("slate", "folio", "phosphor").index(id)
             starter_draw.text((column * 256 + 10, 8), id.title(), fill="white")
             starters.paste(combined, (column * 256, 32))
-    gallery.save(ROOT / "docs/collection-preview.png", optimize=True)
-    starters.save(ROOT / "docs/starter-preview.png", optimize=True)
+    if args.gallery:
+        target = ROOT / args.gallery
+        target.parent.mkdir(parents=True, exist_ok=True)
+        selected_gallery.save(target, optimize=True)
+    elif args.only:
+        selected_gallery.save(build / "selected-theme-preview.png", optimize=True)
+    if not args.only:
+        gallery.save(ROOT / "docs/collection-preview.png", optimize=True)
+        starters.save(ROOT / "docs/starter-preview.png", optimize=True)
+        collection_gallery(inspired).save(
+            ROOT / "docs/inspired-preview.png", optimize=True
+        )
 
 
 if __name__ == "__main__":

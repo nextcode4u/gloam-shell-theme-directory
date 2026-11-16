@@ -18,6 +18,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 from package_collection import package, ART_COLLECTION, STARTER_COLLECTION
 from build_collection import PROFILES
+from inspired_assets import SPECS as INSPIRED_SPECS
 
 
 class ThemeCollectionTests(unittest.TestCase):
@@ -119,7 +120,10 @@ class ThemeCollectionTests(unittest.TestCase):
 
     def test_catalog_and_pack_requirements_agree(self):
         catalog = json.loads((ROOT / "catalog.json").read_text())
-        self.assertEqual({entry["id"] for entry in catalog["themes"]}, set(PROFILES))
+        self.assertEqual(
+            {entry["id"] for entry in catalog["themes"]},
+            set(PROFILES) | set(INSPIRED_SPECS),
+        )
         for entry in catalog["themes"]:
             with self.subTest(theme=entry["id"]):
                 folder = ROOT / entry["path"]
@@ -136,7 +140,15 @@ class ThemeCollectionTests(unittest.TestCase):
                     self.assertEqual(data[:8], b"DSFONT03")
                     self.assertEqual(
                         data[9],
-                        12 if role == "ui" else PROFILES[entry["id"]]["heading"][3],
+                        (
+                            12
+                            if role == "ui"
+                            else (
+                                PROFILES[entry["id"]]["heading"][3]
+                                if entry["id"] in PROFILES
+                                else 16
+                            )
+                        ),
                     )
                 for section in ("backgrounds", "audio"):
                     for key, path in (

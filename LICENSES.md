@@ -42,3 +42,18 @@ MUSIC.md with track credit, source and adaptation notes, and MUSIC-LICENSE.txt
 with the full license. Source/output hashes and conversion settings are in
 `config/theme-music.json`; `tools/prepare_theme_music.py` verifies or reproduces
 the prepared WAVs. No theme build regenerates placeholder music over these tracks.
+
+## Desktop and device interpretations
+
+Luna XP, Desktop 98, Classic DS, Portal Terminal, Aero Glass, Pokédex and
+Synthwave use original agent-assisted wallpaper/icon illustrations and original
+code-authored UI assets. Project-held rights in these artworks, original UI cues
+and splash compositions are dedicated under CC0-1.0. Fonts retain SIL OFL 1.1;
+recorded music by Kevin MacLeod retains CC-BY-4.0 and per-pack attribution.
+
+These packs are unofficial interpretations, not endorsed products. Referenced
+Windows/Microsoft, Nintendo, Pokémon and Rick and Morty names/marks remain with
+their respective owners. No extracted official wallpaper, icons, character
+sprites, television clips or franchise/system audio is included. The dedication
+covers project-held rights only. See each pack's CREDITS.md and original font
+and music license texts; artwork hashes are in config/inspired-art.json.

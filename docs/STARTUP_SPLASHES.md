@@ -245,7 +245,7 @@ only intended production `splash.gsp` assets with their theme's source and credi
 
 ## Included theme intros
 
-All nine packs include a short `splash.gsp`. Choose **Startup splash → Theme**
+All sixteen packs include a short `splash.gsp`. Choose **Startup splash → Theme**
 in Gloam to use the selected pack’s intro. **Preview splash** plays it without
 restarting. Custom overrides, Off, skipping and Reduced motion still apply.
 
@@ -273,3 +273,9 @@ font rasterization changes in other Pillow/FreeType versions can change bytes.
 The tool changes only `splash.gsp`; source artwork, previews, music and settings
 are preserved. Splash artwork and type remain covered by the pack’s existing
 credits and licenses, including BUUF’s noncommercial terms.
+
+The seven desktop/device packs can be regenerated with
+`python tools/build_inspired_collection.py --gloam /path/to/gloam --download-fonts`.
+Their recorded music remains pinned and separate. The builder uses
+`config/inspired-themes.json` for authored defaults and `config/inspired-art.json`
+for original artwork checksums; only prepared runtime assets enter theme ZIPs.

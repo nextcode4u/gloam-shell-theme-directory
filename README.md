@@ -37,6 +37,27 @@ Reduced motion holds the ambient accent still.
 | [Phosphor](themes/phosphor) | Radar instruments; open brackets and segmented controls | Gloam project |
 | [BUUF](themes/buuf) | Hand-drawn objects, worn paper, leather and moss-green labels | mattahan icons; upstream fana-m / oxayotl; Gloam adaptation |
 
+## Desktop and device collection
+
+![Seven desktop and device themes rendered in Gloam](docs/inspired-preview.png)
+
+| Theme | Personality |
+| --- | --- |
+| [Luna XP](themes/luna) | Green hills, cobalt window trim, amber folders and rounded enamel |
+| [Desktop 98](themes/desktop-98) | Teal desktop, raised gray controls, navy selections and pixel icons |
+| [Classic DS](themes/classic-ds) | Pearl silver, subtle dot matrix, blue glass and orange touch controls |
+| [Portal Terminal](themes/portal-terminal) | Rick and Morty-inspired garage, inked lab props and goo-green selections |
+| [Aero Glass](themes/aero-glass) | Blue-green ribbons, pearl glass cards and luminous shell objects |
+| [Pokédex](themes/pokedex) | Red/ivory research-device casing, celadon screens and blue sensors |
+| [Synthwave](themes/synthwave) | Airbrushed coastal sunset, chrome props and warm neon selection rails |
+
+These are original, unofficial interpretations with separate icon sets, controls,
+font pairs, recorded music, UI cues and short startup splashes. No extracted
+operating-system/franchise artwork or audio is included. Each pack requires
+**Gloam 1.1.0 or later**; names and marks remain with their respective owners.
+Previews use the current source build, which also fixes selection-text contrast
+in settings and other menus; that fix is not present in the original 1.1.0 binary.
+
 Each theme page includes wallpaper previews, installation instructions and credits.
 Slate, Folio and Phosphor extend their original Gloam designs with the same new
 capabilities. These revisions are optional packs, separate from Gloam’s bundled themes.
@@ -56,8 +77,8 @@ See [BUUF credits](themes/buuf/CREDITS.md).
 
 ## Install
 
-**These revisions require Gloam's updated development build with full-image
-material support. They do not load in Gloam 1.0.0.** Build
+**These revisions require Gloam 1.1.0 or a newer build with full-image
+material support. They do not load in Gloam 1.0.0.** Use the current release or build
 [Gloam `6aacad1` or later](https://github.com/nextcode4u/gloam-shell-ndx/commit/6aacad1e965ddcf36553637ab17ccd475936602c),
 or use the [original 1.0-compatible collection](https://github.com/nextcode4u/gloam-shell-theme-directory/tree/74fd2dd/themes).
 
@@ -68,8 +89,9 @@ or use the [original 1.0-compatible collection](https://github.com/nextcode4u/gl
 
 Copy the whole theme folder, including its assets. Back up any theme with the same
 folder name before replacing it. Do not copy this repository over your SD root.
-Gloam 1.0 displays the alphabetically first 23 valid theme folders plus Built-in;
-keep only the themes you want installed if you reach that limit.
+Gloam 1.0/1.1.0 displays the alphabetically first 23 valid theme folders plus
+Built-in. Newer source builds expand this to 64 installed themes plus Built-in;
+keep a selection installed if your build still has the earlier limit.
 
 Each pack also includes a lightweight, 1.2-second startup intro using its own
 artwork and typography. Choose **Startup splash → Theme** in Gloam; **Preview
@@ -108,6 +130,28 @@ a Gloam build after 1.0.0; new motion exports additionally require
 `GLOMSP02` support, and automatically compressed exports require `GLOMSP03`.
 Compression retains every prepared frame while reducing SD/package size.
 The 1.0.0 release does not support splashes.
+
+## Rebuild the desktop/device collection
+
+Install `requirements.txt`, then use the matching Gloam checkout for its native
+font/sprite packers:
+
+```sh
+python tools/build_inspired_collection.py --gloam /path/to/gloam --download-fonts
+python tools/prepare_theme_music.py
+python tools/package_collection.py
+```
+
+Artwork masters and hashes are under `source/art` and `config/inspired-art.json`;
+`config/inspired-themes.json` holds authored layouts/palettes. Recorded music
+is preserved during ordinary builds; `prepare_theme_music.py --rebuild --download`
+reproduces its pinned loops separately. Authoring does not install anything to SD.
+
+Packaging creates each theme ZIP and `dist/gloam-desktop-device-themes.zip`, with
+credits and notices but no preview screenshots. To render selected previews,
+first run Gloam’s host checks, then use `tools/render_previews.py --gloam` with
+`--only` followed by the desired theme IDs. `--gallery docs/inspired-preview.png`
+sets a combined preview destination. Omitting `--only` renders all sixteen packs.
 
 ## Share a theme
 

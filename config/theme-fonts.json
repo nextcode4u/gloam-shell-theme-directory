@@ -178,6 +178,17 @@
         "url": "https://raw.githubusercontent.com/google/fonts/cc39c4c2c304bc368c9b7c311ea2bcc6013299fe/ofl/delius/OFL.txt",
         "sha256": "d8eb8611f8c98d20cbf18a28425652d6022dc2a5cca15026b920f1f2bc92a612"
       }
+    },
+    "archivoblack": {
+      "name": "ArchivoBlack-Regular",
+      "font": {
+        "url": "https://raw.githubusercontent.com/google/fonts/cc39c4c2c304bc368c9b7c311ea2bcc6013299fe/ofl/archivoblack/ArchivoBlack-Regular.ttf",
+        "sha256": "dd9a89a019b4849f66ab75455fe7bdf931311042cbb0f0f97acc061539703180"
+      },
+      "license": {
+        "url": "https://raw.githubusercontent.com/google/fonts/cc39c4c2c304bc368c9b7c311ea2bcc6013299fe/ofl/archivoblack/OFL.txt",
+        "sha256": "3173acd82f8c6159b5b1037b539fcbd4edff68e65c2ea8b9412b5a5ca97b08ff"
+      }
     }
   },
   "themes": {
@@ -314,6 +325,126 @@
       },
       "heading": {
         "family": "delius",
+        "size": 14,
+        "baseline": 14,
+        "height": 16,
+        "edge_shift": 2
+      }
+    },
+    "luna": {
+      "body": {
+        "family": "publicsans",
+        "weight": 500,
+        "size": 11,
+        "baseline": 10,
+        "height": 12,
+        "edge_shift": 2
+      },
+      "heading": {
+        "family": "sourcesans3",
+        "weight": 500,
+        "size": 14,
+        "baseline": 14,
+        "height": 16,
+        "edge_shift": 2
+      }
+    },
+    "desktop-98": {
+      "body": {
+        "family": "ibmplexsanscondensed",
+        "size": 11,
+        "baseline": 10,
+        "height": 12,
+        "edge_shift": 2
+      },
+      "heading": {
+        "family": "barlowsemicondensed",
+        "size": 14,
+        "baseline": 14,
+        "height": 16,
+        "edge_shift": 2
+      }
+    },
+    "classic-ds": {
+      "body": {
+        "family": "quicksand",
+        "weight": 500,
+        "size": 11,
+        "baseline": 10,
+        "height": 12,
+        "edge_shift": 2
+      },
+      "heading": {
+        "family": "nunito",
+        "weight": 500,
+        "size": 14,
+        "baseline": 14,
+        "height": 16,
+        "edge_shift": 2
+      }
+    },
+    "portal-terminal": {
+      "body": {
+        "family": "barlowsemicondensed",
+        "size": 11,
+        "baseline": 10,
+        "height": 12,
+        "edge_shift": 2
+      },
+      "heading": {
+        "family": "kalam",
+        "size": 14,
+        "baseline": 14,
+        "height": 16,
+        "edge_shift": 2
+      }
+    },
+    "aero-glass": {
+      "body": {
+        "family": "sourcesans3",
+        "weight": 500,
+        "size": 11,
+        "baseline": 10,
+        "height": 12,
+        "edge_shift": 2
+      },
+      "heading": {
+        "family": "quicksand",
+        "weight": 500,
+        "size": 14,
+        "baseline": 14,
+        "height": 16,
+        "edge_shift": 2
+      }
+    },
+    "pokedex": {
+      "body": {
+        "family": "atkinsonhyperlegible",
+        "size": 11,
+        "baseline": 10,
+        "height": 12,
+        "edge_shift": 2
+      },
+      "heading": {
+        "family": "archivoblack",
+        "size": 14,
+        "baseline": 14,
+        "height": 16,
+        "edge_shift": 2
+      }
+    },
+    "synthwave": {
+      "body": {
+        "family": "outfit",
+        "size": 11,
+        "baseline": 10,
+        "height": 12,
+        "edge_shift": 2,
+        "weight": 650
+      },
+      "heading": {
+        "family": "spacegrotesk",
+        "weight": 650,
         "size": 14,
         "baseline": 14,
         "height": 16,
