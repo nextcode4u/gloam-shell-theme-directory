@@ -4,6 +4,13 @@ Repository-authored tools, tests, documentation and starter theme configuration
 use GPL-3.0-or-later; the full text is in LICENSE. This does not override the
 licenses of contributed assets.
 
+Theme Studio includes unchanged Gloam font and prepared-asset converters under
+`tools/theme_native/`. UPSTREAM.json records their exact revision and SHA-256
+hashes; they retain Gloam’s GPL-3.0-or-later terms. Shared splash tools retain the
+same license. Pillow is installed separately under its own terms. Imported
+fonts, illustrations and audio retain their licenses; export credits do not
+replace required third-party notices.
+
 Original artwork and synthesized UI cues in Slate, Folio and Phosphor are dedicated
 under [CC0-1.0](https://creativecommons.org/publicdomain/zero/1.0/).
 Each theme’s CREDITS.md identifies its source and asset terms.

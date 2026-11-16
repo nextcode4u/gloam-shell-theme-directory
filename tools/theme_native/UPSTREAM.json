@@ -1,0 +1,10 @@
+{
+  "repository": "https://github.com/nextcode4u/gloam-shell-ndx",
+  "revision": "ced8a5f0e1f85303317d2c33ad71df4b9d89f4bb",
+  "license": "GPL-3.0-or-later",
+  "files": {
+    "pack_theme_assets.py": "f0c725b082c302f4e05a9611a3ae82656c62775081cde05bb86926662fc8d13d",
+    "pack_theme_font.py": "1dfbb728890dd8461bd0ade1a7e6db69fafdc97bd46de70f7bce28e451ee001e",
+    "theme_prepared_surfaces.py": "04b1a409df8eb5dca4b0744c15256bad1e4425557e7d34c3f1952e9dbf2a1e4c"
+  }
+}
