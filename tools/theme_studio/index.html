@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Gloam · Theme Studio</title>
+    <link rel="stylesheet" href="/studio.css" />
+  </head>
+  <body data-token="__TOKEN__">
+    <header class="toolbar">
+      <div class="brand">
+        <span class="moon">◕</span><strong>GLOAM</strong
+        ><span>Theme Studio</span>
+      </div>
+      <div id="project-name">Opening project…</div>
+      <span id="save-state" role="status">Local workspace</span>
+      <div class="toolbar-actions">
+        <button id="help">Help</button>
+        <button id="undo" title="Undo saved project edit">↶</button
+        ><button id="redo" title="Redo saved edit (Ctrl+Shift+Z)">↷</button
+        ><button id="save">Save</button
+        ><button id="validate">Check theme</button
+        ><button class="primary" id="export">Export ZIP</button>
+      </div>
+    </header>
+    <div class="workspace">
+      <aside class="navigation">
+        <div class="nav-label">WORKSPACE</div>
+        <nav id="navigation"></nav>
+        <div class="nav-bottom">
+          <button id="open-project">Open / new project…</button
+          ><span id="workspace-path"></span
+          ><button id="open-folder">Open working folder ↗</button>
+        </div>
+      </aside>
+      <main class="stage">
+        <div class="stage-toolbar">
+          <div class="segmented">
+            <button class="selected" data-stage="preview">Two screens</button
+            ><button data-stage="canvas">Artwork editor</button
+            ><button data-stage="assets">Asset library</button>
+          </div>
+          <label
+            >Zoom
+            <select id="zoom">
+              <option value="fit" selected>Fit</option>
+              <option>1</option>
+              <option>2</option>
+              <option>3</option>
+              <option>4</option>
+            </select></label
+          ><label><input type="checkbox" id="guides" /> Safe areas</label>
+        </div>
+        <div id="preview-stage" class="stage-body">
+          <div class="preview-controls">
+            <select id="sample" aria-label="Preview context">
+              <option value="browser">File browser</option>
+              <option value="settings">Settings</option></select
+            ><select id="preview-view" aria-label="Preview browser view">
+              <option value="">Theme view</option>
+              <option>classic</option>
+              <option>extended</option>
+              <option>list</option>
+              <option>grid</option>
+              <option>shelf</option>
+              <option>index</option></select
+            ><label
+              >Focus
+              <input id="selected" type="number" min="0" max="5" value="1"
+            /></label>
+          </div>
+          <div class="device">
+            <img
+              id="preview"
+              width="512"
+              height="792"
+              alt="Top and bottom screen authoring preview"
+            />
+          </div>
+          <p class="caption">
+            256 × 192 · authoring preview · validate on the console
+          </p>
+          <div id="preview-loading" role="status"></div>
+        </div>
+        <div id="canvas-stage" class="stage-body hidden">
+          <div class="button-row">
+            <button id="new-canvas">New canvas</button
+            ><button id="resize-canvas">Resize / resample</button
+            ><button id="rotate-layer">Rotate layer</button
+            ><button id="flip-layer">Flip layer</button
+            ><button id="coverage-layer">Quantize alpha</button
+            ><button id="download-art">Export PNG</button>
+          </div>
+          <div class="canvas-bar">
+            <select id="paint-tool" aria-label="Drawing tool">
+              <option value="brush">Brush</option>
+              <option value="eraser">Eraser</option>
+              <option value="fill">Flood fill</option>
+              <option value="line">Line</option>
+              <option value="rectangle">Rectangle</option>
+              <option value="ellipse">Ellipse</option>
+              <option value="gradient">Gradient</option>
+              <option value="text">Text</option>
+              <option value="eyedropper">Eyedropper</option>
+              <option value="move">Move layer</option></select
+            ><input
+              id="paint-color"
+              type="color"
+              value="#b9a5f4"
+              aria-label="Paint color"
+            /><label
+              >Size
+              <input
+                id="brush-size"
+                type="number"
+                value="1"
+                min="1"
+                max="64" /></label
+            ><label
+              >Alpha
+              <input
+                id="paint-alpha"
+                type="number"
+                value="255"
+                min="0"
+                max="255" /></label
+            ><label
+              ><input type="checkbox" id="shape-fill" checked /> Fill</label
+            ><button id="paint-undo">↶</button
+            ><button id="paint-redo">↷</button>
+          </div>
+          <div class="artboard-scroll">
+            <div class="artboard">
+              <canvas id="paint"></canvas><canvas id="paint-guides"></canvas>
+            </div>
+          </div>
+          <div class="canvas-footer">
+            <span id="artboard-name"
+              >Select an asset slot or create a canvas.</span
+            ><label><input type="checkbox" id="pixel-grid" /> Pixel grid</label
+            ><label
+              ><input type="checkbox" id="slice-grid" /> Slice guides</label
+            ><button class="primary" id="commit-art">Save artwork</button>
+          </div>
+          <section class="layer-pane">
+            <div class="section-heading">
+              <strong>Layers</strong>
+              <div>
+                <button id="add-layer">+ Empty</button
+                ><button id="import-layer">+ Image</button
+                ><button id="duplicate-layer">Duplicate</button
+                ><button id="up-layer">↑</button
+                ><button id="down-layer">↓</button
+                ><button id="delete-layer">Remove</button>
+              </div>
+            </div>
+            <div id="layer-list"></div>
+          </section>
+        </div>
+        <div id="assets-stage" class="stage-body hidden">
+          <div class="section-heading">
+            <h2>Project assets</h2>
+            <input
+              id="asset-search"
+              placeholder="Filter paths…"
+              aria-label="Filter assets"
+            />
+          </div>
+          <div id="asset-grid"></div>
+        </div>
+        <div class="activity">
+          <button id="toggle-log">
+            Activity / checks <span id="error-count"></span>
+          </button>
+          <div id="activity" role="log" aria-live="polite"></div>
+        </div>
+      </main>
+      <aside class="inspector">
+        <div class="inspector-heading">
+          <span id="section-kicker">PROJECT</span>
+          <h1 id="section-title">Theme</h1>
+          <p id="section-description"></p>
+        </div>
+        <div id="inspector-content"></div>
+      </aside>
+    </div>
+    <div id="toast" role="status"></div>
+    <input id="file-picker" type="file" hidden />
+    <script src="/studio.js"></script>
+  </body>
+</html>
