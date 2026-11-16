@@ -98,7 +98,27 @@ Each pack also includes a lightweight, 1.2-second startup intro using its own
 artwork and typography. Choose **Startup splash → Theme** in Gloam; **Preview
 splash** lets you try it without restarting. See the [splash guide](docs/STARTUP_SPLASHES.md).
 
-## Splash Builder
+## Theme Studio
+
+Create complete theme packs in a resumable local workspace: palette roles,
+layouts, backgrounds, layered artwork, icons, component skins, fonts, audio,
+motion and startup splashes. Use visual controls, direct INI editing, imported
+artwork, sprite sheets or drawing/material tools. On Windows:
+
+```powershell
+irm https://raw.githubusercontent.com/nextcode4u/gloam-shell-theme-directory/main/theme.ps1 | iex
+```
+
+Choose a working folder to create or resume a project. The builder opens in your
+browser; its Python process runs locally. Dependency installation is offered when
+needed. ZIP export rebuilds prepared assets and keeps source masters/layers on the
+PC. The existing Splash Builder opens from the same project. See the
+[Theme Studio guide](docs/THEME_STUDIO.md) for tools, offline launch, preview
+limitations, validation, native checks and SD installation.
+
+![Theme Studio editing a Morrow study project](docs/theme-studio.png)
+
+## Standalone Splash Builder
 
 Create static or animated startup splashes with images, GIFs, numbered frames,
 independent layer motion and optional WAV audio. Fit/crop/stretch/native sizing,

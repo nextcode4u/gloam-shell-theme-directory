@@ -2,5 +2,8 @@
 *.ps1 text eol=lf
 *.md text eol=lf
 *.json text eol=lf
+*.html text eol=lf
+*.css text eol=lf
+*.js text eol=lf
 LICENSE text eol=lf
 *.txt text eol=lf

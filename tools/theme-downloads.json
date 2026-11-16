@@ -1,0 +1,111 @@
+{
+  "format": 1,
+  "pillow": "11.3.0",
+  "files": [
+    {
+      "path": "tools/theme_builder.py",
+      "size": 20689,
+      "sha256": "da87ec02f1bbfc42ebff660d60322ee7467d6811d113cd1d389ef2e371943058"
+    },
+    {
+      "path": "tools/theme_project.py",
+      "size": 23439,
+      "sha256": "d872edb26ec3d31a79e32987abf73c914ae2d28f27b1773eb3007354a03033b3"
+    },
+    {
+      "path": "tools/theme_schema.py",
+      "size": 5708,
+      "sha256": "1226aa36049339b5d5f602d265f03b2b38f708a45ca8a7d3a8d28338dd10825d"
+    },
+    {
+      "path": "tools/theme_validate.py",
+      "size": 17948,
+      "sha256": "f7a933021f4c33d936c53d7334fc1288d39e0cc54d9f21febe6ca85d38847bd7"
+    },
+    {
+      "path": "tools/theme_media.py",
+      "size": 17393,
+      "sha256": "2ea4da9e3355d839d8ca1df04a7fed157ece3de68906d184726ca66a019a5486"
+    },
+    {
+      "path": "tools/theme_preview.py",
+      "size": 16959,
+      "sha256": "b6619a184412dbd1a0621874192cc7c28d958dd477cb3a8648ac830a7187568d"
+    },
+    {
+      "path": "tools/theme_studio/index.html",
+      "size": 7378,
+      "sha256": "9d7214b57f09f0c7c96e6308dd490bf8bf4750d614a0bcabc4cfc0bc7d700da7"
+    },
+    {
+      "path": "tools/theme_studio/studio.css",
+      "size": 12270,
+      "sha256": "7c4d5c0fc80a494937c78e4ae4bacf8e1a4518bd33816d39d669df5867c1fbcd"
+    },
+    {
+      "path": "tools/theme_studio/studio.js",
+      "size": 57504,
+      "sha256": "6b3aeac98d35a62b861580a0b0902f8a2f16763bee12768b905839fe44e06d3e"
+    },
+    {
+      "path": "tools/theme_native/__init__.py",
+      "size": 44,
+      "sha256": "39c5cd3f08c3c9b5ad73100bd08845b4a88c12b1cfe31ba0520a4c28f6e96063"
+    },
+    {
+      "path": "tools/theme_native/UPSTREAM.json",
+      "size": 468,
+      "sha256": "f518d368af00f1059aafdbb1c01e35dbc0f3f8bc37a10d1b4678007f288551fd"
+    },
+    {
+      "path": "tools/theme_native/pack_theme_assets.py",
+      "size": 4114,
+      "sha256": "f0c725b082c302f4e05a9611a3ae82656c62775081cde05bb86926662fc8d13d"
+    },
+    {
+      "path": "tools/theme_native/theme_prepared_surfaces.py",
+      "size": 7029,
+      "sha256": "04b1a409df8eb5dca4b0744c15256bad1e4425557e7d34c3f1952e9dbf2a1e4c"
+    },
+    {
+      "path": "tools/theme_native/pack_theme_font.py",
+      "size": 8381,
+      "sha256": "1dfbb728890dd8461bd0ade1a7e6db69fafdc97bd46de70f7bce28e451ee001e"
+    },
+    {
+      "path": "tools/pack_splash.py",
+      "size": 13763,
+      "sha256": "c7688aaa804f3fd6b1d2ec44aa1318f3e75b0bdd0de6f7d50a85d03de3de50f4"
+    },
+    {
+      "path": "tools/splash_builder.py",
+      "size": 30211,
+      "sha256": "ee06a0ab53fffdbe54cfb397c1356434a6f18d5e4af9749f8d0ae52d8fbc1bd8"
+    },
+    {
+      "path": "tools/splash_project.py",
+      "size": 9488,
+      "sha256": "3ac8413d1232ce78338e32f9799f358a0dd16a152c728dec99f1505beb589317"
+    },
+    {
+      "path": "tools/splash_motion.py",
+      "size": 14636,
+      "sha256": "20c6d2ac52cf425fe2ad38c924e404265169f8fed27f6dfb227fc964d4aeb51a"
+    },
+    {
+      "path": "docs/THEME_STUDIO.md",
+      "size": 8245,
+      "sha256": "cf28c9abda749eaf73a0b2dce7fa97bbcb78d447106e0976cba42d2fb28c830d"
+    },
+    {
+      "path": "LICENSE",
+      "size": 35141,
+      "sha256": "589ed823e9a84c56feb95ac58e7cf384626b9cbf4fda2a907bc36e103de1bad2"
+    },
+    {
+      "path": "LICENSES.md",
+      "size": 4086,
+      "sha256": "99d1209d353f68bb8b738cee0865ea522833a77a0f34da59076434e6f640f58a"
+    }
+  ]
+}

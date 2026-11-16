@@ -1,6 +1,7 @@
 # Authoring and validating the art collection
 
-For startup artwork and animation, use the [Splash Builder](STARTUP_SPLASHES.md).
+For interactive full-theme creation, use [Theme Studio](THEME_STUDIO.md).
+For startup artwork and animation alone, use the [Splash Builder](STARTUP_SPLASHES.md).
 Its GUI, converter and tests are maintained here; Gloam owns native playback and
 the package format.
 
