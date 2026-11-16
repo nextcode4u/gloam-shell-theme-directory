@@ -1,0 +1,49 @@
+{
+  "format": 1,
+  "creator": "nextcode4u / Gloam project (agent-assisted)",
+  "project_asset_terms": "CC0-1.0 for project-held rights; franchise names/marks excluded",
+  "sources": {
+    "source/art/luna.png": {
+      "sha256": "c55bfecd90406430b4590ac6b7f98167487875fd622ca16f5e030db633e0f1d1"
+    },
+    "source/art/luna-icons.png": {
+      "sha256": "bc4054fa30016bd3534f875c6f94468db26d43e2cbcc5eb313c6551b49ec6bb3"
+    },
+    "source/art/desktop-98.png": {
+      "sha256": "42aa7800cda9e79acafd4849f23c90b49ed2dace33d90dc0019922cdf825adec"
+    },
+    "source/art/desktop-98-icons.png": {
+      "sha256": "f56609ce73b240b5310244456b26e8c9b285cf6aed60b4150c811fec6cc0b9f4"
+    },
+    "source/art/classic-ds.png": {
+      "sha256": "028c4c70887219a1d7eb189534fa94730cd44cf85ead4b18e0c644adf7572294"
+    },
+    "source/art/classic-ds-icons.png": {
+      "sha256": "a823cea378286565dcf7ce644c6deafe42646ff86c0a8bd4b90caaf53fdbbc58"
+    },
+    "source/art/portal-terminal.png": {
+      "sha256": "98f1c2ec4d3893550ecd08bbaabc6b5ebf33c1386c383b3579ea2a6ea6cf9242"
+    },
+    "source/art/portal-terminal-icons.png": {
+      "sha256": "c01ed1ca7af421943599b3d3732b0994dda4870f129282aea3c6db8b1cd07630"
+    },
+    "source/art/aero-glass.png": {
+      "sha256": "d2218a185f16eb21d0342922ba549a7a3cf60711a5b57c906079db88cd898836"
+    },
+    "source/art/aero-glass-icons.png": {
+      "sha256": "1e006dd1210090b9306dc4f2931935bf2d631bc65aeff6c11c61af985b893903"
+    },
+    "source/art/pokedex.png": {
+      "sha256": "9d77ad5ff82a11fcb170897475465d97f54a6f3241a1a01ffd0f9bd185e50c98"
+    },
+    "source/art/pokedex-icons.png": {
+      "sha256": "dc4393017088216da98db4aa3f6d122fe95a85dc0079f88666dce6f49c2f4dd5"
+    },
+    "source/art/synthwave.png": {
+      "sha256": "9d71e305ba87202924f63a5f19dfc41679fc62fdab20a6a77e2f6b5625bfcd13"
+    },
+    "source/art/synthwave-icons.png": {
+      "sha256": "43bfe43b91954866e34567975847b6592d492f02a6a275fe20e8471cc76f6264"
+    }
+  }
+}

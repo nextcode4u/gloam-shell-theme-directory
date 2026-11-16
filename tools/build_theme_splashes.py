@@ -21,6 +21,13 @@ from theme_font_sources import verified_source
 
 ROOT = Path(__file__).resolve().parents[1]
 PROFILES = {
+    "luna": ("fade", "slide-up", "#e5effa", "#2157b5"),
+    "desktop-98": ("none", "reveal", "#c0c0c0", "#000080"),
+    "classic-ds": ("fade", "fade", "#f0f2f1", "#35434d"),
+    "portal-terminal": ("reveal", "fade-zoom", "#182e2c", "#c8f970"),
+    "aero-glass": ("fade", "zoom-out", "#d6e9ef", "#285873"),
+    "pokedex": ("reveal-down", "slide-left", "#e8f2dd", "#245d60"),
+    "synthwave": ("fade", "slide-up", "#272540", "#ffb99f"),
     "aerial": ("fade", "slide-up", "#eaf1f4", "#263a55"),
     "buuf": ("fade", "zoom-out", "#ede0bc", "#603c25"),
     "copper": ("fade", "reveal", "#172b2b", "#f5d39b"),
@@ -49,7 +56,9 @@ def font_source(repo: Path, theme: str, download: bool, font_dir: Path, role="he
             / ("DejaVuSerif-Italic.ttf" if role == "heading" else "DejaVuSans.ttf"),
             None,
         )
-    manifest = json.loads((repo / "config/theme-fonts.json").read_text(encoding="utf-8"))
+    manifest = json.loads(
+        (repo / "config/theme-fonts.json").read_text(encoding="utf-8")
+    )
     spec = manifest["themes"][theme][role]
     family = spec["family"]
     path = verified_source(
@@ -105,7 +114,7 @@ def title_layer(
 
 def build_theme(repo: Path, folder: Path, *, download=False, font_dir: Path):
     config = configparser.ConfigParser(interpolation=None)
-    config.read(folder / "theme.ini")
+    config.read(folder / "theme.ini", encoding="utf-8")
     theme = folder.name
     intro, motion, paper, ink = PROFILES[theme]
     source, weight = font_source(repo, theme, download, font_dir)

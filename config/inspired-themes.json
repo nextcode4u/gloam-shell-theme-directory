@@ -1,0 +1,198 @@
+{
+  "format": 1,
+  "themes": {
+    "luna": {
+      "name": "Luna XP",
+      "inspiration": "Windows XP Luna",
+      "description": "Fresh green hills, cobalt window trim, amber folders and rounded enamel controls.",
+      "colors": [
+        "#dce9fc",
+        "#f1f4ed",
+        "#5378a8",
+        "#172a4a",
+        "#536378",
+        "#235ed4",
+        "#fffdf1"
+      ],
+      "layout": "spotlight",
+      "tabs": "labels",
+      "position": "bottom",
+      "view": "extended",
+      "size": "large",
+      "radius": 5,
+      "opacity": [
+        74,
+        205
+      ],
+      "body": "publicsans",
+      "heading": "sourcesans3",
+      "pitch": 740,
+      "chrome": "full"
+    },
+    "desktop-98": {
+      "name": "Desktop 98",
+      "inspiration": "Windows 98",
+      "description": "Teal desktop, raised gray windows, navy selections and individually illustrated pixel icons.",
+      "colors": [
+        "#c0c0c0",
+        "#c0c0c0",
+        "#636363",
+        "#101010",
+        "#3c3c3c",
+        "#000080",
+        "#ffffff"
+      ],
+      "layout": "sidebar_left",
+      "tabs": "labels",
+      "view": "classic",
+      "size": "small",
+      "radius": 0,
+      "opacity": [
+        245,
+        245
+      ],
+      "body": "ibmplexsanscondensed",
+      "heading": "barlowsemicondensed",
+      "pitch": 620,
+      "chrome": "full"
+    },
+    "classic-ds": {
+      "name": "Classic DS",
+      "inspiration": "the original Nintendo DS",
+      "description": "Pearl silver plastic, subtle dot-matrix surfaces, blue glass and orange touch controls.",
+      "colors": [
+        "#e9edf0",
+        "#f8f8f2",
+        "#84939f",
+        "#25343e",
+        "#586a79",
+        "#eb9426",
+        "#221e17"
+      ],
+      "layout": "gallery",
+      "tabs": "icons",
+      "position": "top",
+      "view": "grid",
+      "size": "large",
+      "radius": 3,
+      "opacity": [
+        105,
+        220
+      ],
+      "body": "quicksand",
+      "heading": "nunito",
+      "pitch": 920,
+      "chrome": "full"
+    },
+    "portal-terminal": {
+      "name": "Portal Terminal",
+      "inspiration": "Rick and Morty",
+      "description": "An interdimensional garage, hand-inked lab props, goo-green selections and purple instrument housings.",
+      "colors": [
+        "#152c2c",
+        "#203c3b",
+        "#749873",
+        "#eff9cf",
+        "#adcbaf",
+        "#b8ec4b",
+        "#172521"
+      ],
+      "layout": "poster",
+      "tabs": "icons",
+      "view": "extended",
+      "size": "large",
+      "radius": 3,
+      "opacity": [
+        90,
+        205
+      ],
+      "body": "barlowsemicondensed",
+      "heading": "kalam",
+      "pitch": 330,
+      "chrome": "full"
+    },
+    "aero-glass": {
+      "name": "Aero Glass",
+      "inspiration": "the Windows Vista/7 Aero era",
+      "description": "Blue-green light ribbons, translucent pearl glass cards, chrome fittings and luminous shell icons.",
+      "colors": [
+        "#d3e5ed",
+        "#e4f6fc",
+        "#6dacc5",
+        "#15334a",
+        "#456878",
+        "#2072a3",
+        "#ffffff"
+      ],
+      "layout": "spotlight",
+      "tabs": "icons",
+      "position": "bottom",
+      "view": "extended",
+      "size": "large",
+      "radius": 7,
+      "opacity": [
+        186,
+        195
+      ],
+      "body": "sourcesans3",
+      "heading": "quicksand",
+      "pitch": 1040,
+      "chrome": "full"
+    },
+    "pokedex": {
+      "name": "Pok\u00e9dex",
+      "inspiration": "Pok\u00e9mon field-research devices",
+      "description": "Red and ivory enamel, celadon displays, blue sensor lenses and chunky illustrated research-tool icons.",
+      "colors": [
+        "#dce8cd",
+        "#e8f2dd",
+        "#648776",
+        "#1c3431",
+        "#4f6962",
+        "#277c8c",
+        "#ffffff"
+      ],
+      "layout": "journal",
+      "tabs": "numbered",
+      "position": "bottom",
+      "view": "extended",
+      "size": "large",
+      "radius": 3,
+      "opacity": [
+        50,
+        150
+      ],
+      "body": "atkinsonhyperlegible",
+      "heading": "archivoblack",
+      "pitch": 880,
+      "chrome": "full"
+    },
+    "synthwave": {
+      "name": "Synthwave",
+      "inspiration": "1980s airbrush artwork and synthwave record sleeves",
+      "description": "Coral sunset, an indigo coastal highway, turquoise chrome and warm neon selection rails.",
+      "colors": [
+        "#181c39",
+        "#242544",
+        "#76627f",
+        "#f8e8df",
+        "#c7b7d5",
+        "#f5ad7d",
+        "#201c30"
+      ],
+      "layout": "scene",
+      "tabs": "pager",
+      "view": "shelf",
+      "size": "large",
+      "radius": 2,
+      "opacity": [
+        70,
+        195
+      ],
+      "body": "outfit",
+      "heading": "spacegrotesk",
+      "pitch": 440,
+      "chrome": "minimal"
+    }
+  }
+}
