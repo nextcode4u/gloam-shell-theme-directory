@@ -27,7 +27,7 @@ PROFILES = {
     "portal-terminal": ("reveal", "fade-zoom", "#fff4d6", "#50316b"),
     "aero-glass": ("fade", "zoom-out", "#d6e9ef", "#285873"),
     "pokedex": ("reveal-down", "slide-left", "#e8f2dd", "#245d60"),
-    "synthwave": ("fade", "slide-up", "#272540", "#ffb99f"),
+    "synthwave": ("fade", "slide-up", "#2a2139", "#ff7edb"),
     "aerial": ("fade", "slide-up", "#eaf1f4", "#263a55"),
     "buuf": ("fade", "zoom-out", "#ede0bc", "#603c25"),
     "copper": ("fade", "reveal", "#172b2b", "#f5d39b"),

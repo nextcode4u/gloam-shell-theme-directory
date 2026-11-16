@@ -49,7 +49,7 @@ Reduced motion holds the ambient accent still.
 | [Portal Terminal](themes/portal-terminal) | Flat cartoon alien landscape, lavender skies, peach panels and lime portal highlights |
 | [Aero Glass](themes/aero-glass) | Blue-green ribbons, pearl glass cards and luminous shell objects |
 | [Pokédex](themes/pokedex) | Red/ivory research-device casing, celadon screens and blue sensors |
-| [Synthwave](themes/synthwave) | Airbrushed coastal sunset, chrome props and warm neon selection rails |
+| [Synthwave](themes/synthwave) | Plum surfaces, hot-pink highlights, electric cyan and a magenta coastal sunset |
 
 These are original, unofficial interpretations with separate icon sets, controls,
 font pairs, recorded music, UI cues and short startup splashes. No extracted

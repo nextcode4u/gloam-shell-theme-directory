@@ -264,6 +264,15 @@ Reduced motion uses a still frame. The pack adds no splash audio.
             "are original agent-assisted illustrations.",
             "are original code-authored assets from `tools/classic_ds_assets.py`.",
         )
+    if theme == "synthwave":
+        credit += """
+## Palette reference
+
+Color direction is informed by [Synthwave-Hass](https://github.com/bbbenji/synthwave-hass),
+by bbbenji: deep plum surfaces, hot pink, electric cyan, mint and yellow accents.
+Gloam uses brighter pink text on dark surfaces to retain contrast at RGB555 precision.
+Artwork and control skins are prepared specifically for this Gloam pack.
+"""
     (folder / "CREDITS.md").write_text(credit, encoding="utf-8")
     compatibility = (
         "Requires a **Gloam source build with header/footer theme colors** "

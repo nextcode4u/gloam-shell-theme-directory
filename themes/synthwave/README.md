@@ -1,6 +1,6 @@
 # Synthwave
 
-Coral sunset, an indigo coastal highway, turquoise chrome and warm neon selection rails.
+Deep plum surfaces, hot-pink selections, electric cyan reflections, mint status lights and a magenta coastal sunset.
 
 ![Two-screen renderer preview](preview.png)
 
@@ -21,6 +21,5 @@ recorded music and a startup splash are included. Reduced motion is respected.
 
 See [credits](CREDITS.md), [music attribution](MUSIC.md) and original notices.
 Illustrations interpret 1980s airbrush artwork and synthwave record sleeves; this is not an official theme.
-Previews use the current Gloam source with selection-ink fixes for menus and
-settings. The original 1.1.0 binary accepts the pack format but lacks those fixes.
+Previews use the current Gloam source with selection-ink fixes for menus and settings. The original 1.1.0 binary accepts the pack format but lacks those fixes.
 These are renderer captures, not photographs of a DSi LCD.

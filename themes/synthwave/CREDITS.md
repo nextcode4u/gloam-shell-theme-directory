@@ -1,7 +1,7 @@
 # Synthwave — credits
 
 Original Gloam interpretation of 1980s airbrush artwork and synthwave record sleeves, by nextcode4u / Gloam project
-(agent-assisted). Coral sunset, an indigo coastal highway, turquoise chrome and warm neon selection rails.
+(agent-assisted). Deep plum surfaces, hot-pink selections, electric cyan reflections, mint status lights and a magenta coastal sunset.
 
 ## Artwork and controls
 
@@ -39,3 +39,10 @@ replaced by the original UI-cue generator.
 The short two-screen `splash.gsp` uses this pack's artwork and typefaces with
 bounded motion; choose Startup splash → Theme in Gloam. Any button skips;
 Reduced motion uses a still frame. The pack adds no splash audio.
+
+## Palette reference
+
+Color direction is informed by [Synthwave-Hass](https://github.com/bbbenji/synthwave-hass),
+by bbbenji: deep plum surfaces, hot pink, electric cyan, mint and yellow accents.
+Gloam uses brighter pink text on dark surfaces to retain contrast at RGB555 precision.
+Artwork and control skins are prepared specifically for this Gloam pack.

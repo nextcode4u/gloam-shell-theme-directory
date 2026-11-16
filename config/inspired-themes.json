@@ -185,15 +185,15 @@
     "synthwave": {
       "name": "Synthwave",
       "inspiration": "1980s airbrush artwork and synthwave record sleeves",
-      "description": "Coral sunset, an indigo coastal highway, turquoise chrome and warm neon selection rails.",
+      "description": "Deep plum surfaces, hot-pink selections, electric cyan reflections, mint status lights and a magenta coastal sunset.",
       "colors": [
-        "#181c39",
-        "#242544",
-        "#76627f",
-        "#f8e8df",
-        "#c7b7d5",
-        "#f5ad7d",
-        "#201c30"
+        "#2a2139",
+        "#34294f",
+        "#675581",
+        "#f4eee4",
+        "#c5bfdb",
+        "#ff7edb",
+        "#241b2f"
       ],
       "layout": "scene",
       "tabs": "pager",

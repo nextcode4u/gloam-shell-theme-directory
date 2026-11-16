@@ -9,6 +9,7 @@ import numpy as np
 from PIL import Image, ImageColor, ImageDraw
 from luna_assets import skin as luna_skin
 from portal_assets import skin as portal_skin
+from synthwave_assets import skin as synthwave_skin
 
 ROOT = Path(__file__).resolve().parents[1]
 SPECS = json.loads((ROOT / "config/inspired-themes.json").read_text(encoding="utf-8"))[
@@ -43,6 +44,8 @@ def material(theme, focused=False):
                     + round(23 * math.sin((x + y) / 110))
                     + round(14 * math.exp(-(((y - 45) / 20) ** 2)))
                 )
+            elif theme == "synthwave":
+                v = 125 + round(16 * math.exp(-(((y - 24) / 42) ** 2)))
             elif theme == "pokedex":
                 v = 139 - round(y / 26) + (2 if (x + y) % 6 == 0 else 0)
             else:
@@ -63,6 +66,8 @@ def skin(theme, name):
         return luna_skin(name)
     if theme == "portal-terminal":
         return portal_skin(name)
+    if theme == "synthwave":
+        return synthwave_skin(name)
     s = SPECS[theme]
     c = dict(zip(KEYS, s["colors"]))
     im = Image.new("RGBA", (32, 32))
@@ -122,15 +127,6 @@ def skin(theme, name):
         )
         if name == "tab-selected":
             d.ellipse((3, 12, 8, 17), fill=color("#72d7ed"), outline=color("#163f4e"))
-    else:
-        d.line(
-            [(1, 26), (1, 2), (4, 0), (27, 0), (31, 4), (31, 29)],
-            fill=color("#77e4e7"),
-            width=1,
-        )
-        d.line([(4, 31), (28, 31), (31, 28)], fill=color("#f99cc8"), width=2)
-        if selected:
-            d.line((5, 3, 26, 3), fill=color("#ffe3b6"), width=2)
     if frame:
         d.rectangle((6, 6, 25, 25), fill=(0, 0, 0, 0))
     if name in ("header", "footer"):
@@ -158,6 +154,13 @@ def control(theme, name):
         if theme == "luna" and name.startswith("battery-")
         else color(c["accent"])
     )
+    if theme == "synthwave":
+        if name.startswith("battery-"):
+            a = color("#72f1b8")
+        elif name == "wireless-idle":
+            a = color("#36f9f6")
+        elif name == "update-available":
+            a = color("#fede5d")
     surface = color(c["surface"])
     if name.startswith("battery-"):
         d.rounded_rectangle(
@@ -276,7 +279,10 @@ def ambient(theme, frame):
     elif theme == "synthwave":
         for i in range(4):
             h = 4 + (i * 3 + frame) % 8
-            d.rectangle((3 + i * 7, 24 - h, 7 + i * 7, 25), fill=a)
+            d.rectangle(
+                (3 + i * 7, 24 - h, 7 + i * 7, 25),
+                fill=color(("#f92aad", "#36f9f6", "#72f1b8", "#fede5d")[i]),
+            )
     elif theme == "desktop-98":
         d.rectangle((7, 8, 24, 24), outline=color(c["text"], 170), width=2)
         d.rectangle((10, 11, 21, 20), fill=a if frame < 4 else color(c["line"], 170))
