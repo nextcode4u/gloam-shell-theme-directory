@@ -429,11 +429,17 @@ class Handler(BaseHTTPRequestHandler):
                 guide = ROOT.parent / "docs/THEME_STUDIO.md"
                 text = guide.read_text("utf-8")
                 page = (
-                    '<html lang="en"><meta charset="utf-8"><title>Theme Studio guide</title><body style="max-width:90ch;margin:40px auto;padding:20px;background:#181b20;color:#eceef4"><pre style="white-space:pre-wrap;font:14px/1.7 system-ui">'
+                    '<html lang="en"><meta charset="utf-8"><title>Theme Studio guide</title><body style="max-width:90ch;margin:40px auto;padding:20px;background:#181b20;color:#eceef4"><nav><button id="help-close">Close help / return to editor</button> <a href="/" style="color:#c2b0f3">Open editor</a></nav><p>Your original editor stays open in its tab.</p><pre style="white-space:pre-wrap;font:14px/1.7 system-ui">'
                     + html_text.escape(text)
-                    + "</pre></body></html>"
+                    + '</pre><script src="/guide-actions.js"></script></body></html>'
                 )
                 self.send(page.encode(), "text/html; charset=utf-8")
+                return
+            if name == "/guide-actions.js":
+                self.send(
+                    b'document.getElementById("help-close").onclick=()=>window.close();',
+                    "text/javascript",
+                )
                 return
             if name in ("/studio.js", "/studio.css"):
                 self.send(

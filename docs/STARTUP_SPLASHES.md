@@ -106,7 +106,9 @@ does not rebuild or overwrite an installed splash.
    a static-image motion effect.
 7. Optionally choose a WAV. Mono/stereo 8/16-bit PCM at 8–48 kHz is converted to
    mono PCM16 at 16 kHz, limited to the splash duration. The PC preview is silent.
-8. Build and preview. Check Reduced motion, Skip and fast-startup simulation.
+8. Build and preview. Check Reduced motion, Stop preview and fast-startup simulation.
+   Escape also stops playback. Save & close designer saves the project and closes
+   the window, leaving Theme Studio available when it opened the designer.
    Reduced motion uses the selected source frame with final position/scale/opacity;
    it does not play transforms. While loading may end partway through the intro.
 9. Save a `.gsp`, **Add to theme**, or **Install as custom splash**. All layer

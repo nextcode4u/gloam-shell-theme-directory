@@ -4,8 +4,8 @@
   "files": [
     {
       "path": "tools/theme_builder.py",
-      "size": 22864,
-      "sha256": "da1474a78646fa55a41e417d1c41950565cea36244b92028c5aee8af69e82288"
+      "size": 23319,
+      "sha256": "018634642f1d55cfce36d744d4e73600f3c7cdfbfb0651dbcc187bd522ec6ad1"
     },
     {
       "path": "tools/theme_project.py",
@@ -34,8 +34,8 @@
     },
     {
       "path": "tools/theme_studio/index.html",
-      "size": 7636,
-      "sha256": "62e52bf871525f10b8e39b4d84f220e5e69e18d53854a94037adbab4a42112cf"
+      "size": 7859,
+      "sha256": "e1f75f1f5fddbe4434b148911ddef32bd8200aa2e8ccb8b73c9ca13e87ff9063"
     },
     {
       "path": "tools/theme_studio/studio.css",
@@ -44,8 +44,8 @@
     },
     {
       "path": "tools/theme_studio/studio.js",
-      "size": 64646,
-      "sha256": "1f869dbf720d694f20c57601b53ddde8f5fbe115a458cb4e18040007fe35e122"
+      "size": 70587,
+      "sha256": "8e84884837a1ff3e460632a97248cf273da373e0310e73fae380c94848d8e147"
     },
     {
       "path": "tools/theme_native/__init__.py",
@@ -79,8 +79,8 @@
     },
     {
       "path": "tools/splash_builder.py",
-      "size": 30211,
-      "sha256": "ee06a0ab53fffdbe54cfb397c1356434a6f18d5e4af9749f8d0ae52d8fbc1bd8"
+      "size": 30855,
+      "sha256": "b0b4841e2466faa1cfccd6ef4db544e97208828a1512b547b6262070a568a88e"
     },
     {
       "path": "tools/splash_project.py",
@@ -94,8 +94,8 @@
     },
     {
       "path": "docs/THEME_STUDIO.md",
-      "size": 9901,
-      "sha256": "5224a683181db7a820da3d46364e4311b541da6d18ca6eb0931df03cf8dd1088"
+      "size": 11012,
+      "sha256": "3fd70a6c92d666ffa2d13024007d31649b62f99560bd41197188fca36f5a1b8f"
     },
     {
       "path": "LICENSE",

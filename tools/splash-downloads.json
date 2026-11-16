@@ -9,8 +9,8 @@
     },
     {
       "path": "tools/splash_builder.py",
-      "size": 30211,
-      "sha256": "ee06a0ab53fffdbe54cfb397c1356434a6f18d5e4af9749f8d0ae52d8fbc1bd8"
+      "size": 30855,
+      "sha256": "b0b4841e2466faa1cfccd6ef4db544e97208828a1512b547b6262070a568a88e"
     },
     {
       "path": "tools/splash_project.py",

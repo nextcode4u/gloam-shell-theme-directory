@@ -19,6 +19,121 @@ let state,
   serial = 0,
   previewTimer,
   savedTimer;
+let navigationHistory = [],
+  navigationRestoring = false,
+  navigationEpoch = 0,
+  backInFlight = false,
+  canvasNeedsReload = false;
+function captureNavigation() {
+  return {
+    section,
+    stage: activeStage,
+    asset: activeAsset,
+    binding: assetBinding,
+    width: artWidth,
+    height: artHeight,
+    slot: selectedSlot,
+    inspectorScroll: document.querySelector(".inspector").scrollTop,
+    stageScroll: $(activeStage + "-stage").scrollTop,
+    preview: {
+      sample: $("sample").value,
+      view: $("preview-view").value,
+      selected: $("selected").value,
+      guides: $("guides").checked,
+      zoom: $("zoom").value,
+    },
+  };
+}
+function rememberNavigation(previous = captureNavigation()) {
+  if (navigationRestoring) return;
+  navigationEpoch++;
+  navigationHistory.push(previous);
+  if (navigationHistory.length > 40) navigationHistory.shift();
+}
+function stopMedia() {
+  document.querySelectorAll("audio,video").forEach((media) => media.pause());
+}
+function closeTool(panel) {
+  panel.remove();
+  navigationEpoch++;
+  stopMedia();
+  document.querySelector(".inspector").scrollTop = panel.returnScroll || 0;
+  (panel.returnFocus?.isConnected ? panel.returnFocus : $("view-back")).focus({
+    preventScroll: true,
+  });
+}
+function toolGroup(title, ...children) {
+  const panel = group(title, ...children);
+  panel.dataset.transientTool = "true";
+  panel.returnFocus = document.activeElement;
+  panel.returnScroll = document.querySelector(".inspector").scrollTop;
+  panel.prepend(button("Close " + title.toLowerCase(), () => closeTool(panel)));
+  return panel;
+}
+async function goBack() {
+  if (backInFlight) return;
+  backInFlight = true;
+  $("view-back").disabled = true;
+  try {
+    await returnToPreviousView();
+  } finally {
+    backInFlight = false;
+    $("view-back").disabled = false;
+  }
+}
+async function returnToPreviousView() {
+  const tool = document.querySelector("[data-transient-tool]");
+  if (tool) {
+    closeTool(tool);
+    return;
+  }
+  await settleEdits(true, true);
+  const target = navigationHistory.at(-1) || {
+    section: "project",
+    stage: "preview",
+    slot: "icons/folder.png",
+  };
+  stopMedia();
+  navigationEpoch++;
+  navigationRestoring = true;
+  try {
+    if (
+      target.stage === "canvas" &&
+      !(target.asset === activeAsset && layers.length && !canvasNeedsReload)
+    )
+      await editAsset(
+        target.asset,
+        target.width,
+        target.height,
+        target.binding,
+      );
+    section = target.section;
+    selectedSlot = target.slot;
+    setStage(target.stage, false);
+    inspect();
+    if (target.preview) {
+      $("sample").value = target.preview.sample;
+      $("preview-view").value = target.preview.view;
+      $("selected").value = target.preview.selected;
+      $("guides").checked = target.preview.guides;
+      $("zoom").value = target.preview.zoom;
+      $("zoom").onchange();
+    }
+    document
+      .querySelectorAll("[data-section]")
+      .forEach((b) =>
+        b.classList.toggle("active", b.dataset.section === section),
+      );
+    $("native-preview-back").classList.add("hidden");
+    refreshPreview();
+    if (navigationHistory.length) navigationHistory.pop();
+    document.querySelector(".inspector").scrollTop =
+      target.inspectorScroll || 0;
+    $(target.stage + "-stage").scrollTop = target.stageScroll || 0;
+  } finally {
+    navigationRestoring = false;
+  }
+}
 let controlId = 0;
 let pending = Promise.resolve(),
   dirtyArt = false,
@@ -213,7 +328,7 @@ async function settleEdits(art = true, manifest = false) {
     if (art && dirtyArt) {
       dirtyArt = false;
       layers = [];
-      setStage("preview");
+      setStage("preview", false);
     }
     if (manifest) rawDraft = null;
   }
@@ -233,6 +348,7 @@ function assetUrl(path) {
   return url("/api/asset", { path });
 }
 async function api(action, data = {}, refresh = true) {
+  const epoch = navigationEpoch;
   const mutations = [
     "image",
     "material",
@@ -282,6 +398,17 @@ async function api(action, data = {}, refresh = true) {
     if (!response.ok) throw Error(result.error || "Action failed");
     if (result.state) {
       if (action === "workspace") installRoot = "";
+      if (["workspace", "import"].includes(action)) {
+        navigationHistory = [];
+        navigationEpoch++;
+        section = "project";
+        setStage("preview", false);
+        document
+          .querySelectorAll("[data-section]")
+          .forEach((b) =>
+            b.classList.toggle("active", b.dataset.section === "project"),
+          );
+      }
       state = result.state;
       serial++;
       updateShell();
@@ -295,10 +422,15 @@ async function api(action, data = {}, refresh = true) {
   const current = pending.then(task);
   pending = current.catch(() => {});
   const result = await current;
-  if (shouldReload) {
+  if (
+    shouldReload &&
+    epoch === navigationEpoch &&
+    activeStage === "canvas" &&
+    !dirtyArt
+  ) {
     dirtyArt = false;
     await editAsset(reload.path, reload.width, reload.height, reload.binding);
-  }
+  } else if (shouldReload) canvasNeedsReload = true;
   return result;
 }
 function updateShell() {
@@ -314,6 +446,7 @@ function refreshPreview() {
   clearTimeout(previewTimer);
   previewTimer = setTimeout(() => {
     if (!state) return;
+    $("native-preview-back").classList.add("hidden");
     document.querySelector(".caption").textContent =
       "256 × 192 · authoring preview · validate on the console";
     $("preview-loading").textContent = "Preparing preview…";
@@ -330,7 +463,9 @@ function refreshPreview() {
     });
   }, 180);
 }
-function setStage(name) {
+function setStage(name, remember = true) {
+  if (name !== activeStage && remember) rememberNavigation();
+  if (name !== activeStage) stopMedia();
   activeStage = name;
   for (const item of ["preview", "canvas", "assets"])
     $(item + "-stage").classList.toggle("hidden", item !== name);
@@ -342,6 +477,10 @@ function setStage(name) {
 function selectSection(name) {
   return guard(async () => {
     if (name !== section && rawDraft !== null) await settleEdits(false, true);
+    if (name !== section) {
+      rememberNavigation();
+      stopMedia();
+    }
     section = name;
     if (
       ["icons", "components"].includes(name) &&
@@ -518,6 +657,7 @@ function inspect() {
   $("section-title").textContent = desc[3];
   $("section-description").textContent = desc[4];
   const host = $("inspector-content");
+  stopMedia();
   host.replaceChildren();
   if (section === "project") projectInspector(host);
   else if (section === "colors") {
@@ -695,7 +835,7 @@ async function extractPalette() {
     colors.set(color, (colors.get(color) || 0) + 1);
   }
   const choices = [...colors].sort((a, b) => b[1] - a[1]).slice(0, 12);
-  const groupNode = group("Extracted colors — choose a role");
+  const groupNode = toolGroup("Extracted colors — choose a role");
   for (const [color] of choices) {
     const role = select(Object.keys(state.schema.colors), "accent");
     groupNode.append(
@@ -827,7 +967,7 @@ function generatorInspector(kind) {
       kind === "icons" ? "soft" : "paper",
     );
   host.prepend(
-    group(
+    toolGroup(
       "Starter set recipe",
       style,
       note(
@@ -860,7 +1000,7 @@ function atlasInspector(kind) {
     [cf, c] = number("Columns", 8, 1, 16),
     [rf, r] = number("Rows", 4, 1, 16);
   host.prepend(
-    group(
+    toolGroup(
       "Import sprite sheet",
       note(
         "Tiles map left-to-right, top-to-bottom in the slot order above. Imported tiles are fitted to 32×32.",
@@ -893,6 +1033,9 @@ async function exportAtlas(kind) {
   const ctx = c.getContext("2d");
   for (let i = 0; i < names.length; i++) {
     const path = dir + "/" + names[i] + ".png";
+    const image = state.assets.some((asset) => asset.path === path)
+      ? await loadImage(assetUrl(path))
+      : null;
     if (image) {
       ctx.drawImage(image, (i % 8) * 32, Math.floor(i / 8) * 32, 32, 32);
     }
@@ -932,7 +1075,7 @@ function materialInspector(
     ["Seed", 17, 0, 99999],
   ].map(([n, v, a, b]) => [n, ...number(n, v, a, b)]);
   host.prepend(
-    group(
+    toolGroup(
       "Material recipe",
       field("Surface", style),
       field("Base color", color),
@@ -941,6 +1084,7 @@ function materialInspector(
       button(
         "Generate " + width + "×" + height,
         async () => {
+          const epoch = navigationEpoch;
           const values = Object.fromEntries(
             fields.map(([name, _, input]) => [
               name.toLowerCase(),
@@ -961,6 +1105,10 @@ function materialInspector(
               ...values,
             },
           });
+          if (epoch !== navigationEpoch) {
+            log("Artwork saved; current view kept.");
+            return;
+          }
           await editAsset(
             path,
             width,
@@ -997,7 +1145,7 @@ async function importImage(
     [ax, x] = number("Crop anchor X", 0.5, 0, 1, 0.05),
     [ay, y] = number("Crop anchor Y", 0.5, 0, 1, 0.05);
   host.prepend(
-    group(
+    toolGroup(
       "Import " + file.name,
       el("img", { class: "texture-preview", src: data, alt: "Source artwork" }),
       field("Fit", fit),
@@ -1008,6 +1156,7 @@ async function importImage(
       button(
         "Convert and assign",
         async () => {
+          const epoch = navigationEpoch;
           await api("image", {
             path,
             data,
@@ -1025,6 +1174,10 @@ async function importImage(
               source_name: file.name,
             },
           });
+          if (epoch !== navigationEpoch) {
+            log("Artwork saved; current view kept.");
+            return;
+          }
           await editAsset(
             path,
             width,
@@ -1336,15 +1489,23 @@ function publishInspector(host) {
       "Native renderer check",
       native.node,
       button("Render with local Gloam host tool", async () => {
+        const previous = captureNavigation(),
+          epoch = navigationEpoch;
         const file = await api("native", {
           executable: native.input.value,
           sample: $("sample").value,
         });
+        if (epoch !== navigationEpoch) {
+          log("Native preview saved in exports; current view kept.");
+          return;
+        }
+        rememberNavigation(previous);
         clearTimeout(previewTimer);
+        $("native-preview-back").classList.remove("hidden");
         document.querySelector(".caption").textContent =
           "Native Gloam renderer · synthetic library";
         $("preview").src = url("/api/export-file", { path: file });
-        setStage("preview");
+        setStage("preview", false);
         toast("Native renderer output loaded");
       }),
       el("small", {
@@ -1454,12 +1615,17 @@ async function restorePaint(s) {
   paintRender();
 }
 async function editAsset(path, width = 32, height = 32, binding = null) {
+  const previous = captureNavigation();
   await settleEdits(true, false);
+  const epoch = navigationEpoch;
   const doc = await api("artboard-load", { path }, false);
   let image = null;
   if (!doc && state.assets.some((a) => a.path === path))
     image = await loadImage(assetUrl(path));
+  if (!navigationRestoring && epoch !== navigationEpoch)
+    throw new CanceledEdit();
   activeAsset = path;
+  canvasNeedsReload = false;
   loadedAsset = path;
   assetBinding = binding;
   artWidth = width;
@@ -1491,7 +1657,9 @@ async function editAsset(path, width = 32, height = 32, binding = null) {
   paintFuture = [];
   dirtyArt = false;
   paintRender();
-  setStage("canvas");
+  if (previous.stage !== "canvas" || previous.asset !== path)
+    rememberNavigation(previous);
+  setStage("canvas", false);
 }
 function composite() {
   const c = canvas();
@@ -2089,9 +2257,20 @@ $("zoom").onchange = () => {
 };
 for (const id of ["sample", "preview-view", "selected", "guides"])
   $(id).onchange = refreshPreview;
-document
-  .querySelectorAll("[data-stage]")
-  .forEach((b) => (b.onclick = () => setStage(b.dataset.stage)));
+document.querySelectorAll("[data-stage]").forEach(
+  (b) =>
+    (b.onclick = () =>
+      guard(async () => {
+        if (activeStage === "canvas" && b.dataset.stage !== "canvas")
+          await settleEdits(true, false);
+        if (b.dataset.stage === "canvas" && canvasNeedsReload) {
+          await editAsset(activeAsset, artWidth, artHeight, assetBinding);
+          return;
+        }
+        setStage(b.dataset.stage);
+      })),
+);
+$("view-back").onclick = $("native-preview-back").onclick = () => guard(goBack);
 for (const [id, icon, label] of sections)
   $("navigation").append(
     el(
@@ -2113,6 +2292,13 @@ window.addEventListener("beforeunload", (e) => {
   }
 });
 window.addEventListener("keydown", (e) => {
+  if (e.defaultPrevented || e.isComposing) return;
+  if (e.key === "Escape" || (e.altKey && e.key === "ArrowLeft")) {
+    if (document.querySelector("dialog[open]")) return;
+    e.preventDefault();
+    guard(goBack);
+    return;
+  }
   if (!(e.ctrlKey || e.metaKey)) return;
   const editing = ["INPUT", "TEXTAREA"].includes(
     document.activeElement.tagName,

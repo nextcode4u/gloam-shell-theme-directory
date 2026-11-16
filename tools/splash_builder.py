@@ -192,7 +192,7 @@ class Builder:
             value="Choose a working folder to save your project."
         )
         ttk.Label(
-            workspace_bar, textvariable=self.workspace_status, wraplength=700
+            workspace_bar, textvariable=self.workspace_status, wraplength=480
         ).pack(side="left", fill="x", expand=True)
         ttk.Button(
             workspace_bar, text="Open working folder…", command=self.open_workspace
@@ -200,6 +200,10 @@ class Builder:
         ttk.Button(workspace_bar, text="Save project", command=self.save_project).pack(
             side="left"
         )
+        self.close_button = ttk.Button(
+            workspace_bar, text="Save & close designer", command=self.close
+        )
+        self.close_button.pack(side="left", padx=(6, 0))
         frame = ttk.Frame(root, padding=18)
         frame.pack(fill="both", expand=True)
         left_shell = ttk.Frame(frame)
@@ -411,9 +415,12 @@ class Builder:
             variable=self.reduced,
             command=self.preview,
         ).pack(anchor="w", pady=8)
-        ttk.Button(right, text="Skip animation", command=self.stop).pack(
-            fill="x", pady=3
+        self.stop_button = ttk.Button(
+            right,
+            text="Stop preview / return to editing",
+            command=self.stop_preview_event,
         )
+        self.stop_button.pack(fill="x", pady=3)
         ttk.Button(
             right,
             text="Simulate startup ready after 0.5 s",
@@ -442,6 +449,15 @@ class Builder:
             self.restore_project()
         self.restoring = False
         root.protocol("WM_DELETE_WINDOW", self.close)
+        root.bind("<Escape>", self.stop_preview_event)
+
+    def stop_preview_event(self, event=None):
+        self.stop()
+        self.status.set(
+            "Preview stopped. Continue editing, or save and close the designer to return."
+        )
+        self.controls_canvas.focus_set()
+        return "break"
 
     def scroll_controls(self, event):
         pointer_x = self.root.winfo_pointerx()
@@ -687,7 +703,9 @@ class Builder:
                     initialdir=(
                         str(Path(self.export_path).parent)
                         if self.export_path
-                        else str(self.workspace.root) if self.workspace else None
+                        else str(self.workspace.root)
+                        if self.workspace
+                        else None
                     ),
                     initialfile=(
                         Path(self.export_path).name

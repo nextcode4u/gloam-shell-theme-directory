@@ -17,6 +17,52 @@ from splash_project import Workspace
     os.name == "nt" or os.environ.get("DISPLAY"), "Needs a graphical display (or xvfb)"
 )
 class SplashGuiTests(unittest.TestCase):
+    def test_escape_stops_animation_and_visible_close_returns_without_losing_the_project(
+        self,
+    ):
+        import tkinter as tk
+        from tkinter import ttk, filedialog, messagebox
+        from PIL import ImageTk
+
+        for key, value in dict(
+            tk=tk,
+            ttk=ttk,
+            filedialog=filedialog,
+            messagebox=messagebox,
+            ImageTk=ImageTk,
+        ).items():
+            setattr(splash_builder, key, value)
+        with tempfile.TemporaryDirectory() as folder:
+            project = Path(folder).resolve()
+            source = project / "source.png"
+            Image.new("RGB", (32, 32), "blue").save(source)
+            root = splash_builder.create_root()
+            builder = splash_builder.Builder(root, Workspace(project))
+            closed = False
+            try:
+                builder.selected_asset(source, builder.paths["top"])
+                root.deiconify()
+                root.update()
+                root.focus_force()
+                builder.preview()
+                self.assertIsNotNone(builder.timer)
+                root.event_generate("<Escape>")
+                root.update()
+                self.assertIsNone(builder.timer)
+                self.assertTrue(root.winfo_exists())
+                builder.preview()
+                builder.stop_button.invoke()
+                self.assertIsNone(builder.timer)
+                builder.close_button.invoke()
+                closed = True
+                self.assertTrue((project / "splash-project.json").is_file())
+                self.assertTrue(
+                    Workspace(project).resolve(Workspace(project).state["paths"]["top"])
+                )
+            finally:
+                if not closed:
+                    builder.close()
+
     def test_autosave_reopen_and_export_keep_editable_project(self):
         import tkinter as tk
         from tkinter import ttk, filedialog, messagebox

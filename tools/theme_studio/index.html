@@ -36,6 +36,9 @@
       </aside>
       <main class="stage">
         <div class="stage-toolbar">
+          <button id="view-back" title="Return to the previous view">
+            ← Back
+          </button>
           <div class="segmented">
             <button class="selected" data-stage="preview">Two screens</button
             ><button data-stage="canvas">Artwork editor</button
@@ -54,6 +57,9 @@
         </div>
         <div id="preview-stage" class="stage-body">
           <div class="preview-controls">
+            <button id="native-preview-back" class="hidden">
+              Back to editor
+            </button>
             <select id="sample" aria-label="Preview context">
               <option value="browser">File browser</option>
               <option value="settings">Settings</option></select

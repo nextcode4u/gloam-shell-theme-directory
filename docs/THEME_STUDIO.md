@@ -153,6 +153,25 @@ Run the Python suite and both download-manifest checks after changes. Refresh
 a downloaded file changes. Keep generated projects under ignored build storage
 or outside the repository. The editor does not modify checked-in collection packs.
 
+## Back, close and playback controls
+
+The persistent Back button returns to the previous section, asset library or
+editor view. Escape and Alt+Left do the same; at the beginning of a session they
+return to Project. Pending artwork/INI changes still offer Save, Discard and
+Cancel. Escape in that confirmation cancels the navigation, rather than closing
+the project. Back also restores the previous view's scroll and preview controls.
+
+Temporary import, palette, atlas and material panels have their own Close button;
+Back/Escape closes the latest panel first. Leaving audio stops playback. Native
+renderer previews have Back to editor. If a preview/conversion finishes after
+you navigate away, its output is saved without forcing you back into that view.
+
+Help opens separately with Close help / return to editor, leaving the original
+editor tab intact. In the shared splash designer, Escape or Stop preview / return
+to editing stops playback. Save & close designer saves the splash project and
+closes its window; Studio remains open. Use Build saved splash into theme there
+when ready to prepare the package.
+
 Linux CI installs `requirements-dev.txt` and Chromium to exercise the actual
 browser journeys, including drawing, cancellation, conversion and a disposable
 SD install. These are development dependencies only. To run those tests locally,
