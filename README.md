@@ -45,7 +45,7 @@ Reduced motion holds the ambient accent still.
 | --- | --- |
 | [Luna XP](themes/luna) | Green hills, cobalt window trim, amber folders and rounded enamel |
 | [Desktop 98](themes/desktop-98) | Teal desktop, raised gray controls, navy selections and pixel icons |
-| [Classic DS](themes/classic-ds) | Pearl silver, subtle dot matrix, blue glass and orange touch controls |
+| [Classic DS](themes/classic-ds) | Gray grid, silver panels, flat monochrome icons and blue-gray selection corners |
 | [Portal Terminal](themes/portal-terminal) | Rick and Morty-inspired garage, inked lab props and goo-green selections |
 | [Aero Glass](themes/aero-glass) | Blue-green ribbons, pearl glass cards and luminous shell objects |
 | [Pokédex](themes/pokedex) | Red/ivory research-device casing, celadon screens and blue sensors |
@@ -141,6 +141,9 @@ python tools/build_inspired_collection.py --gloam /path/to/gloam --download-font
 python tools/prepare_theme_music.py
 python tools/package_collection.py
 ```
+
+Classic DS uses original code-authored grid and glyph masters; regenerate them
+with `python tools/classic_ds_assets.py` before rebuilding that pack.
 
 Artwork masters and hashes are under `source/art` and `config/inspired-art.json`;
 `config/inspired-themes.json` holds authored layouts/palettes. Recorded music

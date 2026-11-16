@@ -32,7 +32,7 @@ def material(theme, focused=False):
             elif theme == "luna":
                 v = 130 + round(18 * math.cos(y / 75)) + noise // 4
             elif theme == "classic-ds":
-                v = 142 - round(y / 20) + (8 if x % 4 == 0 and y % 4 == 0 else 0)
+                v = 136 - (10 if y % 3 == 0 else 0) - (5 if x % 16 == 0 else 0)
             elif theme == "portal-terminal":
                 v = 125 + noise + round(9 * math.sin(x / 53 + y / 39))
             elif theme == "aero-glass":
@@ -68,7 +68,7 @@ def skin(theme, name):
     panel = name == "panel"
     raised = name in ("card", "card-selected", "tab-selected", "panel")
     fill = color(
-        c["accent"] if selected else c["surface"],
+        c["accent"] if selected and theme != "classic-ds" else c["surface"],
         255 if panel or selected else 170 if name == "card" else 220,
     )
     edge = color(c["line"])
@@ -94,11 +94,23 @@ def skin(theme, name):
         if name == "tab-selected":
             d.line((5, 4, 26, 4), fill=color("#f7d46a"), width=2)
     elif theme == "classic-ds":
-        d.rounded_rectangle((1, 1, 30, 30), radius=2, outline=shine)
-        d.line((4, 29, 27, 29), fill=shadow, width=2)
+        if name == "header":
+            d.rectangle((0, 0, 31, 31), fill=color("#c9d8df"))
+        d.rectangle((0, 0, 31, 31), outline=color("#343a3c"))
+        d.line([(1, 29), (1, 1), (29, 1)], fill=color("#ffffff"))
+        d.line([(2, 30), (30, 30), (30, 2)], fill=color("#929b9e"))
         if selected:
-            d.line((4, 3, 27, 3), fill=color("#fff0a8"), width=2)
-            d.line((4, 28, 27, 28), fill=color("#ba5b13"), width=1)
+            for x, y, dx, dy in (
+                (0, 0, 1, 1),
+                (31, 0, -1, 1),
+                (0, 31, 1, -1),
+                (31, 31, -1, -1),
+            ):
+                d.line(
+                    [(x, y + dy * 5), (x, y), (x + dx * 5, y)],
+                    fill=color(c["accent"]),
+                    width=2,
+                )
     elif theme == "portal-terminal":
         d.polygon(
             [(4, 1), (27, 0), (31, 5), (30, 28), (26, 31), (2, 30), (0, 24), (1, 5)],
@@ -173,11 +185,14 @@ def control(theme, name):
             "unknown": 0,
         }[name[8:]]
         for index in range(level):
-            d.rectangle((6 + index * 5, 12, 9 + index * 5, 20), fill=a)
+            d.rectangle(
+                (6 + index * 5, 12, 9 + index * 5, 20),
+                fill=color("#669455") if theme == "classic-ds" else a,
+            )
         if name.endswith("charging"):
             d.polygon(
                 [(17, 7), (10, 17), (15, 17), (12, 25), (23, 13), (17, 13)],
-                fill=color("#eab14b"),
+                fill=color("#669455" if theme == "classic-ds" else "#eab14b"),
                 outline=ink,
             )
         if name.endswith("unknown"):

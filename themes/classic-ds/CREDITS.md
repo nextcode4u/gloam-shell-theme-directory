@@ -1,12 +1,12 @@
 # Classic DS — credits
 
 Original Gloam interpretation of the original Nintendo DS, by nextcode4u / Gloam project
-(agent-assisted). Pearl silver plastic, subtle dot-matrix surfaces, blue glass and orange touch controls.
+(agent-assisted). Classic DS gray grid, silver square panels, flat monochrome icons and blue-gray selection corners.
 
 ## Artwork and controls
 
 Wallpaper and icon masters in `source/art/classic-ds.png` and
-`source/art/classic-ds-icons.png` are original agent-assisted illustrations.
+`source/art/classic-ds-icons.png` are original code-authored assets from `tools/classic_ds_assets.py`.
 Frames, material maps, status/control assets, ambient animation, UI cues and the
 startup splash are prepared by `tools/build_inspired_collection.py` and the
 shared splash converter. Project-held rights in this original artwork and
@@ -21,8 +21,8 @@ are included. The CC0 dedication covers project-held rights only.
 
 ## Fonts
 
-- Body: Quicksand, 11px; line height 12.
-- Heading: Nunito, 14px; line height 16.
+- Body: IBMPlexSansCondensed-Regular, 11px; line height 12.
+- Heading: IBMPlexSansCondensed-Regular, 12px; line height 16.
 
 Full original font notices are in `fonts/LICENSE.txt`. Font source revisions and
 hashes are pinned in `config/theme-fonts.json`; font licenses are separate from

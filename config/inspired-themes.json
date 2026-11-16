@@ -59,30 +59,32 @@
     "classic-ds": {
       "name": "Classic DS",
       "inspiration": "the original Nintendo DS",
-      "description": "Pearl silver plastic, subtle dot-matrix surfaces, blue glass and orange touch controls.",
+      "description": "Classic DS gray grid, silver square panels, flat monochrome icons and blue-gray selection corners.",
       "colors": [
-        "#e9edf0",
-        "#f8f8f2",
-        "#84939f",
-        "#25343e",
-        "#586a79",
-        "#eb9426",
-        "#221e17"
+        "#f0f1ee",
+        "#eff1ee",
+        "#636b6e",
+        "#252b2d",
+        "#61696d",
+        "#547e92",
+        "#fbfcfa"
       ],
-      "layout": "gallery",
+      "layout": "journal",
       "tabs": "icons",
-      "position": "top",
-      "view": "grid",
+      "position": "bottom",
+      "view": "extended",
       "size": "large",
-      "radius": 3,
+      "radius": 0,
       "opacity": [
-        105,
-        220
+        35,
+        50
       ],
-      "body": "quicksand",
-      "heading": "nunito",
+      "body": "ibmplexsanscondensed",
+      "heading": "ibmplexsanscondensed",
       "pitch": 920,
-      "chrome": "full"
+      "chrome": "full",
+      "heading_size": 12,
+      "heading_baseline": 12
     },
     "portal-terminal": {
       "name": "Portal Terminal",

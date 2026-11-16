@@ -1,6 +1,6 @@
 # Classic DS
 
-Pearl silver plastic, subtle dot-matrix surfaces, blue glass and orange touch controls.
+Classic DS gray grid, silver square panels, flat monochrome icons and blue-gray selection corners.
 
 ![Two-screen renderer preview](preview.png)
 
@@ -13,7 +13,7 @@ Requires **Gloam 1.1.0 or later**. Copy this whole folder to
 Up/Down selects, X previews and A applies when ready. Existing personal view,
 wallpaper or accent overrides can alter the supplied defaults.
 
-Defaults: Gallery top composition, Grid browser,
+Defaults: Journal top composition, Extended browser,
 large icons and icons tabs. Native DS/DSi banner icons keep priority;
 theme file/system/category icons cover other entries. Both reading surfaces,
 all control skins, eight ambient frames, body/heading fonts, three UI cues,

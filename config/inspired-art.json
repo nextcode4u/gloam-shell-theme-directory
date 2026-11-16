@@ -16,10 +16,12 @@
       "sha256": "f56609ce73b240b5310244456b26e8c9b285cf6aed60b4150c811fec6cc0b9f4"
     },
     "source/art/classic-ds.png": {
-      "sha256": "028c4c70887219a1d7eb189534fa94730cd44cf85ead4b18e0c644adf7572294"
+      "sha256": "770357b4ddc5f29d448252181db3ea85d08bc798f6857e6cc0d4907c5006b29d",
+      "authoring": "tools/classic_ds_assets.py"
     },
     "source/art/classic-ds-icons.png": {
-      "sha256": "a823cea378286565dcf7ce644c6deafe42646ff86c0a8bd4b90caaf53fdbbc58"
+      "sha256": "24078fb788549b3fa73199bbdb9e0c10a59b6b3e5d242820a7ff8c19b017ea34",
+      "authoring": "tools/classic_ds_assets.py"
     },
     "source/art/portal-terminal.png": {
       "sha256": "98f1c2ec4d3893550ecd08bbaabc6b5ebf33c1386c383b3579ea2a6ea6cf9242"

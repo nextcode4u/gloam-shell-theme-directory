@@ -52,8 +52,8 @@ def update_font_manifest(gloam):
                 {"family": family},
             )
             existing.update(
-                size=11 if role == "body" else 14,
-                baseline=10 if role == "body" else 14,
+                size=11 if role == "body" else s.get("heading_size", 14),
+                baseline=10 if role == "body" else s.get("heading_baseline", 14),
                 height=12 if role == "body" else 16,
                 edge_shift=2,
             )
@@ -126,6 +126,8 @@ def build(theme, gloam, font_dir, download):
         "selection_text": colors["ink"],
         "tab_text": colors["ink"],
     }
+    if theme == "classic-ds":
+        config["colors"].update(selection_text=colors["text"], tab_text=colors["text"])
     config["fonts"] = {"ui": "fonts/ui.dsfont", "heading": "fonts/heading.dsfont"}
     config["layout"] = {
         "top_layout": s["layout"],
@@ -239,6 +241,11 @@ bounded motion; choose Startup splash → Theme in Gloam. Any button skips;
 Reduced motion uses a still frame. The pack adds no splash audio.
 """
     )
+    if theme == "classic-ds":
+        credit = credit.replace(
+            "are original agent-assisted illustrations.",
+            "are original code-authored assets from `tools/classic_ds_assets.py`.",
+        )
     (folder / "CREDITS.md").write_text(credit, encoding="utf-8")
     (folder / "README.md").write_text(
         f"""# {s['name']}
