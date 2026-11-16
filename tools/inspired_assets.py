@@ -10,6 +10,7 @@ from PIL import Image, ImageColor, ImageDraw
 from luna_assets import skin as luna_skin
 from portal_assets import skin as portal_skin
 from synthwave_assets import skin as synthwave_skin
+from pokedex_assets import skin as pokedex_skin
 
 ROOT = Path(__file__).resolve().parents[1]
 SPECS = json.loads((ROOT / "config/inspired-themes.json").read_text(encoding="utf-8"))[
@@ -68,6 +69,8 @@ def skin(theme, name):
         return portal_skin(name)
     if theme == "synthwave":
         return synthwave_skin(name)
+    if theme == "pokedex":
+        return pokedex_skin(name)
     s = SPECS[theme]
     c = dict(zip(KEYS, s["colors"]))
     im = Image.new("RGBA", (32, 32))
@@ -119,14 +122,6 @@ def skin(theme, name):
         d.rounded_rectangle((2, 2, 29, 29), radius=5, outline=color("#e6f9ff", 85))
         d.line((7, 3, 24, 3), fill=color("#ffffff", 230), width=2)
         d.line((6, 28, 25, 28), fill=color("#5a9bbd", 170), width=2)
-    elif theme == "pokedex":
-        d.rounded_rectangle((1, 1, 30, 30), radius=2, outline=color("#a6c2ae"))
-        d.line((4, 3, 27, 3), fill=color("#ffffff", 170), width=2)
-        d.line(
-            (4, 28, 27, 28), fill=color("#365f55" if selected else "#9eb29a"), width=2
-        )
-        if name == "tab-selected":
-            d.ellipse((3, 12, 8, 17), fill=color("#72d7ed"), outline=color("#163f4e"))
     if frame:
         d.rectangle((6, 6, 25, 25), fill=(0, 0, 0, 0))
     if name in ("header", "footer"):
@@ -143,7 +138,7 @@ def control(theme, name):
     d = ImageDraw.Draw(im)
     ink = (
         color("#ffffff")
-        if theme == "luna"
+        if theme in ("luna", "pokedex")
         and (
             name.startswith("battery-") or name in ("wireless-idle", "update-available")
         )

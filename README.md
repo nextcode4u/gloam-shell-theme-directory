@@ -48,13 +48,13 @@ Reduced motion holds the ambient accent still.
 | [Classic DS](themes/classic-ds) | Gray grid, silver panels, flat monochrome icons and blue-gray selection corners |
 | [Portal Terminal](themes/portal-terminal) | Flat cartoon alien landscape, lavender skies, peach panels and lime portal highlights |
 | [Aero Glass](themes/aero-glass) | Blue-green ribbons, pearl glass cards and luminous shell objects |
-| [Pokédex](themes/pokedex) | Red/ivory research-device casing, celadon screens and blue sensors |
+| [Pokédex](themes/pokedex) | Red illustrated casing, an unobstructed celadon display and teal selection frames |
 | [Synthwave](themes/synthwave) | Plum surfaces, hot-pink highlights, electric cyan and a magenta coastal sunset |
 
 These are original, unofficial interpretations with separate icon sets, controls,
 font pairs, recorded music, UI cues and short startup splashes. No extracted
-operating-system/franchise artwork or audio is included. Luna requires a source build with the new header/footer theme colors
-(commit `99a5fab` or later); the other six support **Gloam 1.1.0 or later**.
+operating-system/franchise artwork or audio is included. Luna and Pokédex require a source build with the new header/footer theme colors
+(commit `99a5fab` or later); the other five support **Gloam 1.1.0 or later**.
 Names and marks remain with their respective owners.
 Previews use the current source build, which also fixes selection-text contrast
 in settings and other menus; that fix is not present in the original 1.1.0 binary.

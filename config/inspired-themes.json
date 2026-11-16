@@ -157,7 +157,7 @@
     "pokedex": {
       "name": "Pok\u00e9dex",
       "inspiration": "Pok\u00e9mon field-research devices",
-      "description": "Red and ivory enamel, celadon displays, blue sensor lenses and chunky illustrated research-tool icons.",
+      "description": "Red illustrated casing and a celadon display form the UI, with open frames, blue sensor lenses and teal selections.",
       "colors": [
         "#dce8cd",
         "#e8f2dd",
@@ -174,13 +174,17 @@
       "size": "large",
       "radius": 3,
       "opacity": [
-        50,
-        150
+        0,
+        0
       ],
       "body": "atkinsonhyperlegible",
       "heading": "archivoblack",
       "pitch": 880,
-      "chrome": "full"
+      "chrome": "full",
+      "bottom_tint": 0,
+      "header_text": "#ffffff",
+      "footer_text": "#ffffff",
+      "header_link_text": "#ffffff"
     },
     "synthwave": {
       "name": "Synthwave",

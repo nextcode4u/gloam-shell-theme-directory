@@ -1,6 +1,6 @@
 # Pokédex
 
-Red and ivory enamel, celadon displays, blue sensor lenses and chunky illustrated research-tool icons.
+Red illustrated casing and a celadon display form the UI, with open frames, blue sensor lenses and teal selections.
 
 ![Two-screen renderer preview](preview.png)
 
@@ -8,7 +8,7 @@ Red and ivory enamel, celadon displays, blue sensor lenses and chunky illustrate
 
 ## Install
 
-Requires **Gloam 1.1.0 or later**. Copy this whole folder to
+Requires a **Gloam source build with header/footer theme colors** (commit `99a5fab` or later). The original 1.1.0 binary rejects these new keys. Copy this whole folder to
 `/_nds/dsi-frontend/themes/pokedex/`. Open START → Appearance → Theme:
 Up/Down selects, X previews and A applies when ready. Existing personal view,
 wallpaper or accent overrides can alter the supplied defaults.
@@ -21,6 +21,5 @@ recorded music and a startup splash are included. Reduced motion is respected.
 
 See [credits](CREDITS.md), [music attribution](MUSIC.md) and original notices.
 Illustrations interpret Pokémon field-research devices; this is not an official theme.
-Previews use the current Gloam source with selection-ink fixes for menus and
-settings. The original 1.1.0 binary accepts the pack format but lacks those fixes.
+Previews use the matching Gloam source build with separate chrome inks.
 These are renderer captures, not photographs of a DSi LCD.

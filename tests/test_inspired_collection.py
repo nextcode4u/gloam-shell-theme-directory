@@ -98,6 +98,23 @@ class InspiredCollectionTests(unittest.TestCase):
                     )
                     self.assertGreaterEqual(ratio, 4.5, (component, key, ratio))
 
+    def test_pokedex_uses_the_device_art_without_white_panel_fills(self):
+        folder = ROOT / "themes/pokedex"
+        for screen in ("top", "bottom"):
+            with Image.open(
+                folder / "backgrounds" / ("material-" + screen + ".png")
+            ) as surface:
+                self.assertEqual(surface.getchannel("A").getextrema(), (0, 0))
+        for name in ("header", "footer", "panel", "row", "card", "artwork-frame"):
+            with Image.open(folder / "components" / (name + ".png")) as component:
+                self.assertEqual(component.getpixel((16, 16))[3], 0, name)
+        with Image.open(folder / "components/row-selected.png") as selection:
+            self.assertEqual(selection.getpixel((16, 16))[3], 255)
+        with Image.open(folder / "backgrounds/top.png") as top, Image.open(
+            folder / "backgrounds/bottom.png"
+        ) as bottom:
+            self.assertEqual(top.tobytes(), bottom.tobytes())
+
     def test_intros_use_three_still_layers_not_full_screen_movies(self):
         for name in SPECS:
             with self.subTest(theme=name):

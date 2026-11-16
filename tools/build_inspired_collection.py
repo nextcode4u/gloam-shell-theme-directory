@@ -92,7 +92,9 @@ def build(theme, gloam, font_dir, download):
             source.convert("RGB"), (256, 192), method=Image.Resampling.LANCZOS
         )
     art.save(folder / "backgrounds/top.png", optimize=True)
-    bottom = Image.blend(art, Image.new("RGB", art.size, s["colors"][0]), 0.14)
+    bottom = Image.blend(
+        art, Image.new("RGB", art.size, s["colors"][0]), s.get("bottom_tint", 0.14)
+    )
     bottom.save(folder / "backgrounds/bottom.png", optimize=True)
     with Image.open(ROOT / "source/art" / (theme + "-icons.png")) as source:
         if source.width < 256 or source.height < 256:
@@ -274,15 +276,18 @@ Gloam uses brighter pink text on dark surfaces to retain contrast at RGB555 prec
 Artwork and control skins are prepared specifically for this Gloam pack.
 """
     (folder / "CREDITS.md").write_text(credit, encoding="utf-8")
+    uses_chrome_inks = any(
+        key in s for key in ("header_text", "footer_text", "header_link_text")
+    )
     compatibility = (
         "Requires a **Gloam source build with header/footer theme colors** "
         "(commit `99a5fab` or later). The original 1.1.0 binary rejects these new keys."
-        if theme == "luna"
+        if uses_chrome_inks
         else "Requires **Gloam 1.1.0 or later**."
     )
     preview_note = (
         "Previews use the matching Gloam source build with separate chrome inks."
-        if theme == "luna"
+        if uses_chrome_inks
         else "Previews use the current Gloam source with selection-ink fixes for menus and "
         "settings. The original 1.1.0 binary accepts the pack format but lacks those fixes."
     )
