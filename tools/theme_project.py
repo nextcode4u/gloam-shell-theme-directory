@@ -28,6 +28,7 @@ ID = re.compile(r"[A-Za-z0-9_-]{1,63}\Z")
 
 def safe_tree(folder):
     result, total = [], 0
+    seen = set()
     for file in sorted(Path(folder).rglob("*")):
         if file.is_symlink():
             raise ValueError("Linked files are not supported.")
@@ -35,6 +36,9 @@ def safe_tree(folder):
             continue
         relative = file.relative_to(folder).as_posix()
         inside(folder, relative)
+        if relative.casefold() in seen:
+            raise ValueError("Case-colliding files are not portable to an SD card.")
+        seen.add(relative.casefold())
         size = file.stat().st_size
         total += size
         if size > MAX_FILE or total > MAX_TOTAL or len(result) >= 4096:
@@ -209,6 +213,8 @@ class ThemeProject:
         return target
 
     def write_asset(self, relative, data, source_name=None):
+        if relative.casefold() == "theme.ini":
+            raise ValueError("Use the manifest editor to change theme.ini.")
         if len(data) > MAX_FILE:
             raise ValueError("Asset exceeds 32 MiB.")
         target = inside(self.theme, relative)
@@ -233,6 +239,8 @@ class ThemeProject:
         self.save()
 
     def image_asset(self, relative, data, options):
+        if not relative.lower().endswith(".png"):
+            raise ValueError("Converted artwork needs a .png destination.")
         with Image.open(io.BytesIO(data)) as source:
             if source.width * source.height > 16777216:
                 raise ValueError("Source image exceeds 16 megapixels.")

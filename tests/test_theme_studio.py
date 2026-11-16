@@ -74,6 +74,7 @@ class ThemeStudioTests(unittest.TestCase):
         p.undo()
         self.assertEqual(file.read_bytes(), first)
         for path in (
+            "theme.ini",
             "../outside.png",
             "/outside.png",
             "sd:/file",
@@ -139,12 +140,23 @@ class ThemeStudioTests(unittest.TestCase):
             self.assertTrue(any(n.endswith("theme.ini") for n in z.namelist()))
             self.assertFalse(any(n.endswith("assets.gfx") for n in z.namelist()))
 
+        p.write_asset(
+            "fonts/ui.dsfont", (ROOT / "themes/morrow/fonts/ui.dsfont").read_bytes()
+        )
+        config = copy.deepcopy(p.data["config"])
+        config["fonts"]["ui"] = "fonts/ui.dsfont"
+        p.update(config=config)
+        with zipfile.ZipFile(p.export()) as z:
+            self.assertTrue(any(n.endswith("fonts/ui.dsfont") for n in z.namelist()))
+            self.assertFalse(any(n.endswith("assets.gfx") for n in z.namelist()))
+
     def test_import_preserves_notices_and_rejects_zip_traversal(self):
         folder = self.root / "input"
         folder.mkdir()
         (folder / "theme.ini").write_text("[theme]\nversion=2\nname=Imported\n")
         (folder / "LICENSE.txt").write_text("Third party terms")
         self.project.import_theme(folder)
+        self.assertFalse(self.project.data["metadata"]["license"])
         self.assertEqual(
             (self.project.theme / "LICENSE.txt").read_text(), "Third party terms"
         )
