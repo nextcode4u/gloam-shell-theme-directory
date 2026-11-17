@@ -17,6 +17,47 @@ from theme_schema import COLORS
 from theme_validate import inside, font_info
 
 
+COMPOSED_LAYOUTS = (
+    "spotlight",
+    "gallery",
+    "journal",
+    "panorama",
+    "dossier",
+    "portrait",
+)
+
+
+def composition_boxes(layout):
+    """Mirror Gloam's bounded composition geometry, including icon-tab captions."""
+    kind = layout.get("top_layout", "gallery")
+    above = layout.get("tabs_position") == "top" or (
+        not layout.get("tabs_position") and kind == "gallery"
+    )
+    tabs_height = 32 if layout.get("tab_style") == "icons" else 20
+    tabs_y = 26 if above else 176 - tabs_height
+    top = tabs_y + tabs_height + 6 if above else 27
+    bottom = 173 if above else tabs_y - 6
+    height = bottom - top - 24
+    title, info = (12, top, 232, 16), None
+    if kind == "spotlight":
+        art = (76, top + 24, 104, min(height, 104))
+    elif kind == "gallery":
+        art, info = (14, top + 24, 92, height), (120, top + 24, 124, height)
+    elif kind == "panorama":
+        art, title = (48, top + 4, 160, bottom - top - 30), (12, bottom - 18, 232, 16)
+    elif kind == "dossier":
+        art, info = (154, top + 24, 88, height), (12, top + 24, 128, height)
+    elif kind == "portrait":
+        art = (14, top + 4, 96, bottom - top - 8)
+        title, info = (124, top + 2, 120, 16), (124, top + 26, 120, bottom - top - 26)
+    else:
+        art = (14, top + 4, 60, min(bottom - top - 8, 84))
+        title, info = (86, top + 2, 158, 16), (86, top + 26, 158, bottom - top - 26)
+    return dict(
+        artwork=art, title=title, information=info, tabs=(0, tabs_y, 256, tabs_height)
+    )
+
+
 def text(draw, xy, value, fill, width=236, size=11):
     packs = getattr(draw, "theme_fonts", {})
     pack = packs.get("heading" if size >= 13 else "ui")
@@ -234,48 +275,71 @@ def render(project, sample="browser", view=None, selected=1, guides=False):
                 size=10,
             )
     else:
-        art = {
-            "scene": (
-                int(layout.get("scene_cover_x", "18")),
-                int(layout.get("scene_cover_y", "34")),
-                int(layout.get("scene_cover_width", "48")),
-                int(layout.get("scene_cover_height", "72")),
-            ),
-            "poster": (18, 45, 86, 95),
-            "spotlight": (90, 46, 76, 90),
-            "gallery": (16, 48, 74, 82),
-            "journal": (14, 42, 62, 92),
-        }[composition]
+        boxes = composition_boxes(layout) if composition in COMPOSED_LAYOUTS else None
+        art = (
+            boxes["artwork"]
+            if boxes
+            else {
+                "scene": (
+                    int(layout.get("scene_cover_x", "18")),
+                    int(layout.get("scene_cover_y", "34")),
+                    int(layout.get("scene_cover_width", "48")),
+                    int(layout.get("scene_cover_height", "72")),
+                ),
+                "poster": (18, 45, 86, 95),
+            }[composition]
+        )
         x, y, w, h = art
         skin(project, top, "card", (x, y, x + w, y + h), p["surface"])
-        size = min(w - 10, h - 10, 48)
+        size = min(w - 12, h - 12, 80)
         top.alpha_composite(
             icon(project, "folder", size), (x + (w - size) // 2, y + (h - size) // 2)
         )
         if composition == "scene":
             skin(project, top, "panel", (7, 121, 249, 151), p["surface"])
-            text(d, (11, 123), "Adventure", p["text"], 232)
-            text(d, (11, 138), "FOLDER / Y: details", p["muted"], 232, size=9)
+            text(d, (11, 123), "Adventure", p["text"], 232, size=13)
+            if layout.get("tab_style") != "icons":
+                text(d, (11, 138), "FOLDER / Y: details", p["muted"], 232, size=9)
+        elif boxes:
+            tx, ty, tw, _ = boxes["title"]
+            text(d, (tx, ty + 2), "Adventure", p["text"], tw, size=13)
+            if boxes["information"]:
+                ix, iy, iw, ih = boxes["information"]
+                text(d, (ix, iy), "FOLDER", p["accent"], iw)
+                if ih >= 60:
+                    text(d, (ix, iy + 48), "SD card", p["muted"], iw)
+                if ih >= 78:
+                    text(d, (ix, iy + 66), "Y: details", p["muted"], iw)
         else:
             text(d, (12, 29), "Adventure", p["text"], 228, size=13)
-            if composition != "spotlight":
-                text(d, (110, 62), "FOLDER", p["accent"], 130)
-                text(d, (110, 98), "SD card", p["muted"], 130)
-                text(d, (110, 117), "Y: details", p["muted"], 130, size=10)
-        nav_y = 28 if layout.get("tabs_position") == "top" else 155
+        nav_y = (
+            boxes["tabs"][1]
+            if boxes
+            else (144 if layout.get("tab_style") == "icons" else 155)
+        )
         count = int(layout.get("tab_visible", "3"))
         gap = int(layout.get("tab_gap", "4"))
         cell = (240 - gap * (count - 1)) // count
         for i, label in enumerate(("Home", "Games", "Apps", "Media", "Files")[:count]):
             x = 8 + i * (cell + gap)
+            highlight = layout.get("tab_highlight", "skin")
             if i == 1:
-                skin(
-                    project,
-                    top,
-                    "tab-selected",
-                    (x, nav_y, x + cell, nav_y + 17),
-                    p["accent"],
-                )
+                if highlight == "skin":
+                    skin(
+                        project,
+                        top,
+                        "tab-selected",
+                        (x, nav_y, x + cell, nav_y + 18),
+                        p["accent"],
+                    )
+                elif highlight == "underline":
+                    d.rectangle(
+                        (x, nav_y + 16, x + cell - 1, nav_y + 17), fill=p["accent"]
+                    )
+                else:
+                    d.rectangle(
+                        (x, nav_y, x + cell - 1, nav_y + 17), outline=p["accent"]
+                    )
             style = layout.get("tab_style", "labels")
             if style == "icons":
                 top.alpha_composite(
@@ -287,10 +351,14 @@ def render(project, sample="browser", view=None, selected=1, guides=False):
                     d,
                     (x + 3, nav_y + 2),
                     str(i + 1) + " " + label if style == "numbered" else label,
-                    p.get("tab_text", p["ink"]) if i == 1 else p["text"],
+                    p.get("tab_text", p["ink"])
+                    if i == 1 and highlight == "skin"
+                    else p["text"],
                     cell - 6,
                     size=9,
                 )
+        if layout.get("tab_style") == "icons":
+            text(d, (12, nav_y + 20), "Games", p["text"], 232)
     text(d, (10, 178), "20:30  L/R tabs", p.get("footer_text", p["muted"]), 164, size=9)
     text(d, (202, 178), "SD OK", p.get("footer_text", p["accent"]), 48, size=9)
     d = theme_draw(project, bottom)
@@ -304,7 +372,9 @@ def render(project, sample="browser", view=None, selected=1, guides=False):
     text(d, (202, 7), "Settings", p.get("header_link_text", p["accent"]), 48, size=9)
     text(d, (10, 23), "sd:/roms", p.get("header_text", p["muted"]), 225, size=9)
     style = view or layout.get("view", "extended")
-    large = layout.get("icon_size", "large") == "large"
+    icon_size = layout.get("icon_size", "large")
+    large = icon_size == "large"
+    medium = icon_size == "medium"
     names = [
         "Adventure",
         "Homebrew",
@@ -342,9 +412,9 @@ def render(project, sample="browser", view=None, selected=1, guides=False):
             text(d, (162, y + 3), value, p["accent"], 80, size=10)
     elif style in ("grid", "shelf"):
         columns = (
-            2
-            if style == "shelf" or not large
-            else int(layout.get("large_grid_columns", "3"))
+            3
+            if style == "shelf" or medium
+            else (2 if not large else int(layout.get("large_grid_columns", "3")))
         )
         rows = 1 if style == "shelf" else 2
         w = 240 // columns
@@ -359,7 +429,11 @@ def render(project, sample="browser", view=None, selected=1, guides=False):
                 (x + 1, y, x + w - 3, y + h - 4),
                 p["accent"] if i == selected else p["surface"],
             )
-            size = 48 if large else 32
+            size = (
+                (48 if large else 40 if medium else 32)
+                if style == "shelf"
+                else (32 if large else 24 if medium else 16)
+            )
             bottom.alpha_composite(
                 icon(project, "folder", size), (x + (w - size) // 2, y + 7)
             )
@@ -373,8 +447,10 @@ def render(project, sample="browser", view=None, selected=1, guides=False):
             )
     else:
         height = (
-            36 if style == "extended" or (style == "index" and large) else 24
-        ) + int(layout.get("row_padding", "0"))
+            (36 if style == "extended" or (style == "index" and large) else 24)
+            + (4 if medium and style not in ("list", "extended") else 0)
+            + int(layout.get("row_padding", "0"))
+        )
         for i, label in enumerate(names[: max(1, 126 // height)]):
             y = 42 + i * height
             skin(
@@ -386,9 +462,10 @@ def render(project, sample="browser", view=None, selected=1, guides=False):
             )
             if style != "list":
                 bottom.alpha_composite(
-                    icon(project, "folder", 24 if large else 16), (13, y + 4)
+                    icon(project, "folder", 32 if large else 24 if medium else 16),
+                    (13, y + 4),
                 )
-            x = 13 if style == "list" else 44
+            x = 13 if style == "list" else 51 if large else 43 if medium else 35
             text(
                 d,
                 (x, y + 4),

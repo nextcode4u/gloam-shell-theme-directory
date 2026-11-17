@@ -305,8 +305,13 @@ def check(root, config, metadata=None):
         "spotlight",
         "gallery",
         "journal",
+        "panorama",
+        "dossier",
+        "portrait",
     ):
-        error("Tab position is only supported by Spotlight, Gallery and Journal.")
+        error(
+            "Tab position requires Spotlight, Gallery, Journal, Panorama, Dossier or Portrait."
+        )
     try:
         x, y, w, h = (
             int(layout.get(k, str(v)))
@@ -331,7 +336,8 @@ def check(root, config, metadata=None):
             k in layout
             for k in ("tabs_position", "top_content_opacity", "bottom_content_opacity")
         )
-        or layout.get("top_layout") in ("spotlight", "gallery", "journal")
+        or layout.get("top_layout")
+        in ("spotlight", "gallery", "journal", "panorama", "dossier", "portrait")
         or any(
             k in config.get("backgrounds", {})
             for k in ("top_surface", "bottom_surface")

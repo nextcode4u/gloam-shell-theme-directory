@@ -136,6 +136,7 @@ async function returnToPreviousView() {
 }
 let controlId = 0;
 let pending = Promise.resolve(),
+  pendingCount = 0,
   dirtyArt = false,
   paintHistory = [],
   paintFuture = [],
@@ -281,11 +282,13 @@ async function guard(fn) {
 }
 class CanceledEdit extends Error {}
 function saveStatus() {
-  $("save-state").textContent = dirtyArt
-    ? "Unsaved artwork"
-    : rawDraft !== null
-      ? "Unsaved manifest"
-      : "Saved locally";
+  $("save-state").textContent = pendingCount
+    ? "Working…"
+    : dirtyArt
+      ? "Unsaved artwork"
+      : rawDraft !== null
+        ? "Unsaved manifest"
+        : "Saved locally";
 }
 function editDecision(message) {
   return new Promise((resolve) => {
@@ -348,7 +351,8 @@ function assetUrl(path) {
   return url("/api/asset", { path });
 }
 async function api(action, data = {}, refresh = true) {
-  const epoch = navigationEpoch;
+  const epoch = navigationEpoch,
+    originSection = section;
   const mutations = [
     "image",
     "material",
@@ -412,16 +416,25 @@ async function api(action, data = {}, refresh = true) {
       state = result.state;
       serial++;
       updateShell();
-      if (refresh) inspect();
+      if (refresh || (action === "field" && section !== originSection))
+        inspect();
       renderAssets();
       refreshPreview();
     }
     saveStatus();
     return result.result;
   };
+  pendingCount++;
+  saveStatus();
   const current = pending.then(task);
   pending = current.catch(() => {});
-  const result = await current;
+  let result;
+  try {
+    result = await current;
+  } finally {
+    pendingCount--;
+    saveStatus();
+  }
   if (
     shouldReload &&
     epoch === navigationEpoch &&
@@ -625,7 +638,10 @@ function renderFields(container, name, keys = null) {
     input.onchange = () => save(input.value);
     input.id = "control-" + ++controlId;
     const children = [
-      el("label", { text: key.replaceAll("_", " "), htmlFor: input.id }),
+      el("label", {
+        text: key === "chrome" ? "Interface framing" : key.replaceAll("_", " "),
+        htmlFor: input.id,
+      }),
       control,
     ];
     if (!(name === "theme" && key === "version")) {
@@ -647,6 +663,40 @@ function renderFields(container, name, keys = null) {
       );
     }
     if (spec.help) children.push(el("small", { text: spec.help }));
+    if (name === "layout" && key === "tab_highlight") {
+      const directory = state.config.components?.directory || "components";
+      const path = directory + "/tab-selected.png";
+      children.push(
+        assetThumb(path),
+        el("small", { class: "mono", text: path }),
+        row(
+          button("Design tab highlight…", async () => {
+            await editAsset(path, 32, 32, {
+              section: "components",
+              key: "directory",
+              value: directory,
+            });
+            selectedSlot = path;
+            await selectSection("components");
+          }),
+          button("Import tab highlight…", () =>
+            importImage(
+              path,
+              32,
+              32,
+              "components",
+              "directory",
+              null,
+              directory,
+            ),
+          ),
+          button("Component settings…", async () => {
+            selectedSlot = path;
+            await selectSection("components");
+          }),
+        ),
+      );
+    }
     container.append(el("div", { class: "field" }, children));
   }
 }
@@ -2286,7 +2336,7 @@ for (const [id, icon, label] of sections)
   );
 window.addEventListener("resize", () => $("zoom").onchange());
 window.addEventListener("beforeunload", (e) => {
-  if (dirtyArt || rawDraft !== null) {
+  if (dirtyArt || rawDraft !== null || pendingCount) {
     e.preventDefault();
     e.returnValue = "";
   }

@@ -217,6 +217,38 @@ class ThemeStudioTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             convert_audio(source, rate=48000, seconds=2, music=False)
 
+    def test_compositions_keep_top_tabs_out_of_headings_and_artwork(self):
+        def overlap(a, b):
+            return (
+                a
+                and b
+                and a[0] < b[0] + b[2]
+                and b[0] < a[0] + a[2]
+                and a[1] < b[1] + b[3]
+                and b[1] < a[1] + a[3]
+            )
+
+        for layout in theme_preview.COMPOSED_LAYOUTS:
+            for position in (None, "top", "bottom"):
+                for style in ("labels", "icons", "numbered", "pager"):
+                    config = dict(top_layout=layout, tab_style=style)
+                    if position:
+                        config["tabs_position"] = position
+                    boxes = theme_preview.composition_boxes(config)
+                    art = boxes["artwork"]
+                    frame = (art[0] - 2, art[1] - 2, art[2] + 4, art[3] + 4)
+                    self.assertGreaterEqual(frame[1], 25)
+                    self.assertLessEqual(frame[1] + frame[3], 176)
+                    for key in ("title", "information", "tabs"):
+                        self.assertFalse(overlap(frame, boxes[key]), (config, key))
+                    self.assertFalse(overlap(boxes["title"], boxes["tabs"]))
+                    self.assertFalse(overlap(boxes["information"], boxes["tabs"]))
+                    if style == "labels" and position == "top":
+                        self.project.data["config"]["layout"].update(config)
+                        self.assertEqual(
+                            theme_preview.render(self.project).size, (256, 396)
+                        )
+
     def test_font_packer_preview_and_exact_source_provenance(self):
         folder = ROOT / "tools/theme_native"
         upstream = json.loads((folder / "UPSTREAM.json").read_text())
@@ -236,6 +268,9 @@ class ThemeStudioTests(unittest.TestCase):
             "spotlight",
             "gallery",
             "journal",
+            "panorama",
+            "dossier",
+            "portrait",
         ):
             self.project.data["config"]["layout"]["top_layout"] = composition
             self.assertEqual(theme_preview.render(self.project).size, (256, 396))

@@ -49,21 +49,36 @@ SCHEMA = {
     },
     "layout": {
         "view": choice("classic extended list grid shelf index", "extended"),
-        "icon_size": choice("small large", "large"),
+        "icon_size": choice(
+            "small medium large",
+            "large",
+            "Small 16px, medium 24px and large 32px. Shelf scales these to 32/40/48px; List hides icons.",
+        ),
         "row_padding": number(0, 12, "2"),
         "large_grid_columns": number(2, 4, "3"),
         "top_layout": choice(
-            "sidebar sidebar_left poster scene spotlight gallery journal", "gallery"
+            "sidebar sidebar_left poster scene spotlight gallery journal panorama dossier portrait",
+            "gallery",
+            "Sidebar: side navigation. Scene: artwork over wallpaper. Spotlight: centered card. Gallery: artwork and facts. Journal: small artwork. Panorama: wide card with caption below. Dossier: right artwork, left facts. Portrait: tall left artwork, right title and facts.",
         ),
-        "chrome": choice("full minimal", "full"),
+        "chrome": choice(
+            "full minimal",
+            "full",
+            "Interface framing: Full draws header/footer skins and divider lines; Minimal leaves wallpaper visible. Text and controls remain available.",
+        ),
         "content_opacity": number(0, 100, "0"),
         "top_content_opacity": number(0, 100),
         "bottom_content_opacity": number(0, 100),
         "tabs_position": choice(
-            "top bottom", help="Only Spotlight, Gallery and Journal."
+            "top bottom",
+            help="Spotlight, Gallery, Journal, Panorama, Dossier and Portrait reserve space for top or bottom tabs. Sidebar uses a side rail; Scene and Poster use a bottom dock.",
         ),
         "tab_style": choice("labels icons numbered pager", "labels"),
-        "tab_highlight": choice("skin underline outline", "skin"),
+        "tab_highlight": choice(
+            "skin underline outline",
+            "skin",
+            "Skin uses components/tab-selected.png from the component directory (a 32×32 nine-slice PNG). Without an asset, Gloam uses the accent color. Design or import it below.",
+        ),
         "tab_visible": number(3, 5, "3"),
         "tab_gap": number(0, 8, "4"),
         "scene_cover_x": number(2, 246, "18"),

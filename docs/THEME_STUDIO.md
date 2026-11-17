@@ -75,7 +75,7 @@ previous metadata is valid, recovery leaves the files unchanged and reports it.
 | --- | --- |
 | Project | Blank theme, palette starter, local folder clone or single-theme ZIP import. Imported notices remain intact. |
 | Palette | Color picker, RGB entry, inheritance, starter palettes and colors extracted from an image. Native brightness checks report invalid combinations. |
-| Layout | Seven top compositions, all browser views, icon size, row spacing, grid columns, tab presentation, per-screen opacity and Scene cover bounds. With Scene and Safe areas enabled, drag the preview to reposition its cover. |
+| Layout | Ten top compositions, all browser views, small/medium/large icon sizes, row spacing, grid columns, tab presentation, per-screen opacity and Scene cover bounds. With Scene and Safe areas enabled, drag the preview to reposition its cover. |
 | Backgrounds | Image import, contain/cover/stretch/native fit, crop anchor, opacity and smooth/nearest resampling; separate wallpapers, reading surfaces and shade maps. |
 | Artwork editor | Brush, eraser, flood fill, line, rectangle, ellipse, gradient, text, eyedropper and layer movement. Visibility, opacity, blending, duplication and reordering; resize, rotate/flip, alpha quantization, PNG export and pixel/nine-slice guides. |
 | Icons | All file/system/tab slots; PNG import, geometric starters, pixel editing, sprite-sheet import/export and copying an asset to multiple slots. |
@@ -177,3 +177,22 @@ browser journeys, including drawing, cancellation, conversion and a disposable
 SD install. These are development dependencies only. To run those tests locally,
 set `GLOAM_STUDIO_BROWSER` to a compatible Chromium executable and run the suite;
 use `xvfb-run -a` when the shared Tk splash-editor tests need a virtual display.
+
+### Composition and tab artwork
+
+Panorama places a wide card above its caption; Dossier places artwork at right
+with facts at left; Portrait gives artwork a tall left column. These join the
+existing seven top layouts. The six composed layouts reserve separate title,
+artwork and top/bottom navigation regions, including icon-tab captions. Scene
+retains its movable artwork box. Panorama/Dossier/Portrait and medium icons need
+a Gloam build after 1.1.0; older layouts and small/large sizes remain compatible.
+
+**Interface framing** is the `chrome` setting in theme.ini: Full draws the
+header/footer skins and dividers; Minimal leaves these areas open. It does not
+remove labels or controls. Each layout control has explanatory help.
+
+Beside **Tab highlight**, Design opens the exact `tab-selected.png` artboard;
+Import opens image conversion for that slot. The thumbnail and theme-relative
+path identify the asset in use. Component settings opens the slot library and
+nine-slice border/alpha controls. Skin falls back to the accent color when no
+image exists; Underline and Outline use the accent without a skin image.
