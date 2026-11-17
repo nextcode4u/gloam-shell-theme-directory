@@ -62,6 +62,40 @@ def draw(page):
     "Optional Chromium / Playwright journeys",
 )
 class EndUserJourneys(unittest.TestCase):
+    def test_labeled_artwork_undo_and_redo_restore_pixels_and_button_states(self):
+        with editor() as (page, root, expect):
+            page.locator("[data-section=icons]").click()
+            page.locator('.slot[title="icons/folder.png"]').click()
+            undo = page.get_by_role("button", name="↶ Undo", exact=True)
+            redo = page.get_by_role("button", name="↷ Redo", exact=True)
+            expect(undo).to_be_disabled()
+            expect(redo).to_be_disabled()
+            original = page.locator("#paint").evaluate("c => c.toDataURL()")
+            draw(page)
+            expect(undo).to_be_enabled()
+            painted = page.locator("#paint").evaluate("c => c.toDataURL()")
+            self.assertNotEqual(painted, original)
+            undo.click()
+            expect(undo).to_be_disabled()
+            expect(redo).to_be_enabled()
+            self.assertEqual(
+                page.locator("#paint").evaluate("c => c.toDataURL()"), original
+            )
+            redo.click()
+            expect(redo).to_be_disabled()
+            expect(undo).to_be_enabled()
+            self.assertEqual(
+                page.locator("#paint").evaluate("c => c.toDataURL()"), painted
+            )
+            page.keyboard.press("Control+z")
+            expect(undo).to_be_disabled()
+            self.assertEqual(
+                page.locator("#paint").evaluate("c => c.toDataURL()"), original
+            )
+            draw(page)
+            expect(redo).to_be_disabled()
+            self.assertFalse((root / "theme/icons/folder.png").exists())
+
     def test_cancel_switch_and_change_inspector_do_not_redirect_the_drawing(self):
         with editor() as (page, root, expect):
             page.locator("[data-section=icons]").click()

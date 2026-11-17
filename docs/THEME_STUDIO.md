@@ -56,7 +56,8 @@ flattened PNG and editable layers. The top Save button also saves pending artwor
 the browser warns before discarding it. Source masters remain when outputs are
 regenerated. Switching assets or leaving an edited INI offers Save, Discard and
 Cancel. Export, preparation and installation save pending artwork/INI first.
-Global undo retains up to 30 edits and 64 MiB of asset/layer snapshots in
+The artwork toolbar has labeled **Undo** and **Redo** buttons (Ctrl+Z and
+Ctrl+Shift+Z), enabled when drawing history is available. Global undo retains up to 30 edits and 64 MiB of asset/layer snapshots in
 the session; drawing has separate undo. Neither undo stack survives a restart.
 Replacing an image outside the layer editor invalidates its old artboard.
 

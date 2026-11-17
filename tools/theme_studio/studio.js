@@ -331,8 +331,8 @@ for (const [id, help] of Object.entries({
   "resize-canvas":
     "Change the asset dimensions, optionally resampling its artwork. Runtime slots still require their documented sizes.",
   "paint-undo":
-    "Undo the last drawing edit. This is separate from saved-project undo.",
-  "paint-redo": "Redo a drawing edit that was undone.",
+    "Undo the last artwork edit (Ctrl+Z). This is separate from saved-project undo.",
+  "paint-redo": "Redo an artwork edit that was undone (Ctrl+Shift+Z).",
   "commit-art":
     "Save both the flattened runtime PNG and the project's editable layers.",
   "up-layer": "Move the selected layer above the next layer in the stack.",
@@ -2108,6 +2108,8 @@ function renderAssignment() {
   };
 }
 function paintRender() {
+  $("paint-undo").disabled = !paintHistory.length;
+  $("paint-redo").disabled = !paintFuture.length;
   const c = $("paint");
   c.width = artWidth;
   c.height = artHeight;
