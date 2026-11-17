@@ -14,6 +14,59 @@ from test_theme_studio_user_journeys import editor, draw
     "Optional Chromium layout checks",
 )
 class LayoutJourneys(unittest.TestCase):
+    def test_reading_surface_opacity_controls_share_layout_values_and_persist(self):
+        with editor() as (page, root, expect):
+            page.locator("[data-section=layout]").click()
+            page.get_by_label("content opacity", exact=True).fill("37")
+            page.get_by_label("content opacity", exact=True).press("Tab")
+            expect(page.locator("#save-state")).to_have_text("Saved locally")
+            page.locator("[data-section=backgrounds]").click()
+            top = page.get_by_role(
+                "heading", name="Top reading surface", exact=True
+            ).locator("..")
+            bottom = page.get_by_role(
+                "heading", name="Bottom reading surface", exact=True
+            ).locator("..")
+            expect(top.get_by_role("checkbox")).to_be_checked()
+            expect(
+                page.get_by_label("Top reading surface opacity percent")
+            ).to_have_value("37")
+            slider = page.get_by_label("Top reading surface opacity slider")
+            slider.focus()
+            slider.press("Home")
+            bottom_value = page.get_by_label("Bottom reading surface opacity percent")
+            bottom_value.fill("65")
+            bottom_value.press("Tab")
+            expect(page.locator("#save-state")).to_have_text("Saved locally")
+            expect(top.get_by_role("checkbox")).not_to_be_checked()
+            expect(bottom.get_by_role("checkbox")).not_to_be_checked()
+            config = json.loads((root / "theme-project.json").read_text())["config"][
+                "layout"
+            ]
+            self.assertEqual(
+                (
+                    config["content_opacity"],
+                    config["top_content_opacity"],
+                    config["bottom_content_opacity"],
+                ),
+                ("37", "0", "65"),
+            )
+            top.get_by_role("checkbox").check()
+            expect(page.locator("#save-state")).to_have_text("Saved locally")
+            page.reload()
+            page.locator("[data-section=backgrounds]").click()
+            expect(
+                page.get_by_label("Top reading surface opacity percent")
+            ).to_have_value("37")
+            expect(
+                page.get_by_label("Bottom reading surface opacity percent")
+            ).to_have_value("65")
+            config = json.loads((root / "theme-project.json").read_text())["config"][
+                "layout"
+            ]
+            self.assertNotIn("top_content_opacity", config)
+            self.assertEqual(config["bottom_content_opacity"], "65")
+
     def test_medium_and_new_compositions_are_selectable_and_persist(self):
         with editor() as (page, root, expect):
             page.locator("[data-section=layout]").click()

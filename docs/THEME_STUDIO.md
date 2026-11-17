@@ -178,6 +178,12 @@ SD install. These are development dependencies only. To run those tests locally,
 set `GLOAM_STUDIO_BROWSER` to a compatible Chromium executable and run the suite;
 use `xvfb-run -a` when the shared Tk splash-editor tests need a virtual display.
 
+Each reading-surface card in Backgrounds has an opacity slider and exact
+percentage input. Top and bottom are independent; **Use shared opacity** inherits
+Layout's common content opacity. Editing a value creates a per-screen override.
+The screen preview updates after each adjustment; source PNG pixels are preserved.
+These controls edit the same values shown in Layout.
+
 ### Composition and tab artwork
 
 Panorama places a wide card above its caption; Dossier places artwork at right

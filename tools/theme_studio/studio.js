@@ -912,26 +912,100 @@ function backgroundInspector(host) {
   for (const [key, label] of slots) {
     const path =
       state.config.backgrounds?.[key] || "backgrounds/" + key + ".png";
-    host.append(
-      group(
-        label,
-        assetThumb(path),
-        row(
-          button("Edit / draw", () =>
-            editAsset(path, 256, 192, { section: "backgrounds", key }),
-          ),
-          button("Import image…", () =>
-            importImage(path, 256, 192, "backgrounds", key),
-          ),
-          button("Generate material", () =>
-            materialInspector(path, 256, 192, "backgrounds", key),
-          ),
+    const card = group(
+      label,
+      assetThumb(path),
+      row(
+        button("Edit / draw", () =>
+          editAsset(path, 256, 192, { section: "backgrounds", key }),
+        ),
+        button("Import image…", () =>
+          importImage(path, 256, 192, "backgrounds", key),
+        ),
+        button("Generate material", () =>
+          materialInspector(path, 256, 192, "backgrounds", key),
         ),
       ),
     );
+    if (key.endsWith("_surface"))
+      card.append(surfaceOpacityControl(key.split("_")[0], label));
+    host.append(card);
   }
   renderFields(host, "backgrounds");
 }
+function surfaceOpacityControl(screen, label) {
+  const key = screen + "_content_opacity",
+    layout = state.config.layout || {},
+    shared = layout.content_opacity ?? "0",
+    value = layout[key] ?? shared,
+    slider = el("input", {
+      type: "range",
+      min: 0,
+      max: 100,
+      step: 1,
+      value,
+      "aria-label": label + " opacity slider",
+    }),
+    percent = el("input", {
+      type: "number",
+      required: true,
+      min: 0,
+      max: 100,
+      step: 1,
+      value,
+      "aria-label": label + " opacity percent",
+    }),
+    inherit = el("input", {
+      type: "checkbox",
+      checked: !Object.hasOwn(layout, key),
+    });
+  const save = (input) =>
+    guard(async () => {
+      if (!input.reportValidity()) return;
+      slider.value = percent.value = input.value;
+      inherit.checked = false;
+      await api("field", { section: "layout", key, value: input.value }, false);
+    });
+  slider.oninput = () => (percent.value = slider.value);
+  percent.oninput = () => {
+    if (percent.validity.valid) slider.value = percent.value;
+  };
+  slider.onchange = () => save(slider);
+  percent.onchange = () => save(percent);
+  inherit.onchange = () =>
+    guard(async () => {
+      if (inherit.checked)
+        slider.value = percent.value =
+          state.config.layout?.content_opacity ?? "0";
+      await api(
+        "field",
+        {
+          section: "layout",
+          key,
+          value: percent.value,
+          inherit: inherit.checked,
+        },
+        false,
+      );
+    });
+  return el(
+    "div",
+    { class: "field" },
+    el("strong", { text: "Surface opacity" }),
+    el(
+      "div",
+      { class: "input-row" },
+      slider,
+      percent,
+      el("span", { text: "%" }),
+    ),
+    el("label", {}, inherit, " Use shared opacity"),
+    el("small", {
+      text: "0% reveals the wallpaper; 100% keeps the surface's original opacity. Changes update the screen preview; source artwork stays intact.",
+    }),
+  );
+}
+
 function assetThumb(path) {
   const found = state.assets.find((a) => a.path === path);
   return found
