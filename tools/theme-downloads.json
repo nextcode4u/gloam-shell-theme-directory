@@ -29,8 +29,8 @@
     },
     {
       "path": "tools/theme_preview.py",
-      "size": 23944,
-      "sha256": "62ddb4224a579fbc4b6dca031f79d8fa22c17631acdcd82312cb71a4af62c28b"
+      "size": 24873,
+      "sha256": "74581cad3ac6f753173ee882f6156466fe06815680485225ed1e5f50c61bccc8"
     },
     {
       "path": "tools/theme_studio/index.html",

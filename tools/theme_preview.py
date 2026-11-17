@@ -189,6 +189,32 @@ def icon(project, name, size=32):
     )
 
 
+def browser_row_height(project, style, size):
+    """Match layout.h's list rows, including the extra space for component frames."""
+    icon_pixels = {"small": 16, "medium": 24, "large": 32}[size]
+    if style == "list":
+        height = 16
+    elif style == "extended":
+        height = {"small": 28, "medium": 34, "large": 40}[size]
+    else:
+        height = {"small": 18, "medium": 28, "large": 36}[size]
+    directory = project.data["config"].get("components", {}).get("directory", "")
+    framed = False
+    if directory:
+        for name in ("row", "row-selected"):
+            path = inside(project.theme, directory + "/" + name + ".png")
+            if path.is_file():
+                with Image.open(path) as image:
+                    framed |= image.size == (32, 32)
+    if framed:
+        content = 26 if style == "extended" else 12
+        if style != "list":
+            content = max(content, icon_pixels)
+        height = max(height, content + 8)
+    padding = int(project.data["config"].get("layout", {}).get("row_padding", "0"))
+    return height + (padding if 0 <= padding <= 12 else 0)
+
+
 def render(project, sample="browser", view=None, selected=1, guides=False):
     config = project.data["config"]
     p = COLORS | config.get("colors", {})
@@ -453,36 +479,27 @@ def render(project, sample="browser", view=None, selected=1, guides=False):
                 size=9,
             )
     else:
-        height = (
-            (36 if style == "extended" or (style == "index" and large) else 24)
-            + (4 if medium and style not in ("list", "extended") else 0)
-            + int(layout.get("row_padding", "0"))
-        )
-        for i, label in enumerate(names[: max(1, 126 // height)]):
-            y = 42 + i * height
+        height = browser_row_height(project, style, icon_size)
+        size = {"small": 16, "medium": 24, "large": 32}[icon_size]
+        for i, label in enumerate(names[: 128 // height]):
+            y = 41 + i * height
             skin(
                 project,
                 bottom,
                 "row-selected" if i == selected else "row",
-                (8, y, 248, y + height - 2),
+                (6, y, 250, y + height),
                 p["accent"] if i == selected else None,
             )
             if style != "list":
                 bottom.alpha_composite(
-                    icon(project, "folder", 32 if large else 24 if medium else 16),
-                    (13, y + 4),
+                    icon(project, "folder", size), (14, y + (height - size) // 2)
                 )
-            x = 13 if style == "list" else 51 if large else 43 if medium else 35
-            text(
-                d,
-                (x, y + 4),
-                label,
-                p.get("selection_text", p["text"]) if i == selected else p["text"],
-                238 - x,
-                size=11,
-            )
+            x = 14 if style == "list" else 14 + size + 6
+            text_y = y + (height - (26 if style == "extended" else 12)) // 2
+            color = p.get("selection_text", p["ink"]) if i == selected else p["muted"]
+            text(d, (x, text_y), label, color, 234 - x, size=11)
             if style == "extended":
-                text(d, (x, y + 21), "FOLDER", p["muted"], 236 - x, size=9)
+                text(d, (x, text_y + 13), "FOLDER", color, 234 - x, size=9)
     text(
         d,
         (10, 178),

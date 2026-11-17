@@ -217,6 +217,66 @@ class ThemeStudioTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             convert_audio(source, rate=48000, seconds=2, music=False)
 
+    def test_browser_icons_fit_native_row_sizes_with_and_without_skins(self):
+        icons = self.project.theme / "icons"
+        icons.mkdir()
+        Image.new("RGBA", (32, 32), "red").save(icons / "folder.png")
+        config = self.project.data["config"]
+        config["icons"]["directory"] = "icons"
+        components = self.project.theme / "components"
+        components.mkdir()
+        Image.new("RGBA", (32, 32), "#234555").save(components / "row.png")
+        expected = {
+            "classic": (18, 28, 36),
+            "index": (18, 28, 36),
+            "extended": (28, 34, 40),
+            "list": (16, 16, 16),
+        }
+        for framed in (False, True):
+            if framed:
+                config["components"]["directory"] = "components"
+            else:
+                config["components"].pop("directory", None)
+            for padding in (0, 12):
+                config["layout"]["row_padding"] = str(padding)
+                for style, heights in expected.items():
+                    for size, pixels, base in zip(
+                        ("small", "medium", "large"), (16, 24, 32), heights
+                    ):
+                        with self.subTest(
+                            framed=framed, padding=padding, style=style, size=size
+                        ):
+                            config["layout"].update(view=style, icon_size=size)
+                            image = theme_preview.render(self.project).crop(
+                                (0, 204, 256, 396)
+                            )
+                            red = [
+                                y
+                                for y in range(41, 169)
+                                if image.getpixel((14, y))[:3] == (255, 0, 0)
+                            ]
+                            if style == "list":
+                                self.assertEqual(red, [])
+                                continue
+                            height = (
+                                max(
+                                    base,
+                                    max(26 if style == "extended" else 12, pixels) + 8,
+                                )
+                                if framed
+                                else base
+                            )
+                            height += padding
+                            starts = [y for y in red if y - 1 not in red]
+                            self.assertEqual(
+                                starts,
+                                [
+                                    41 + i * height + (height - pixels) // 2
+                                    for i in range(min(6, 128 // height))
+                                ],
+                            )
+                            self.assertEqual(len(red), len(starts) * pixels)
+
     def test_motion_previews_decode_prepared_frames_and_keep_native_timing(self):
         gif = io.BytesIO()
         Image.new("RGBA", (32, 32), "red").save(
