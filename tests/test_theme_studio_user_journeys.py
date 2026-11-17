@@ -48,6 +48,7 @@ def editor():
 
 
 def draw(page):
+    page.locator("#paint").wait_for(state="visible")
     box = page.locator("#paint").bounding_box()
     page.mouse.move(box["x"] + box["width"] * 0.3, box["y"] + box["height"] * 0.3)
     page.mouse.down()

@@ -49,8 +49,8 @@
     },
     {
       "path": "tools/theme_studio/studio.js",
-      "size": 89133,
-      "sha256": "b55c41f0fe3121e3872d32225e53423a718d0e8cc4c5ae4889486ca26561c67d"
+      "size": 90071,
+      "sha256": "ba6404fb8dadf499e03a34451825ae19975c3bf3f7098788efa1ee21bd1936dd"
     },
     {
       "path": "tools/theme_native/__init__.py",
@@ -99,8 +99,8 @@
     },
     {
       "path": "docs/THEME_STUDIO.md",
-      "size": 16416,
-      "sha256": "5c115e86239ca9f10cc5228b01fdb71b059dfc4256bc4c1485dbab66548ee12d"
+      "size": 16654,
+      "sha256": "fe1efe78897ad027ab894575645e762473a439a5108487a49e0a954d3f313745"
     },
     {
       "path": "LICENSE",

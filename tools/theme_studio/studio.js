@@ -421,6 +421,12 @@ async function settleEdits(art = true, manifest = false) {
   if (choice === "save") {
     if (art && dirtyArt) await saveArtwork();
     if (manifest && rawDraft !== null) await saveManifest();
+    if ((art && dirtyArt) || (manifest && rawDraft !== null)) {
+      toast(
+        "Newer edits are still unsaved. Finish editing before leaving this view.",
+      );
+      throw new CanceledEdit();
+    }
   } else {
     if (art && dirtyArt) {
       dirtyArt = false;
@@ -435,7 +441,7 @@ async function saveManifest() {
   if (rawDraft === null) return;
   const text = rawDraft;
   await api("save", { raw: text }, false);
-  rawDraft = null;
+  if (rawDraft === text) rawDraft = null;
   saveStatus();
 }
 function url(endpoint, params = {}) {
@@ -468,6 +474,10 @@ async function api(action, data = {}, refresh = true) {
   if (["export", "install", "native", "prepare"].includes(action)) {
     if (dirtyArt) await saveArtwork();
     await saveManifest();
+    if (dirtyArt || rawDraft !== null)
+      throw Error(
+        "Newer edits arrived during save. Finish editing and try this action again.",
+      );
   }
   const shouldReload =
     layers.length &&
@@ -2397,16 +2407,30 @@ async function saveArtwork() {
     !confirm("Replace existing artwork at " + activeAsset + "?")
   )
     throw new CanceledEdit();
+  const path = activeAsset,
+    binding = assetBinding ? { ...assetBinding } : null,
+    drawingDocument = snapshotPaint(),
+    savedDrawing = JSON.stringify(drawingDocument);
   await api("artboard-save", {
-    path: activeAsset,
-    binding: assetBinding,
+    path,
+    binding,
     data: composite().toDataURL("image/png"),
-    document: snapshotPaint(),
+    document: drawingDocument,
   });
-  dirtyArt = false;
-  loadedAsset = activeAsset;
+  if (activeAsset !== path) {
+    toast("Saved " + path + "; current artwork kept.");
+    return;
+  }
+  loadedAsset = path;
+  dirtyArt =
+    JSON.stringify(snapshotPaint()) !== savedDrawing ||
+    JSON.stringify(assetBinding) !== JSON.stringify(binding);
   paintRender();
-  toast("Artwork and editable layers saved");
+  toast(
+    dirtyArt
+      ? "Earlier artwork saved; newer edits are still unsaved."
+      : "Artwork and editable layers saved",
+  );
 }
 $("commit-art").onclick = () => guard(saveArtwork);
 $("add-layer").onclick = () =>
@@ -2587,7 +2611,11 @@ async function saveProject() {
   if (dirtyArt) await saveArtwork();
   await saveManifest();
   await api("save");
-  toast("Project saved in " + state.workspace);
+  toast(
+    dirtyArt || rawDraft !== null
+      ? "Completed saves kept; newer edits are still unsaved."
+      : "Project saved in " + state.workspace,
+  );
 }
 $("save").onclick = () => guard(saveProject);
 $("validate").onclick = () =>

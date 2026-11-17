@@ -51,6 +51,10 @@ exports/                    SD-ready ZIPs and optional native screenshots
 exports/backups/             Previous installed theme before replacement
 ```
 
+A save writes the snapshot it started with. Artwork or INI edits made while it
+runs remain marked unsaved; save again to include them. Export/install/prepare
+will stop if newer drafts arrive during their save, keeping those drafts open.
+
 Configuration and metadata fields save on change. Save artwork writes both the
 flattened PNG and editable layers. The top Save button also saves pending artwork;
 the browser warns before discarding it. Source masters remain when outputs are
