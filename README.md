@@ -186,7 +186,9 @@ submission before preparing a pull request.
 
 The authoritative [theme format guide](https://github.com/nextcode4u/gloam-shell-ndx/blob/main/docs/guides/THEME_PACKAGES.md)
 lives with Gloam’s source. [catalog.json](catalog.json) lists the entries and their
-requirements; it is not yet connected to an automatic theme downloader.
+requirements. Gloam SD Setup builds after 1.1.0 can browse this catalog, cache
+`preview.png` screenshots before installation, and download individual themes
+with their credits and license notices. See the [Windows setup guide](https://github.com/nextcode4u/gloam-shell-ndx/blob/main/docs/guides/WINDOWS_SETUP.md#themes).
 
 ## Credits and licenses
 
