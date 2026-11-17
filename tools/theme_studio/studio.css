@@ -139,9 +139,11 @@ a {
   border-left: 1px solid var(--line);
   padding-left: 12px;
 }
-.moon {
-  font-size: 27px;
-  color: var(--accent);
+.brand-icon {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  image-rendering: pixelated;
 }
 #project-name {
   flex: 1;

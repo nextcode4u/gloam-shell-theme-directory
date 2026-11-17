@@ -441,6 +441,11 @@ class Handler(BaseHTTPRequestHandler):
                     "text/javascript",
                 )
                 return
+            if name == "/gloam-icon.png":
+                self.send(
+                    (ROOT / "theme_studio/gloam-icon.png").read_bytes(), "image/png"
+                )
+                return
             if name in ("/studio.js", "/studio.css"):
                 self.send(
                     (ROOT / "theme_studio" / name[1:]).read_bytes(),

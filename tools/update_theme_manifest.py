@@ -16,6 +16,7 @@ FILES = (
     "tools/theme_media.py",
     "tools/theme_preview.py",
     "tools/theme_studio/index.html",
+    "tools/theme_studio/gloam-icon.png",
     "tools/theme_studio/studio.css",
     "tools/theme_studio/studio.js",
     "tools/theme_native/__init__.py",

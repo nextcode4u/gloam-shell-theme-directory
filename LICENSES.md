@@ -4,6 +4,10 @@ Repository-authored tools, tests, documentation and starter theme configuration
 use GPL-3.0-or-later; the full text is in LICENSE. This does not override the
 licenses of contributed assets.
 
+Theme Studio's header and browser-tab mark reuse Gloam Shell NDX's original
+32×32 application icon (`forwarder/icon.png`), under the project's GPL-3.0-or-later
+terms. It is the same artwork used for BOOT.NDS, kept at native pixel dimensions.
+
 Theme Studio includes unchanged Gloam font and prepared-asset converters under
 `tools/theme_native/`. UPSTREAM.json records their exact revision and SHA-256
 hashes; they retain Gloam’s GPL-3.0-or-later terms. Shared splash tools retain the

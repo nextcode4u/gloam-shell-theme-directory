@@ -4,8 +4,8 @@
   "files": [
     {
       "path": "tools/theme_builder.py",
-      "size": 23700,
-      "sha256": "5d600732302e572436a0f242dbc8fb3dcb508933bcdc7951dc8e1db0e7122da7"
+      "size": 23895,
+      "sha256": "878a7d8b0dd9b23d1dbd6aa895e7fccd5fb0f115157f5107c3031489ae8db2cb"
     },
     {
       "path": "tools/theme_project.py",
@@ -34,13 +34,18 @@
     },
     {
       "path": "tools/theme_studio/index.html",
-      "size": 7859,
-      "sha256": "e1f75f1f5fddbe4434b148911ddef32bd8200aa2e8ccb8b73c9ca13e87ff9063"
+      "size": 8021,
+      "sha256": "8e6e267347033bebe05bb6d88888ca1545d12c749db95b269bb4fac4da781a14"
+    },
+    {
+      "path": "tools/theme_studio/gloam-icon.png",
+      "size": 1143,
+      "sha256": "0ef3ded074b164f085a21440ac9e3a09a47e3d985ba73ecf7fa61d790762f1ff"
     },
     {
       "path": "tools/theme_studio/studio.css",
-      "size": 12675,
-      "sha256": "5fd2bee0c910e73a8b926aa401ea3923b28dfc343ba59b66b4f0a53bb19e6a4d"
+      "size": 12717,
+      "sha256": "0fe817c022d08992df5ab420331a4ce2fd40e241c5be2d9f89a33d56e0cb3a8d"
     },
     {
       "path": "tools/theme_studio/studio.js",
@@ -104,8 +109,8 @@
     },
     {
       "path": "LICENSES.md",
-      "size": 4086,
-      "sha256": "99d1209d353f68bb8b738cee0865ea522833a77a0f34da59076434e6f640f58a"
+      "size": 4330,
+      "sha256": "2bd10e823c5e2bda5b4d4fbe8af7624e5bc32c161015470f0a68d4c26cd9e3c3"
     }
   ]
 }
