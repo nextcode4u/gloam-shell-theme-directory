@@ -3,39 +3,9 @@
 A home for community-made themes and original themes for
 [Gloam Shell NDX](https://github.com/nextcode4u/gloam-shell-ndx), the Nintendo DSi SD-card frontend.
 
-The directory includes five original illustrated themes, three updated Gloam starter themes,
-and a credited BUUF adaptation.
-Community submissions are welcome;
-there are no community entries yet. Themes from AKMenu, TWiLight Menu++ or other
-frontends are not directly compatible with Gloam’s format.
-
-## Art collection
-
-![Five themes rendered in Gloam](docs/collection-preview.png)
-
-These previews show the actual host renderer with synthetic content. Each theme
-includes licensed background music, original UI cues and its own material/icon treatment. The updated
-packs use translucent components, separate body/heading faces, independent screen
-opacity and additional top-screen compositions. Image-backed reading surfaces,
-matching control sprites and a small ambient header accent give each pack its
-own material treatment. Each pack now has independently illustrated icons and
-a distinct font pairing. Full-image material masks preserve continuous detail
-across rows and panels; selections use complete themed skins. Prepared bundles include preblended screens and material fields, reducing PNG decoding and small-file loading;
-Reduced motion holds the ambient accent still.
-
-## Browse themes
-
-| Theme | Style | Author |
-| --- | --- | --- |
-| [Aerial](themes/aerial) | Pearl glass and open clouds | Gloam project (agent-assisted) |
-| [Koi](themes/koi) | Coral lacquer and ink-blue water | Gloam project (agent-assisted) |
-| [Vesper](themes/vesper) | Velvet, moths and brass fittings | Gloam project (agent-assisted) |
-| [Tidal](themes/tidal) | Sea-glass lenses and jellyfish | Gloam project (agent-assisted) |
-| [Morrow](themes/morrow) | A slower morning | Gloam project (agent-assisted) |
-| [Slate](themes/slate) | City archive; folded labels and left icon rail | Gloam project |
-| [Folio](themes/folio) | Botanical notebook; translucent tracing paper | Gloam project |
-| [Phosphor](themes/phosphor) | Radar instruments; open brackets and segmented controls | Gloam project |
-| [BUUF](themes/buuf) | Hand-drawn objects, worn paper, leather and moss-green labels | mattahan icons; upstream fana-m / oxayotl; Gloam adaptation |
+Browse the [complete theme catalog](catalog.json) or the [theme folders](themes/).
+Each pack has screenshots, installation instructions and its own credits.
+Community submissions are welcome. Gloam themes use their own format.
 
 ## Desktop and device collection
 
@@ -118,64 +88,19 @@ limitations, validation, native checks and SD installation.
 
 ![Theme Studio editing a Morrow study project](docs/theme-studio.png)
 
-## Standalone Splash Builder
+## Splash Builder and reproducible builds
 
-Create static or animated startup splashes with images, GIFs, numbered frames,
-independent layer motion and optional WAV audio. Fit/crop/stretch/native sizing,
-start/end scale and opacity, position, timing, easing and repeat controls make
-each screen and overlay independently editable. The graphical builder and converter live
-here; playback lives in Gloam. On Windows, open PowerShell and run:
+Theme Studio includes the Splash Builder for images, GIFs, frame sequences,
+layer effects and optional WAV audio. To open it separately on Windows:
 
 ```powershell
 irm https://raw.githubusercontent.com/nextcode4u/gloam-shell-theme-directory/main/splash.ps1 | iex
 ```
 
-Choose or create a working folder. Your imported artwork and project settings
-are saved there automatically; run the command again and select that folder to
-continue. **Save project** saves immediately. Missing Python or image-processing
-dependencies are offered for installation before the builder opens. Installation
-requires your choice; the tool uses its own Python environment.
-
-You can also run from this repository's root:
-
-```sh
-python -m pip install -r requirements.txt
-python tools/pack_splash.py
-```
-
-Use Python 3.10+ with Tk (included in the standard Windows Python installer).
-Running without arguments opens the graphical builder and working-folder picker.
-See the [splash authoring guide](docs/STARTUP_SPLASHES.md)
-for saved projects, offline startup, preview, theme export and custom SD installation. Splash playback requires
-a Gloam build after 1.0.0; new motion exports additionally require
-`GLOMSP02` support, and automatically compressed exports require `GLOMSP03`.
-Compression retains every prepared frame while reducing SD/package size.
-The 1.0.0 release does not support splashes.
-
-## Rebuild the desktop/device collection
-
-Install `requirements.txt`, then use the matching Gloam checkout for its native
-font/sprite packers:
-
-```sh
-python tools/build_inspired_collection.py --gloam /path/to/gloam --download-fonts
-python tools/prepare_theme_music.py
-python tools/package_collection.py
-```
-
-Classic DS uses original code-authored grid and glyph masters; regenerate them
-with `python tools/classic_ds_assets.py` before rebuilding that pack.
-
-Artwork masters and hashes are under `source/art` and `config/inspired-art.json`;
-`config/inspired-themes.json` holds authored layouts/palettes. Recorded music
-is preserved during ordinary builds; `prepare_theme_music.py --rebuild --download`
-reproduces its pinned loops separately. Authoring does not install anything to SD.
-
-Packaging creates each theme ZIP and `dist/gloam-desktop-device-themes.zip`, with
-credits and notices but no preview screenshots. To render selected previews,
-first run Gloam’s host checks, then use `tools/render_previews.py --gloam` with
-`--only` followed by the desired theme IDs. `--gallery docs/inspired-preview.png`
-sets a combined preview destination. Omitting `--only` renders all sixteen packs.
+Both builders save work in the folder you choose and offer dependency setup when
+needed. See [splash authoring](docs/STARTUP_SPLASHES.md) for saved projects, offline
+use and export. For asset regeneration, native previews and pack ZIPs, see
+[authoring and validation](docs/AUTHORING.md).
 
 ## Share a theme
 
@@ -184,7 +109,7 @@ self-contained, include previews and credits, and describe the Gloam version and
 hardware or emulator used for testing. An issue can also be used to discuss a
 submission before preparing a pull request.
 
-The authoritative [theme format guide](https://github.com/nextcode4u/gloam-shell-ndx/blob/main/docs/guides/THEME_PACKAGES.md)
+The [theme format guide](https://github.com/nextcode4u/gloam-shell-ndx/blob/main/docs/guides/THEME_PACKAGES.md)
 lives with Gloam’s source. [catalog.json](catalog.json) lists the entries and their
 requirements. Gloam SD Setup builds after 1.1.0 can browse this catalog, cache
 `preview.png` screenshots before installation, and download individual themes
@@ -201,8 +126,3 @@ theme’s CREDITS.md. This directory does not relicense community work.
 This project was developed with assistance from AI language models. Some source
 code and documentation were generated or refined using AI, with the resulting
 work reviewed and integrated by the project author where appropriate.
-
-## Building packs
-
-See [authoring and validation](docs/AUTHORING.md) for reproducible asset builds,
-renderer checks and local install ZIP generation. Generated ZIPs stay out of Git.

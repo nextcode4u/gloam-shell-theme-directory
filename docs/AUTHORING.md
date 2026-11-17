@@ -198,3 +198,24 @@ format, or `--rebuild --download` to obtain pinned original MP3s and reproduce
 the excerpts with the recorded FFmpeg version. Source downloads stay in ignored
 `build/`. The final mono PCM16, 16-kHz loops remain within the existing 1-MiB cap.
 Each pack must retain MUSIC.md and MUSIC-LICENSE.txt.
+
+## Desktop and device packs
+
+Use the matching Gloam checkout and the pinned fonts:
+
+```sh
+python tools/build_inspired_collection.py --gloam /path/to/gloam --download-fonts
+python tools/prepare_theme_music.py
+python tools/package_collection.py
+```
+
+Run `python tools/classic_ds_assets.py` before rebuilding Classic DS. Layouts and
+palettes are in `config/inspired-themes.json`; artwork masters and hashes are
+under `source/art/` and `config/inspired-art.json`. Ordinary builds preserve the
+recorded music. Reproduce its pinned loops separately with
+`python tools/prepare_theme_music.py --rebuild --download`.
+
+Packaging writes per-theme ZIPs and `dist/gloam-desktop-device-themes.zip`, with
+notices but no preview screenshots. Use `tools/render_previews.py --gloam` with
+`--only` theme IDs and `--gallery docs/inspired-preview.png` to regenerate a
+selected gallery. These authoring commands do not install anything on SD.
