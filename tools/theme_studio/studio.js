@@ -245,13 +245,99 @@ function el(tag, attrs = {}, ...children) {
   }
   return node;
 }
-function button(label, fn, primary = false) {
-  return el("button", {
-    text: label,
-    class: primary ? "primary" : "",
-    onclick: () => guard(fn),
-  });
+const BUTTON_HELP = {
+  "Generate texture…":
+    "Create a paper, linen, glass, metal, wood, flat-color or gradient image with adjustable colors, grain and edges. Generating replaces this asset; it is not an overlay on the existing image.",
+  "Edit / draw":
+    "Open this exact asset in the layered artwork editor. Save artwork writes its PNG and editable layers.",
+  "Import image…":
+    "Choose an image, then adjust its fit, crop, opacity and sampling before assigning it to this slot.",
+  "Copy to slots…":
+    "Copy the selected icon or component into other slots in this theme. Choose the destinations before copying.",
+  Remove:
+    "Remove the selected asset after confirmation. A missing slot uses Gloam's built-in fallback where available.",
+  "Fill missing slots":
+    "Generate starter artwork only for slots without an image. Existing assets are preserved.",
+  "Generate set…":
+    "Choose a starter style for the icon or component set. Existing files stay unless you explicitly enable replacement.",
+  "Import atlas…":
+    "Import a sprite sheet and divide it into 32×32 slots, reading left to right and then top to bottom.",
+  "Export atlas":
+    "Download the current slots together as one sprite-sheet PNG for editing outside Studio.",
+  "Convert and assign":
+    "Convert the source using these settings and save it into the selected theme slot.",
+  "Extract colors from an image…":
+    "Read common colors from an image and choose which theme color role receives each one.",
+  "Design tab highlight…":
+    "Draw the tab-selected.png nine-slice skin used when Tab highlight is set to Skin.",
+  "Import tab highlight…":
+    "Choose and convert artwork for the theme's tab-selected.png skin.",
+  "Component settings…":
+    "Open the component slots and their shared border, transparency and fill controls.",
+  "Prepare assets.gfx":
+    "Build Gloam's prepared asset bundle from this theme to reduce small SD-card reads. Keep the editable source assets too.",
+  "Export runtime ZIP":
+    "Validate and prepare the theme, then download the runtime files for installation. Editable project layers stay in the working folder.",
+  "Render with local Gloam host tool":
+    "Use a trusted local Gloam preview executable to check the theme with the frontend's actual renderer.",
+  "Import prepared DSFONT…":
+    "Import a font already converted into Gloam's DSFONT format; this does not convert a TTF or OTF file.",
+  "Build saved splash into theme":
+    "Convert the splash designer's saved project into this theme's splash.gsp startup animation.",
+};
+const CONTROL_HELP = {
+  Grain: "Amount of fine texture noise. Lower values make a smoother surface.",
+  Radius: "Corner rounding in pixels for the generated texture.",
+  Border: "Width of the generated edge in pixels; zero removes the edge.",
+  Seed: "A repeatable texture variation. The same settings and seed produce the same pattern.",
+  Opacity:
+    "Generated image alpha from 0 (transparent) to 255 (opaque). Reading-surface opacity is a separate per-screen percentage.",
+  Surface: "The kind of texture to generate, such as paper, cloth or glass.",
+};
+function describeControl(node, help) {
+  if (help) {
+    node.title = help;
+    node.setAttribute("aria-description", help);
+  }
+  return node;
 }
+function button(label, fn, primary = false) {
+  return describeControl(
+    el("button", {
+      text: label,
+      class: primary ? "primary" : "",
+      onclick: () => guard(fn),
+    }),
+    BUTTON_HELP[label],
+  );
+}
+for (const [id, help] of Object.entries({
+  guides:
+    "Show screen-safe boundaries. In Scene layout, drag the artwork box in the preview to reposition it.",
+  "coverage-layer":
+    "Reduce the active layer's transparency to the four coverage levels Gloam supports for translucent components.",
+  "slice-grid":
+    "Show the nine-slice border guides: corners remain fixed while edges and the center stretch or tile.",
+  "pixel-grid":
+    "Show pixel boundaries while zoomed in for precise artwork editing.",
+  "resize-canvas":
+    "Change the asset dimensions, optionally resampling its artwork. Runtime slots still require their documented sizes.",
+  "paint-undo":
+    "Undo the last drawing edit. This is separate from saved-project undo.",
+  "paint-redo": "Redo a drawing edit that was undone.",
+  "commit-art":
+    "Save both the flattened runtime PNG and the project's editable layers.",
+  "up-layer": "Move the selected layer above the next layer in the stack.",
+  "down-layer": "Move the selected layer below the next layer in the stack.",
+  "delete-layer":
+    "Remove the selected artwork layer; drawing Undo can restore it.",
+  validate:
+    "Check paths, asset formats, size limits, layout settings, contrast and required notices before export.",
+  "reload-project":
+    "Read the working folder again, including external edits. Pending artwork or INI edits are handled before reloading.",
+}))
+  describeControl($(id), help);
+
 function toast(text) {
   $("toast").textContent = text;
   $("toast").classList.add("show");
@@ -512,6 +598,7 @@ function field(label, input, help = "") {
     ? input
     : input.querySelector("input,select,textarea");
   if (target && !target.id) target.id = "control-" + ++controlId;
+  if (target) describeControl(target, help || CONTROL_HELP[label]);
   return el(
     "div",
     { class: "field" },
@@ -636,6 +723,7 @@ function renderFields(container, name, keys = null) {
         if (inherit) inherit.checked = false;
       });
     input.onchange = () => save(input.value);
+    describeControl(input, spec.help);
     input.id = "control-" + ++controlId;
     const children = [
       el("label", {
@@ -922,7 +1010,7 @@ function backgroundInspector(host) {
         button("Import image…", () =>
           importImage(path, 256, 192, "backgrounds", key),
         ),
-        button("Generate material", () =>
+        button("Generate texture…", () =>
           materialInspector(path, 256, 192, "backgrounds", key),
         ),
       ),
@@ -1069,7 +1157,7 @@ function spriteInspector(host, kind) {
         button("Import image…", () =>
           importImage(selectedSlot, 32, 32, kind, "directory", null, directory),
         ),
-        button("Material recipe", () =>
+        button("Generate texture…", () =>
           materialInspector(selectedSlot, 32, 32, kind, "directory", directory),
         ),
         button("Copy to slots…", () => copySlots(selectedSlot)),
@@ -1200,7 +1288,12 @@ function materialInspector(
   ].map(([n, v, a, b]) => [n, ...number(n, v, a, b)]);
   host.prepend(
     toolGroup(
-      "Material recipe",
+      "Generate texture",
+      note(
+        "Generate a new texture for " +
+          path +
+          ". This replaces that output image when you generate; it does not apply an effect over the current artwork.",
+      ),
       field("Surface", style),
       field("Base color", color),
       field("Edge color", edge),

@@ -71,6 +71,13 @@ previous metadata is valid, recovery leaves the files unchanged and reports it.
 
 ## Authoring tools
 
+Hover over the texture, import, copying, atlas and preparation buttons for short
+explanations. Drawing guides and recipe controls also have descriptions, exposed
+to assistive technology. **Generate texture…** (formerly Material recipe) creates
+paper, linen, glass, metal, wood or gradient artwork from adjustable parameters.
+It generates a replacement image for the selected slot; it does not add a texture
+effect over existing artwork. Imported source masters remain in the project.
+
 | Area | Choices |
 | --- | --- |
 | Project | Blank theme, palette starter, local folder clone or single-theme ZIP import. Imported notices remain intact. |

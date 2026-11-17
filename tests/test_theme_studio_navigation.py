@@ -38,7 +38,7 @@ class NavigationTests(unittest.TestCase):
             page.locator("[data-stage=assets]").click()
             page.locator(".asset-tile").filter(has_text="icons/folder.png").click()
             expect(page.locator("#canvas-stage")).to_be_visible()
-            page.get_by_role("button", name="Material recipe", exact=True).click()
+            page.get_by_role("button", name="Generate texture…", exact=True).click()
             page.get_by_role("button", name="Generate 32×32", exact=True).click()
             self.assertTrue(started.wait(5))
             page.locator("#view-back").click()
@@ -100,7 +100,7 @@ class NavigationTests(unittest.TestCase):
     def test_temporary_tools_close_without_leaving_their_parent_section(self):
         with editor() as (page, root, expect):
             page.locator("[data-section=icons]").click()
-            page.get_by_role("button", name="Material recipe", exact=True).click()
+            page.get_by_role("button", name="Generate texture…", exact=True).click()
             expect(page.locator("[data-transient-tool]")).to_have_count(1)
             page.keyboard.press("Escape")
             expect(page.locator("[data-transient-tool]")).to_have_count(0)
