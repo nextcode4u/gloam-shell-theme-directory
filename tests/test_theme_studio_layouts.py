@@ -67,6 +67,38 @@ class LayoutJourneys(unittest.TestCase):
             self.assertNotIn("top_content_opacity", config)
             self.assertEqual(config["bottom_content_opacity"], "65")
 
+    def test_fixed_rail_controls_and_inherited_dock_defaults_stay_in_sync(self):
+        with editor() as (page, root, expect):
+            page.locator("[data-section=layout]").click()
+            position = page.get_by_label("tabs position", exact=True)
+            position.select_option("bottom")
+            expect(page.locator("#save-state")).to_have_text("Saved locally")
+            page.get_by_label("top layout", exact=True).select_option("sidebar_left")
+            expect(position).to_be_disabled()
+            expect(position).to_have_text("Fixed side rail")
+            expect(page.get_by_label("tab gap", exact=True)).to_be_disabled()
+            expect(page.get_by_label("tab visible", exact=True)).to_be_disabled()
+            config = json.loads((root / "theme-project.json").read_text())["config"][
+                "layout"
+            ]
+            self.assertNotIn("tabs_position", config)
+            page.locator("#undo").click()
+            expect(position).to_be_enabled()
+            expect(position).to_have_value("bottom")
+            page.locator("#redo").click()
+            expect(position).to_be_disabled()
+            page.get_by_label("tab style", exact=True).select_option("numbered")
+            expect(page.locator("#save-state")).to_have_text("Saved locally")
+            config = json.loads((root / "theme-project.json").read_text())["config"][
+                "layout"
+            ]
+            self.assertEqual(config["tab_style"], "numbered")
+            page.get_by_label("top layout", exact=True).select_option("gallery")
+            expect(position).to_be_enabled()
+            expect(position).to_have_value("top")
+            page.get_by_label("top layout", exact=True).select_option("portrait")
+            expect(position).to_have_value("bottom")
+
     def test_medium_and_new_compositions_are_selectable_and_persist(self):
         with editor() as (page, root, expect):
             page.locator("[data-section=layout]").click()

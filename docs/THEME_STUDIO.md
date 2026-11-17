@@ -247,3 +247,13 @@ In Layout's Scene composition, Safe areas enables dragging the artwork box to
 change its coordinates. Drag outside that box, hold **Alt** while dragging, or
 use the middle button to pan without repositioning artwork. Releasing or
 cancelling a drag ends it, including outside the viewport.
+
+Tab styles and highlights preview on both side rails and horizontal docks:
+Labels, Icons (a two-column grid on a side rail), Numbered and Pager (one focused
+tab). Sidebar/Sidebar left keep side navigation; Poster/Scene keep a bottom dock.
+Studio disables Top/Bottom position for those layouts, and disables horizontal
+count/gap controls on side rails. Switching to a fixed-position layout removes
+an incompatible position override in the same undoable edit. Inherited positions
+show the actual preset default: Gallery uses Top; the other composed layouts use
+Bottom. Imported incompatible overrides can be cleared with **Use layout's fixed
+position** before export.

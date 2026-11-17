@@ -217,6 +217,27 @@ class ThemeStudioTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             convert_audio(source, rate=48000, seconds=2, music=False)
 
+    def test_tab_styles_and_highlights_change_both_side_and_horizontal_previews(self):
+        layout = self.project.data["config"]["layout"]
+        for composition in ("sidebar", "sidebar_left", "gallery", "scene"):
+            layout["top_layout"] = composition
+            styles = set()
+            for style in ("labels", "icons", "numbered", "pager"):
+                layout["tab_style"] = style
+                highlights = set()
+                for highlight in ("skin", "underline", "outline"):
+                    layout["tab_highlight"] = highlight
+                    pixels = (
+                        theme_preview.render(self.project)
+                        .crop((0, 24, 256, 173))
+                        .tobytes()
+                    )
+                    highlights.add(hashlib.sha256(pixels).digest())
+                    if highlight == "skin":
+                        styles.add(hashlib.sha256(pixels).digest())
+                self.assertEqual(len(highlights), 3, (composition, style))
+            self.assertEqual(len(styles), 4, composition)
+
     def test_browser_icons_fit_native_row_sizes_with_and_without_skins(self):
         icons = self.project.theme / "icons"
         icons.mkdir()

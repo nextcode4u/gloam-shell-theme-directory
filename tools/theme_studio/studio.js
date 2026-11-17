@@ -698,7 +698,15 @@ function renderFields(container, name, keys = null) {
     if (keys && !keys.includes(key)) continue;
     const current = state.config[name] || {},
       present = Object.hasOwn(current, key),
-      value = current[key] ?? spec.default ?? "";
+      value =
+        current[key] ??
+        (name === "layout" && key === "tabs_position"
+          ? state.config.layout?.top_layout === "gallery"
+            ? "top"
+            : "bottom"
+          : name === "layout" && key === "top_layout"
+            ? "sidebar"
+            : (spec.default ?? ""));
     let control, input;
     if (spec.type === "choice") {
       input = select(spec.choices, value);
@@ -730,6 +738,7 @@ function renderFields(container, name, keys = null) {
         await api("field", { section: name, key, value }, false);
         const inherit = input.closest(".field").querySelector(".inherit input");
         if (inherit) inherit.checked = false;
+        if (name === "layout" && key === "top_layout") inspect();
       });
     input.onchange = () => save(input.value);
     describeControl(input, spec.help);
@@ -799,6 +808,57 @@ function renderFields(container, name, keys = null) {
           }),
         ),
       );
+    }
+    if (name === "layout") {
+      const composition = state.config.layout?.top_layout || "sidebar",
+        composed = [
+          "spotlight",
+          "gallery",
+          "journal",
+          "panorama",
+          "dossier",
+          "portrait",
+        ].includes(composition),
+        side = ["sidebar", "sidebar_left"].includes(composition),
+        unavailable =
+          (key === "tabs_position" && !composed) ||
+          (side && ["tab_visible", "tab_gap"].includes(key));
+      if (unavailable) {
+        input.disabled = true;
+        if (key === "tab_visible") input.value = "6";
+        if (key === "tab_gap") {
+          input.value = "";
+          input.placeholder = "Fixed";
+        }
+        const inheritControl = children
+          .find((node) => node.classList?.contains("inherit"))
+          ?.querySelector("input");
+        if (inheritControl) inheritControl.disabled = !present;
+        if (key === "tabs_position") {
+          input.replaceChildren(
+            el("option", {
+              value: "",
+              text: side ? "Fixed side rail" : "Fixed bottom dock",
+            }),
+          );
+          children.push(
+            note(
+              "This layout fixes the tab position. Choose Spotlight, Gallery, Journal, Panorama, Dossier or Portrait for top/bottom tabs.",
+            ),
+          );
+          if (present)
+            children.push(
+              button("Use layout's fixed position", () =>
+                api("field", { section: "layout", key, inherit: true }),
+              ),
+            );
+        } else
+          children.push(
+            el("small", {
+              text: "Only horizontal docks use this setting. Side rails show up to six entries with fixed spacing.",
+            }),
+          );
+      }
     }
     container.append(el("div", { class: "field" }, children));
   }

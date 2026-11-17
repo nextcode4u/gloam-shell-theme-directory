@@ -189,6 +189,99 @@ def icon(project, name, size=32):
     )
 
 
+def tab_highlight(project, screen, palette, box):
+    """Shared tab highlight and text roles, matching draw_tab_highlight."""
+    x, y, width, height = box
+    mode = project.data["config"].get("layout", {}).get("tab_highlight", "skin")
+    draw = ImageDraw.Draw(screen)
+    if mode == "skin":
+        skin(
+            project,
+            screen,
+            "tab-selected",
+            (x, y, x + width, y + height),
+            palette["accent"],
+        )
+        return palette.get("tab_text", palette["ink"])
+    if mode == "underline":
+        draw.rectangle(
+            (x, y + height - 2, x + width - 1, y + height - 1), fill=palette["accent"]
+        )
+    else:
+        draw.rectangle((x, y, x + width - 1, y + height - 1), outline=palette["accent"])
+    return palette["text"]
+
+
+def side_tabs(project, screen, palette, left=False):
+    layout = project.data["config"].get("layout", {})
+    style, rail = layout.get("tab_style", "labels"), -178 if left else 0
+    draw = theme_draw(project, screen)
+    if style == "pager":
+        color = tab_highlight(project, screen, palette, (rail + 182, 60, 65, 76))
+        screen.alpha_composite(icon(project, "tab-games", 24), (rail + 202, 68))
+        text(draw, (rail + 186, 101), "Games", color, 57)
+        text(draw, (rail + 193, 119), "2/6", color, 49)
+        text(draw, (rail + 188, 40), "< L/R >", palette["muted"], 56, size=10)
+        return
+    for i, label in enumerate(("Home", "Games", "Apps", "Media", "System", "Files")):
+        if style == "icons":
+            x, y = rail + 181 + (i % 2) * 35, 38 + (i // 2) * 34
+            if i == 1:
+                tab_highlight(project, screen, palette, (x, y, 32, 32))
+            screen.alpha_composite(
+                icon(project, "tab-" + label.lower(), 20), (x + 6, y + 6)
+            )
+        else:
+            y = 38 + i * 20
+            color = (
+                tab_highlight(project, screen, palette, (rail + 182, y - 2, 65, 16))
+                if i == 1
+                else palette["muted"]
+            )
+            inset = 188
+            if style == "numbered":
+                text(draw, (rail + 185, y), f"{i + 1:02}", color, 14)
+                inset = 205
+            text(draw, (rail + inset, y), label, color, 244 - inset)
+    if style == "icons":
+        text(draw, (rail + 188, 144), "Games", palette["text"], 56)
+
+
+def horizontal_tabs(project, screen, palette, y):
+    layout = project.data["config"].get("layout", {})
+    style = layout.get("tab_style", "labels")
+    draw = theme_draw(project, screen)
+    if style == "pager":
+        color = tab_highlight(project, screen, palette, (30, y, 196, 18))
+        text(draw, (10, y + 3), "<", palette["accent"], 7)
+        text(draw, (239, y + 3), ">", palette["accent"], 7)
+        text(draw, (38, y + 3), "Games", color, 135)
+        text(draw, (177, y + 3), "2/6", color, 42)
+        return
+    count, gap = int(layout.get("tab_visible", "3")), int(layout.get("tab_gap", "4"))
+    width = (242 - gap * (count - 1)) // count
+    for i, label in enumerate(("Home", "Games", "Apps", "Media", "System")[:count]):
+        x = 7 + i * (width + gap)
+        color = (
+            tab_highlight(project, screen, palette, (x, y, width, 18))
+            if i == 1
+            else palette["muted"]
+        )
+        if style == "icons":
+            screen.alpha_composite(
+                icon(project, "tab-" + label.lower(), 16),
+                (x + (width - 16) // 2, y + 1),
+            )
+        else:
+            inset = 4
+            if style == "numbered":
+                text(draw, (x + 3, y + 3), f"{i + 1:02}", color, 14)
+                inset = 20
+            text(draw, (x + inset, y + 3), label, color, width - inset - 4)
+    if style == "icons":
+        text(draw, (12, y + 20), "Games", palette["text"], 232)
+
+
 def browser_row_height(project, style, size):
     """Match layout.h's list rows, including the extra space for component frames."""
     icon_pixels = {"small": 16, "medium": 24, "large": 32}[size]
@@ -287,26 +380,7 @@ def render(project, sample="browser", view=None, selected=1, guides=False):
         skin(project, top, "card", (art_x, 48, art_x + 76, 143), p["surface"])
         top.alpha_composite(icon(project, "folder", 48), (art_x + 14, 64))
         text(d, (art_x, 30), "Adventure", p["text"], 100)
-        for i, label in enumerate(
-            ("Home", "Games", "Apps", "Media", "System", "Files")
-        ):
-            y = 40 + i * 20
-            if i == 1:
-                skin(
-                    project,
-                    top,
-                    "tab-selected",
-                    (rail - 2, y - 2, rail + 65, y + 16),
-                    p["accent"],
-                )
-            text(
-                d,
-                (rail + 2, y),
-                label,
-                p.get("tab_text", p["ink"]) if i == 1 else p["text"],
-                60,
-                size=10,
-            )
+        side_tabs(project, top, p, composition == "sidebar_left")
     else:
         boxes = composition_boxes(layout) if composition in COMPOSED_LAYOUTS else None
         art = (
@@ -350,48 +424,7 @@ def render(project, sample="browser", view=None, selected=1, guides=False):
             if boxes
             else (144 if layout.get("tab_style") == "icons" else 155)
         )
-        count = int(layout.get("tab_visible", "3"))
-        gap = int(layout.get("tab_gap", "4"))
-        cell = (240 - gap * (count - 1)) // count
-        for i, label in enumerate(("Home", "Games", "Apps", "Media", "Files")[:count]):
-            x = 8 + i * (cell + gap)
-            highlight = layout.get("tab_highlight", "skin")
-            if i == 1:
-                if highlight == "skin":
-                    skin(
-                        project,
-                        top,
-                        "tab-selected",
-                        (x, nav_y, x + cell, nav_y + 18),
-                        p["accent"],
-                    )
-                elif highlight == "underline":
-                    d.rectangle(
-                        (x, nav_y + 16, x + cell - 1, nav_y + 17), fill=p["accent"]
-                    )
-                else:
-                    d.rectangle(
-                        (x, nav_y, x + cell - 1, nav_y + 17), outline=p["accent"]
-                    )
-            style = layout.get("tab_style", "labels")
-            if style == "icons":
-                top.alpha_composite(
-                    icon(project, "tab-" + label.lower(), 14),
-                    (x + cell // 2 - 7, nav_y + 1),
-                )
-            else:
-                text(
-                    d,
-                    (x + 3, nav_y + 2),
-                    str(i + 1) + " " + label if style == "numbered" else label,
-                    p.get("tab_text", p["ink"])
-                    if i == 1 and highlight == "skin"
-                    else p["text"],
-                    cell - 6,
-                    size=9,
-                )
-        if layout.get("tab_style") == "icons":
-            text(d, (12, nav_y + 20), "Games", p["text"], 232)
+        horizontal_tabs(project, top, p, nav_y)
     text(d, (10, 178), "20:30  L/R tabs", p.get("footer_text", p["muted"]), 164, size=9)
     text(d, (202, 178), "SD OK", p.get("footer_text", p["accent"]), 48, size=9)
     d = theme_draw(project, bottom)

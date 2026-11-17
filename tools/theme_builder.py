@@ -125,6 +125,13 @@ class Studio:
                 config.get(section, {}).pop(key, None)
             else:
                 config.setdefault(section, {})[key] = str(request.get("value", ""))
+            if (
+                section == "layout"
+                and key == "top_layout"
+                and config.get(section, {}).get(key, "sidebar")
+                not in theme_preview.COMPOSED_LAYOUTS
+            ):
+                config[section].pop("tabs_position", None)
             p.update(config=config)
         elif action == "save":
             p.update(

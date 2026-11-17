@@ -4,8 +4,8 @@
   "files": [
     {
       "path": "tools/theme_builder.py",
-      "size": 23895,
-      "sha256": "878a7d8b0dd9b23d1dbd6aa895e7fccd5fb0f115157f5107c3031489ae8db2cb"
+      "size": 24180,
+      "sha256": "052f7787b6dcf6ba8ed3d4f88e63dcf9f83c130d146e7d6700a63f642bbc3ee9"
     },
     {
       "path": "tools/theme_project.py",
@@ -14,8 +14,8 @@
     },
     {
       "path": "tools/theme_schema.py",
-      "size": 7240,
-      "sha256": "6d801690b9827ba3546e7837e3633ec83db38d286a8cae4649d774d04948f3aa"
+      "size": 7683,
+      "sha256": "5125bab3b0c841ffc98345d1f2b6d7491dfb426edc7370aa09197f69350d48c6"
     },
     {
       "path": "tools/theme_validate.py",
@@ -29,8 +29,8 @@
     },
     {
       "path": "tools/theme_preview.py",
-      "size": 24873,
-      "sha256": "74581cad3ac6f753173ee882f6156466fe06815680485225ed1e5f50c61bccc8"
+      "size": 26443,
+      "sha256": "09d645c8800794b093e228729be7f9048581bf7aa05a5fb3b4f8a6cf3c4c68b3"
     },
     {
       "path": "tools/theme_studio/index.html",
@@ -49,8 +49,8 @@
     },
     {
       "path": "tools/theme_studio/studio.js",
-      "size": 86902,
-      "sha256": "b555f10f06da8b34c367e6f6ec85337c6d63cb5cd605934943fc3047493ec056"
+      "size": 89007,
+      "sha256": "c5d1647c2e483c0e8c9da7224c07ba6e110cf599f3a8091e3c2ce52d13e5cb97"
     },
     {
       "path": "tools/theme_native/__init__.py",
@@ -99,8 +99,8 @@
     },
     {
       "path": "docs/THEME_STUDIO.md",
-      "size": 15266,
-      "sha256": "9e94344d7846866e2fb910153b13f2de50c840e3fcf8dc99c01586a679013fc2"
+      "size": 15933,
+      "sha256": "62facbd74b8c7323f032cd222156ae6b4826dafabf32fb225fafb1e7bcafbd61"
     },
     {
       "path": "LICENSE",
