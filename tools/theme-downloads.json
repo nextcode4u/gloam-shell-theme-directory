@@ -49,8 +49,8 @@
     },
     {
       "path": "tools/theme_studio/studio.js",
-      "size": 91314,
-      "sha256": "1a316d3bfdb8e864fbcf6cb2a2b3c6c6a7739cef3c0ccf68ddef6ca8fbc570ce"
+      "size": 91641,
+      "sha256": "9b6486672a25be6715ad90291b13dd107453dee5ec6f2cc45e0e4168871993aa"
     },
     {
       "path": "tools/theme_native/__init__.py",

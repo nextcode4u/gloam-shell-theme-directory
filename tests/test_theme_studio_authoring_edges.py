@@ -123,6 +123,8 @@ class AuthoringEdges(unittest.TestCase):
         with editor() as (page, root, expect):
             page.locator("[data-section=icons]").click()
             page.locator('.slot[title="icons/folder.png"]').click()
+            expect(page.locator("#paint")).to_be_visible()
+            expect(page.locator("#paint")).to_have_js_property("width", 32)
             states = [page.locator("#paint").evaluate("c => c.toDataURL()")]
             for color in ("#ff0000", "#00ff00", "#0000ff"):
                 page.locator("#paint-color").fill(color)
@@ -195,3 +197,34 @@ class AuthoringEdges(unittest.TestCase):
             self.assertEqual(
                 page.locator("#paint").evaluate("c => c.toDataURL()"), saved
             )
+
+    def test_slow_layer_import_does_not_edit_after_leaving_the_artboard(self):
+        from PIL import Image
+
+        with editor() as (page, root, expect):
+            source = root / "layer.png"
+            Image.new("RGBA", (32, 32), "red").save(source)
+            page.locator("[data-section=icons]").click()
+            page.locator('.slot[title="icons/folder.png"]').click()
+            expect(page.locator("#canvas-stage")).to_be_visible()
+            page.evaluate("""() => {
+                const original = loadImage;
+                document.body.edgeLoading = false;
+                document.body.edgeFinished = false;
+                loadImage = async value => {
+                    document.body.edgeLoading = true;
+                    await new Promise(resolve => setTimeout(resolve, 700));
+                    const result = await original(value);
+                    document.body.edgeFinished = true;
+                    return result;
+                };
+            }""")
+            with page.expect_file_chooser() as chooser:
+                page.locator("#import-layer").click()
+            chooser.value.set_files(str(source))
+            expect(page.locator("body")).to_have_js_property("edgeLoading", True)
+            page.locator("#view-back").click()
+            expect(page.locator("#canvas-stage")).to_be_hidden()
+            expect(page.locator("body")).to_have_js_property("edgeFinished", True)
+            self.assertEqual(page.evaluate("layers.length"), 1)
+            self.assertFalse(page.evaluate("dirtyArt"))

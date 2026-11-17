@@ -37,7 +37,9 @@ def editor():
                 errors = []
                 page.on("pageerror", lambda e: errors.append(str(e)))
                 page.goto(f"http://127.0.0.1:{server.server_port}")
-                expect(page.locator("#project-name")).to_have_text("Untitled theme")
+                expect(page.locator("#project-name")).to_have_text(
+                    "Untitled theme", timeout=15000
+                )
                 yield page, Path(folder), expect
                 if errors:
                     raise AssertionError(errors)

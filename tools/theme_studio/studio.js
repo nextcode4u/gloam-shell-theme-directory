@@ -2483,10 +2483,22 @@ $("add-layer").onclick = () =>
     paintRender();
   });
 async function importLayer(droppedFile = null) {
+  const epoch = navigationEpoch,
+    asset = activeAsset;
   if (layers.length >= 16) throw Error("Use at most 16 layers.");
   const file = droppedFile || (await upload("image/*"));
   if (!file) return;
   const image = await loadImage(await fileData(file));
+  await paintHistoryQueue;
+  if (
+    epoch !== navigationEpoch ||
+    asset !== activeAsset ||
+    activeStage !== "canvas"
+  ) {
+    toast("Layer import canceled; current view kept.");
+    return;
+  }
+  if (layers.length >= 16) throw Error("Use at most 16 layers.");
   if (!checkpointPaint()) return;
   const c = canvas();
   const scale = Math.min(artWidth / image.width, artHeight / image.height);
