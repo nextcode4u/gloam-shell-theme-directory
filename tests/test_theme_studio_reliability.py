@@ -44,6 +44,34 @@ class AuthoringReliabilityTests(unittest.TestCase):
             ),
         )
 
+    def test_refresh_updates_both_launchers_after_shared_notice_changes(self):
+        import update_theme_manifest as themes
+        import update_splash_manifest as splashes
+
+        root = self.p.root / "manifest-fixture"
+        for relative in set(themes.FILES) | set(splashes.FILES):
+            target = root / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(("Fixture: " + relative).encode())
+        with (
+            mock.patch.object(themes, "ROOT", root),
+            mock.patch.object(splashes, "ROOT", root),
+        ):
+            themes.refresh()
+            (root / "LICENSES.md").write_text("Updated shared notice")
+            with self.assertRaises(SystemExit):
+                themes.refresh(check=True)
+            themes.refresh()
+            themes.refresh(check=True)
+            import json
+
+            for name in ("theme", "splash"):
+                data = json.loads(
+                    (root / ("tools/" + name + "-downloads.json")).read_text()
+                )
+                entry = next(e for e in data["files"] if e["path"] == "LICENSES.md")
+                self.assertEqual(entry["size"], len(b"Updated shared notice"))
+
     def test_prepared_asset_destination_cannot_destroy_a_notice_or_font(self):
         generate_set(self.p, "icons", {})
         for path in ("notices/LICENSE.txt", "LICENSE.gfx", "fonts/ui.dsfont"):

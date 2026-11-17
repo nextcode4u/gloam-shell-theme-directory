@@ -6,6 +6,7 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+from update_splash_manifest import manifest as splash_manifest
 
 ROOT = Path(__file__).resolve().parents[1]
 FILES = (
@@ -49,18 +50,29 @@ def manifest():
     }
 
 
+def refresh(check=False):
+    # The launchers share converters and license notices. Refresh them together.
+    snapshots = {
+        "tools/theme-downloads.json": manifest(),
+        "tools/splash-downloads.json": splash_manifest(),
+    }
+    for name, snapshot in snapshots.items():
+        path = ROOT / name
+        data = (json.dumps(snapshot, indent=2) + "\n").encode()
+        if check:
+            if not path.is_file() or path.read_bytes() != data:
+                raise SystemExit("Run python tools/update_theme_manifest.py")
+        else:
+            path.write_bytes(data)
+    if check:
+        print("Theme Studio and Splash Builder manifests match their authoring files.")
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
-    path = ROOT / "tools/theme-downloads.json"
-    data = (json.dumps(manifest(), indent=2) + "\n").encode()
-    if args.check:
-        if not path.is_file() or path.read_bytes() != data:
-            raise SystemExit("Run python tools/update_theme_manifest.py")
-        print("Theme Studio manifest matches its authoring files.")
-    else:
-        path.write_bytes(data)
+    refresh(args.check)
 
 
 if __name__ == "__main__":

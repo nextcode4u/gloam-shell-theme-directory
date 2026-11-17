@@ -258,3 +258,9 @@ an incompatible position override in the same undoable edit. Inherited positions
 show the actual preset default: Gallery uses Top; the other composed layouts use
 Bottom. Imported incompatible overrides can be cleared with **Use layout's fixed
 position** before export.
+
+For contributor changes to authoring tools or shared notices, run
+`python tools/update_theme_manifest.py` before committing. It refreshes both the
+Theme Studio and standalone Splash Builder download hashes; `--check` verifies
+both without writing. Shared converter/license edits must keep both launchers
+usable, including cached and offline startup.
