@@ -34,8 +34,8 @@
     },
     {
       "path": "tools/theme_studio/index.html",
-      "size": 8021,
-      "sha256": "8e6e267347033bebe05bb6d88888ca1545d12c749db95b269bb4fac4da781a14"
+      "size": 9689,
+      "sha256": "1ee8dab9c9328b46a7744e62b148b14452b9176809e4c86faef88ddcf7c8244c"
     },
     {
       "path": "tools/theme_studio/gloam-icon.png",
@@ -44,13 +44,13 @@
     },
     {
       "path": "tools/theme_studio/studio.css",
-      "size": 12717,
-      "sha256": "0fe817c022d08992df5ab420331a4ce2fd40e241c5be2d9f89a33d56e0cb3a8d"
+      "size": 13510,
+      "sha256": "f420bce60395327e184324799a4d39fb52d9b7d84b295faca359d0567bd3ffde"
     },
     {
       "path": "tools/theme_studio/studio.js",
-      "size": 82895,
-      "sha256": "7a882a8a4830361f1de48c8013f09e17fc8156894f0569f7655fbe7bb0cb6cd6"
+      "size": 86902,
+      "sha256": "b555f10f06da8b34c367e6f6ec85337c6d63cb5cd605934943fc3047493ec056"
     },
     {
       "path": "tools/theme_native/__init__.py",
@@ -99,8 +99,8 @@
     },
     {
       "path": "docs/THEME_STUDIO.md",
-      "size": 14313,
-      "sha256": "904687f9996a29a4d1d0882f06777c7d1165c29b9a2cd03607401512535997ac"
+      "size": 15266,
+      "sha256": "9e94344d7846866e2fb910153b13f2de50c840e3fcf8dc99c01586a679013fc2"
     },
     {
       "path": "LICENSE",

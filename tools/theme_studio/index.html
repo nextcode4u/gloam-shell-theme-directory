@@ -50,16 +50,46 @@
             ><button data-stage="canvas">Artwork editor</button
             ><button data-stage="assets">Asset library</button>
           </div>
-          <label
-            >Zoom
-            <select id="zoom">
-              <option value="fit" selected>Fit</option>
-              <option>1</option>
-              <option>2</option>
-              <option>3</option>
-              <option>4</option>
-            </select></label
-          ><label><input type="checkbox" id="guides" /> Safe areas</label>
+          <div class="zoom-controls">
+            <button
+              id="zoom-out"
+              aria-label="Zoom out"
+              title="Zoom out; preview keyboard shortcut: minus"
+            >
+              −
+            </button>
+            <label
+              >Zoom
+              <select id="zoom">
+                <option value="fit" selected>Fit</option>
+                <option value="0.25">25%</option>
+                <option value="0.5">50%</option>
+                <option value="0.75">75%</option>
+                <option value="1">100%</option>
+                <option value="1.5">150%</option>
+                <option value="2">200%</option>
+                <option value="3">300%</option>
+                <option value="4">400%</option>
+                <option value="6">600%</option>
+                <option value="8">800%</option>
+              </select></label
+            >
+            <button
+              id="zoom-in"
+              aria-label="Zoom in"
+              title="Zoom in; preview keyboard shortcut: plus"
+            >
+              +
+            </button>
+            <button
+              id="zoom-fit"
+              title="Fit both screens and reset panning; preview keyboard shortcut: 0"
+            >
+              Fit
+            </button>
+            <span id="zoom-level" role="status" aria-live="polite"></span>
+          </div>
+          <label><input type="checkbox" id="guides" /> Safe areas</label>
         </div>
         <div id="preview-stage" class="stage-body">
           <div class="preview-controls">
@@ -82,14 +112,29 @@
               <input id="selected" type="number" min="0" max="5" value="1"
             /></label>
           </div>
-          <div class="device">
-            <img
-              id="preview"
-              width="512"
-              height="792"
-              alt="Top and bottom screen authoring preview"
-            />
+          <div
+            id="preview-viewport"
+            tabindex="0"
+            role="region"
+            aria-label="Two-screen preview"
+            aria-describedby="preview-pan-hint"
+          >
+            <div class="preview-plane">
+              <div class="device">
+                <img
+                  id="preview"
+                  width="512"
+                  height="792"
+                  draggable="false"
+                  alt="Top and bottom screen authoring preview"
+                />
+              </div>
+            </div>
           </div>
+          <p id="preview-pan-hint" class="caption">
+            Drag to pan · + / − to zoom · 0 to fit. With Scene safe areas on,
+            drag its artwork box to reposition it; Alt-drag pans instead.
+          </p>
           <p class="caption">
             256 × 192 · authoring preview · validate on the console
           </p>

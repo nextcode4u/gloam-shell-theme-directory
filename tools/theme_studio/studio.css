@@ -229,7 +229,8 @@ nav button.active .nav-icon {
 .stage-toolbar {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
+  flex-wrap: wrap;
   padding: 12px 14px;
   border-bottom: 1px solid var(--line);
   background: #17191e;
@@ -268,6 +269,9 @@ nav button.active .nav-icon {
   display: none !important;
 }
 #preview-stage {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   position: relative;
   background: radial-gradient(ellipse at 50% 30%, #242731, #14161c 70%);
   text-align: center;
@@ -277,7 +281,8 @@ nav button.active .nav-icon {
   justify-content: center;
   gap: 8px;
   align-items: center;
-  margin-bottom: 22px;
+  margin-bottom: 12px;
+  flex-shrink: 0;
 }
 .preview-controls input {
   width: 47px;
@@ -285,20 +290,60 @@ nav button.active .nav-icon {
 .preview-controls select {
   font-size: 11px;
 }
+.zoom-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.zoom-controls button {
+  padding: 5px 9px;
+}
+#zoom-level {
+  min-width: 35px;
+  color: var(--muted);
+  font-size: 11px;
+}
+#preview-viewport {
+  flex: 1;
+  min-height: 120px;
+  min-width: 0;
+  overflow: auto;
+  cursor: grab;
+  touch-action: none;
+  border-radius: 6px;
+}
+#preview-viewport:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: -1px;
+}
+#preview-viewport.panning {
+  cursor: grabbing;
+  user-select: none;
+}
+.preview-plane {
+  width: max-content;
+  min-width: 100%;
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
 .device {
+  flex-shrink: 0;
   display: inline-block;
   border: 1px solid #3d424e;
   border-radius: 13px;
   padding: 10px;
   background: #090b10;
   box-shadow: 0 18px 55px #0008;
-  max-width: 100%;
 }
 .device img {
   display: block;
   image-rendering: pixelated;
-  max-width: 100%;
+  max-width: none;
   height: auto;
+  user-select: none;
   border-radius: 3px;
 }
 .caption {

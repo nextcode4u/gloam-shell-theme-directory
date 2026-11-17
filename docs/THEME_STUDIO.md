@@ -82,7 +82,7 @@ effect over existing artwork. Imported source masters remain in the project.
 | --- | --- |
 | Project | Blank theme, palette starter, local folder clone or single-theme ZIP import. Imported notices remain intact. |
 | Palette | Color picker, RGB entry, inheritance, starter palettes and colors extracted from an image. Native brightness checks report invalid combinations. |
-| Layout | Ten top compositions, all browser views, small/medium/large icon sizes, row spacing, grid columns, tab presentation, per-screen opacity and Scene cover bounds. With Scene and Safe areas enabled, drag the preview to reposition its cover. |
+| Layout | Ten top compositions, all browser views, small/medium/large icon sizes, row spacing, grid columns, tab presentation, per-screen opacity and Scene cover bounds. With Scene and Safe areas enabled, drag the artwork box to reposition its cover. |
 | Backgrounds | Image import, contain/cover/stretch/native fit, crop anchor, opacity and smooth/nearest resampling; separate wallpapers, reading surfaces and shade maps. |
 | Artwork editor | Brush, eraser, flood fill, line, rectangle, ellipse, gradient, text, eyedropper and layer movement. Visibility, opacity, blending, duplication and reordering; resize, rotate/flip, alpha quantization, PNG export and pixel/nine-slice guides. |
 | Icons | All file/system/tab slots; PNG import, geometric starters, pixel editing, sprite-sheet import/export and copying an asset to multiple slots. |
@@ -230,3 +230,20 @@ DS/DSi banner animation is independent.
 Both demonstrations start only when Play is pressed, and have visible Stop
 buttons. Switching views stops playback. Changing a setting is reflected the
 next time Play is pressed; the main two-screen authoring image remains static.
+
+### Zooming and panning the two-screen preview
+
+Use **+** and **−** beside Zoom, or choose 25–800% from the menu. **Fit** fits
+both screens and resets panning. The percentage readout reports the actual scale,
+including automatic Fit sizes. Enlarged images remain full-sized inside a
+scrollable viewport instead of being shrunk back to the panel width.
+
+Drag the image or surrounding preview area to pan; the middle mouse button also
+works. Focus the viewport to use arrow-key scrolling, **+ / −** to zoom and **0**
+to fit. Zoom and pan are viewing controls: they do not edit theme files. Back
+restores the previous preview's scale and scroll position.
+
+In Layout's Scene composition, Safe areas enables dragging the artwork box to
+change its coordinates. Drag outside that box, hold **Alt** while dragging, or
+use the middle button to pan without repositioning artwork. Releasing or
+cancelling a drag ends it, including outside the viewport.

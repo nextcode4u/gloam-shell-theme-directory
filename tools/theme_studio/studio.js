@@ -23,7 +23,8 @@ let navigationHistory = [],
   navigationRestoring = false,
   navigationEpoch = 0,
   backInFlight = false,
-  canvasNeedsReload = false;
+  canvasNeedsReload = false,
+  previewScale = 1;
 function captureNavigation() {
   return {
     section,
@@ -41,6 +42,8 @@ function captureNavigation() {
       selected: $("selected").value,
       guides: $("guides").checked,
       zoom: $("zoom").value,
+      left: $("preview-viewport").scrollLeft,
+      top: $("preview-viewport").scrollTop,
     },
   };
 }
@@ -121,6 +124,8 @@ async function returnToPreviousView() {
       $("guides").checked = target.preview.guides;
       $("zoom").value = target.preview.zoom;
       $("zoom").onchange();
+      $("preview-viewport").scrollLeft = target.preview.left || 0;
+      $("preview-viewport").scrollTop = target.preview.top || 0;
     }
     document
       .querySelectorAll("[data-section]")
@@ -575,6 +580,7 @@ function setStage(name, remember = true) {
     .querySelectorAll("[data-stage]")
     .forEach((b) => b.classList.toggle("selected", b.dataset.stage === name));
   if (name === "assets") renderAssets();
+  if (name === "preview") requestAnimationFrame(() => applyPreviewZoom());
 }
 function selectSection(name) {
   return guard(async () => {
@@ -2560,21 +2566,101 @@ $("reload-project").onclick = () =>
 $("toggle-log").onclick = () =>
   document.querySelector(".activity").classList.toggle("open");
 $("asset-search").oninput = renderAssets;
-$("zoom").onchange = () => {
-  const stage = $("preview-stage");
-  const scale =
+const PREVIEW_ZOOM_STEPS = [0.25, 0.5, 0.75, 1, 1.5, 2, 3, 4, 6, 8];
+function applyPreviewZoom(reset = false) {
+  const viewport = $("preview-viewport");
+  if (!viewport.clientWidth || !viewport.clientHeight) return;
+  const image = $("preview"),
+    previous = image.getBoundingClientRect(),
+    bounds = viewport.getBoundingClientRect(),
+    centerX = bounds.left + viewport.clientWidth / 2,
+    centerY = bounds.top + viewport.clientHeight / 2,
+    pointX = previous.width ? (centerX - previous.left) / previous.width : 0.5,
+    pointY = previous.height ? (centerY - previous.top) / previous.height : 0.5;
+  previewScale =
     $("zoom").value === "fit"
       ? Math.max(
-          0.5,
+          0.25,
           Math.min(
             3,
-            (stage.clientWidth - 70) / 256,
-            (stage.clientHeight - 160) / 396,
+            (viewport.clientWidth - 70) / 256,
+            (viewport.clientHeight - 70) / 396,
           ),
         )
       : Number($("zoom").value);
-  $("preview").width = Math.round(256 * scale);
-  $("preview").style.width = $("preview").width + "px";
+  const width = Math.round(256 * previewScale),
+    height = Math.round(396 * previewScale);
+  image.width = width;
+  image.height = height;
+  image.style.width = width + "px";
+  image.style.height = height + "px";
+  if (reset) {
+    viewport.scrollLeft = (viewport.scrollWidth - viewport.clientWidth) / 2;
+    viewport.scrollTop = (viewport.scrollHeight - viewport.clientHeight) / 2;
+  } else {
+    const next = image.getBoundingClientRect();
+    viewport.scrollLeft += next.left + pointX * next.width - centerX;
+    viewport.scrollTop += next.top + pointY * next.height - centerY;
+  }
+  $("zoom-level").textContent = Math.round(previewScale * 100) + "%";
+  $("zoom-out").disabled = previewScale <= PREVIEW_ZOOM_STEPS[0];
+  $("zoom-in").disabled = previewScale >= PREVIEW_ZOOM_STEPS.at(-1);
+}
+function stepPreviewZoom(direction) {
+  const next =
+    direction > 0
+      ? PREVIEW_ZOOM_STEPS.find((v) => v > previewScale + 0.001)
+      : [...PREVIEW_ZOOM_STEPS].reverse().find((v) => v < previewScale - 0.001);
+  if (next === undefined) return;
+  $("zoom").value = String(next);
+  applyPreviewZoom();
+}
+$("zoom").onchange = () => applyPreviewZoom($("zoom").value === "fit");
+$("zoom-in").onclick = () => stepPreviewZoom(1);
+$("zoom-out").onclick = () => stepPreviewZoom(-1);
+$("zoom-fit").onclick = () => {
+  $("zoom").value = "fit";
+  applyPreviewZoom(true);
+};
+const previewViewport = $("preview-viewport");
+let panDrag = null;
+previewViewport.onpointerdown = (e) => {
+  if (e.defaultPrevented || panDrag || ![0, 1].includes(e.button)) return;
+  e.preventDefault();
+  previewViewport.focus({ preventScroll: true });
+  panDrag = {
+    pointer: e.pointerId,
+    x: e.clientX,
+    y: e.clientY,
+    left: previewViewport.scrollLeft,
+    top: previewViewport.scrollTop,
+  };
+  previewViewport.setPointerCapture(e.pointerId);
+  previewViewport.classList.add("panning");
+};
+previewViewport.onpointermove = (e) => {
+  if (!panDrag || panDrag.pointer !== e.pointerId) return;
+  previewViewport.scrollLeft = panDrag.left + panDrag.x - e.clientX;
+  previewViewport.scrollTop = panDrag.top + panDrag.y - e.clientY;
+};
+function endPreviewPan(e) {
+  if (!panDrag || e.pointerId !== panDrag.pointer) return;
+  panDrag = null;
+  previewViewport.classList.remove("panning");
+  if (previewViewport.hasPointerCapture(e.pointerId))
+    previewViewport.releasePointerCapture(e.pointerId);
+}
+previewViewport.onpointerup =
+  previewViewport.onpointercancel =
+  previewViewport.onlostpointercapture =
+    endPreviewPan;
+previewViewport.onkeydown = (e) => {
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
+  if (["+", "=", "-", "_", "0"].includes(e.key)) {
+    e.preventDefault();
+    if (e.key === "0") $("zoom-fit").click();
+    else stepPreviewZoom(["+", "="].includes(e.key) ? 1 : -1);
+  }
 };
 for (const id of ["sample", "preview-view", "selected", "guides"])
   $(id).onchange = refreshPreview;
@@ -2643,6 +2729,8 @@ window.addEventListener("keydown", (e) => {
 let coverDrag = null;
 $("preview").onpointerdown = (e) => {
   if (
+    e.button !== 0 ||
+    e.altKey ||
     section !== "layout" ||
     !$("guides").checked ||
     state.config.layout?.top_layout !== "scene"
@@ -2651,7 +2739,19 @@ $("preview").onpointerdown = (e) => {
   const rect = e.target.getBoundingClientRect(),
     x = ((e.clientX - rect.left) * 256) / rect.width,
     y = ((e.clientY - rect.top) * 396) / rect.height;
-  if (y < 118) {
+  const layout = state.config.layout,
+    ox = Number(layout.scene_cover_x || 18),
+    oy = Number(layout.scene_cover_y || 34),
+    width = Number(layout.scene_cover_width || 48),
+    height = Number(layout.scene_cover_height || 72);
+  if (
+    x >= ox - 2 &&
+    x <= ox + width + 2 &&
+    y >= oy - 2 &&
+    y <= oy + height + 2
+  ) {
+    e.preventDefault();
+    e.stopPropagation();
     coverDrag = {
       x,
       y,
@@ -2660,6 +2760,9 @@ $("preview").onpointerdown = (e) => {
     };
     e.target.setPointerCapture(e.pointerId);
   }
+};
+$("preview").onpointercancel = () => {
+  coverDrag = null;
 };
 $("preview").onpointerup = (e) =>
   guard(async () => {
