@@ -150,3 +150,48 @@ class AuthoringEdges(unittest.TestCase):
                 self.assertEqual(
                     page.locator("#paint").evaluate("c => c.toDataURL()"), state
                 )
+
+    def test_layer_transforms_blending_and_resizing_survive_reopen(self):
+        with editor() as (page, root, expect):
+            page.locator("[data-section=icons]").click()
+            page.locator('.slot[title="icons/folder.png"]').click()
+            draw(page)
+            page.locator("#duplicate-layer").click()
+            expect(page.locator("#layer-list .layer")).to_have_count(2)
+            page.locator("#layer-list .layer").last.locator("select").select_option(
+                "multiply"
+            )
+            slider = page.locator("#layer-list .layer").last.locator(
+                "input[type=range]"
+            )
+            slider.fill("50")
+            slider.dispatch_event("change")
+            page.locator("#rotate-layer").click()
+            page.locator("#flip-layer").click()
+            page.locator("#coverage-layer").click()
+            page.once("dialog", lambda dialog: dialog.accept("64 x 48"))
+            page.locator("#resize-canvas").click()
+            expect(page.locator("#artboard-name")).to_contain_text("64×48")
+            page.locator("#paint-undo").click()
+            expect(page.locator("#artboard-name")).to_contain_text("32×32")
+            page.locator("#paint-redo").click()
+            expect(page.locator("#artboard-name")).to_contain_text("64×48")
+            # Restore icon dimensions before saving a runtime-compatible asset.
+            page.locator("#paint-undo").click()
+            expect(page.locator("#artboard-name")).to_contain_text("32×32")
+            page.locator("#commit-art").click()
+            expect(page.locator("#save-state")).to_have_text("Saved locally")
+            saved = page.locator("#paint").evaluate("c => c.toDataURL()")
+            page.reload()
+            page.locator("[data-section=icons]").click()
+            page.locator('.slot[title="icons/folder.png"]').click()
+            expect(page.locator("#layer-list .layer")).to_have_count(2)
+            expect(
+                page.locator("#layer-list .layer").last.locator("select")
+            ).to_have_value("multiply")
+            expect(
+                page.locator("#layer-list .layer").last.locator("input[type=range]")
+            ).to_have_value("50")
+            self.assertEqual(
+                page.locator("#paint").evaluate("c => c.toDataURL()"), saved
+            )
