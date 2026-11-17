@@ -4,8 +4,8 @@
   "files": [
     {
       "path": "tools/theme_builder.py",
-      "size": 24180,
-      "sha256": "052f7787b6dcf6ba8ed3d4f88e63dcf9f83c130d146e7d6700a63f642bbc3ee9"
+      "size": 24188,
+      "sha256": "7096a8cf61a25b2e07ed47a5934efb5c9e8ad4bcee7a42bbdc51d32aba40d6b6"
     },
     {
       "path": "tools/theme_project.py",

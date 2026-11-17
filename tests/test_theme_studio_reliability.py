@@ -44,6 +44,17 @@ class AuthoringReliabilityTests(unittest.TestCase):
             ),
         )
 
+    def test_inherit_top_layout_without_an_explicit_layout_section(self):
+        self.p.update(raw="[theme]\nname=Minimal theme\nversion=2\n")
+        self.studio.action(
+            "field", dict(section="layout", key="top_layout", inherit=True)
+        )
+        self.assertNotIn("top_layout", self.p.data["config"].get("layout", {}))
+        self.studio.action(
+            "field", dict(section="layout", key="top_layout", value="spotlight")
+        )
+        self.assertEqual(self.p.data["config"]["layout"]["top_layout"], "spotlight")
+
     def test_refresh_updates_both_launchers_after_shared_notice_changes(self):
         import update_theme_manifest as themes
         import update_splash_manifest as splashes

@@ -131,7 +131,7 @@ class Studio:
                 and config.get(section, {}).get(key, "sidebar")
                 not in theme_preview.COMPOSED_LAYOUTS
             ):
-                config[section].pop("tabs_position", None)
+                config.get(section, {}).pop("tabs_position", None)
             p.update(config=config)
         elif action == "save":
             p.update(
