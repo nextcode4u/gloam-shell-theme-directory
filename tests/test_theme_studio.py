@@ -217,6 +217,51 @@ class ThemeStudioTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             convert_audio(source, rate=48000, seconds=2, music=False)
 
+    def test_motion_previews_decode_prepared_frames_and_keep_native_timing(self):
+        gif = io.BytesIO()
+        Image.new("RGBA", (32, 32), "red").save(
+            gif,
+            "GIF",
+            save_all=True,
+            append_images=[Image.new("RGBA", (32, 32), "blue")],
+            duration=100,
+        )
+        self.project.write_asset(
+            "motion/ambient.gtm",
+            ambient(gif.getvalue()),
+            binding=dict(section="motion", key="ambient"),
+        )
+        for play, count in ((False, 1), (True, 2)):
+            with Image.open(
+                io.BytesIO(theme_preview.motion_preview(self.project, "ambient", play))
+            ) as image:
+                self.assertEqual(image.n_frames, count)
+                self.assertEqual(image.size, (256, 88))
+                self.assertEqual(
+                    image.convert("RGBA").getpixel((136, 4)), (255, 0, 0, 255)
+                )
+                if play:
+                    self.assertAlmostEqual(image.info["duration"], 200, places=1)
+                    image.seek(1)
+                    self.assertEqual(
+                        image.convert("RGBA").getpixel((136, 4)), (0, 0, 255, 255)
+                    )
+        self.project.data["config"]["motion"]["focus"] = "pulse"
+        with Image.open(
+            io.BytesIO(theme_preview.motion_preview(self.project, "focus", True))
+        ) as image:
+            self.assertEqual(image.n_frames, 3)
+        self.project.data["config"]["motion"]["focus"] = "off"
+        with Image.open(
+            io.BytesIO(theme_preview.motion_preview(self.project, "focus", True))
+        ) as image:
+            self.assertEqual(image.n_frames, 1)
+        with self.assertRaises(ValueError):
+            theme_preview.motion_preview(self.project, "unknown", True)
+        (self.project.theme / "motion/ambient.gtm").write_bytes(b"bad")
+        with self.assertRaises(ValueError):
+            theme_preview.motion_preview(self.project, "ambient", True)
+
     def test_compositions_keep_top_tabs_out_of_headings_and_artwork(self):
         def overlap(a, b):
             return (

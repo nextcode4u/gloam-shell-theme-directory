@@ -464,6 +464,15 @@ class Handler(BaseHTTPRequestHandler):
                         query.get("guides", ["0"])[0] == "1",
                     )
                     self.send(theme_media.png(image), "image/png")
+                elif name == "/api/motion-preview":
+                    self.send(
+                        theme_preview.motion_preview(
+                            p,
+                            query.get("kind", ["ambient"])[0],
+                            query.get("play", ["0"])[0] == "1",
+                        ),
+                        "image/png",
+                    )
                 elif name in ("/api/asset", "/api/export-file"):
                     root = (
                         p.theme if name == "/api/asset" else inside(p.root, "exports")

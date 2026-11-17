@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import configparser
+import io
 from pathlib import Path
 import os
 import shutil
@@ -239,7 +240,13 @@ def render(project, sample="browser", view=None, selected=1, guides=False):
     header = config.get("theme", {}).get(
         "header", config.get("theme", {}).get("name", "Gloam")
     )
-    text(d, (10, 7), header, p.get("header_text", p["text"]), width=132)
+    text(
+        d,
+        (10, 7),
+        header,
+        p.get("header_text", p["text"]),
+        width=122 if config.get("motion", {}).get("ambient") else 138,
+    )
     text(d, (201, 7), "2 / 6", p.get("header_text", p["muted"]), width=48, size=10)
     cd = config.get("components", {}).get("directory", "components")
     for name, x in (("battery-high", 164), ("wireless-idle", 182)):
@@ -529,3 +536,99 @@ def native(project, executable, sample="browser"):
             with Image.open(root / f"preview-{name}.ppm") as source:
                 image.paste(source, (0, y))
         return image
+
+
+def motion_preview(project, kind="ambient", play=False):
+    """Bounded authoring-only APNGs; Gloam still consumes the existing GTM format."""
+    config = project.data["config"]
+    palette = COLORS | config.get("colors", {})
+    motion = config.get("motion", {})
+    images, durations = [], []
+    if kind == "ambient":
+        path = inside(project.theme, motion.get("ambient", "motion/ambient.gtm"))
+        if not path.is_file() or path.stat().st_size > 16 + 8 * 2304:
+            raise ValueError("Import a header accent before previewing it.")
+        data = path.read_bytes()
+        if (
+            len(data) < 16
+            or data[:8] != b"GLMFX001"
+            or not 1 <= data[8] <= 8
+            or data[9:11] != b"  "
+            or any(data[11:16])
+            or len(data) != 16 + data[8] * 2304
+        ):
+            raise ValueError("Invalid header accent package.")
+        base = render(project).crop((0, 0, 256, 24)).convert("RGBA")
+        ticks = max(5, min(120, int(motion.get("ambient_ticks", "12"))))
+        for index in range(data[8] if play else 1):
+            offset = 16 + index * 2304
+            pixels = struct.unpack_from("<1024H", data, offset)
+            alpha = data[offset + 2048 : offset + 2304]
+            icon = Image.new("RGBA", (16, 16))
+            # Native rendering samples every second source pixel, retaining coverage.
+            icon.putdata(
+                [
+                    (
+                        (pixels[i] & 31) * 255 // 31,
+                        ((pixels[i] >> 5) & 31) * 255 // 31,
+                        ((pixels[i] >> 10) & 31) * 255 // 31,
+                        ((alpha[i // 4] >> (2 * (i % 4))) & 3) * 85,
+                    )
+                    for y in range(16)
+                    for x in range(16)
+                    for i in (y * 64 + x * 2,)
+                ]
+            )
+            image = Image.new("RGBA", (256, 88), palette["background"])
+            image.alpha_composite(base)
+            image.alpha_composite(icon, (136, 4))
+            image.alpha_composite(
+                icon.resize((48, 48), Image.Resampling.NEAREST), (12, 34)
+            )
+            draw = ImageDraw.Draw(image)
+            draw.rectangle((134, 2, 153, 21), outline=palette["accent"])
+            text(draw, (72, 42), "3x detail", palette["text"], 174)
+            text(
+                draw,
+                (72, 59),
+                "Frame " + str(index + 1) + " / " + str(data[8]),
+                palette["muted"],
+                174,
+            )
+            images.append(image)
+            durations.append(ticks * 1000 / 60)
+    elif kind == "focus":
+        enabled = motion.get("focus", "off") == "pulse"
+        for elapsed in [0, 4, 12] if play and enabled else [12]:
+            image = Image.new("RGBA", (256, 48), palette["background"])
+            skin(project, image, "row-selected", (6, 4, 250, 44), palette["surface"])
+            draw = theme_draw(project, image)
+            text(
+                draw,
+                (18, 15),
+                "Selected item",
+                palette.get("selection_text", palette["text"]),
+                220,
+            )
+            if elapsed < 12:
+                gleam = Image.new("RGBA", (1, 34), palette["accent"])
+                gleam.putalpha(170 if elapsed < 4 else 85)
+                image.alpha_composite(gleam, (8, 7))
+            images.append(image)
+            durations.append(
+                [4 * 1000 / 60, 8 * 1000 / 60, 800][[0, 4, 12].index(elapsed)]
+            )
+    else:
+        raise ValueError("Unknown motion preview.")
+    output = io.BytesIO()
+    images[0].save(
+        output,
+        "PNG",
+        save_all=len(images) > 1,
+        append_images=images[1:],
+        duration=durations,
+        loop=0,
+        disposal=0,
+        blend=0,
+    )
+    return output.getvalue()

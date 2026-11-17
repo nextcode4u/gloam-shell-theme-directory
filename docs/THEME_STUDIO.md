@@ -89,7 +89,7 @@ effect over existing artwork. Imported source masters remain in the project.
 | Components | All skin/status/control slots; independent artwork and paper/linen/glass/metal/wood/flat/gradient recipes; border, fill, controls and coverage settings. |
 | Fonts | Prepared DSFONT import or proportional TTF/OTF conversion with separate body/heading metrics, baseline, variable weight and bounded bearing adjustment. |
 | Audio | WAV conversion, mono mixdown, resampling, trim range, gain, fades and circular loop crossfade. Optional FFmpeg on PATH adds MP3/OGG/FLAC/M4A inputs. Embedded playback controls audition the result. |
-| Motion | Still/GIF conversion to a bounded 1–8-frame header accent; cadence and focus-feedback controls. |
+| Motion | Separate Play/Stop demonstrations for the 16×16 header accent and brief selection-edge gleam; GIF/PNG conversion, uniform frame timing and feedback controls. |
 | Splash | Full shared designer in the project’s splash folder; build saved layers into the theme or import a prepared splash. |
 | Manifest | Direct INI editing with the same validation as visual controls. |
 
@@ -209,3 +209,24 @@ Import opens image conversion for that slot. The thumbnail and theme-relative
 path identify the asset in use. Component settings opens the slot library and
 nine-slice border/alpha controls. Skin falls back to the accent color when no
 image exists; Underline and Outline use the accent without a skin image.
+
+### What Motion animates
+
+**Header accent** places a small mark at top-screen coordinates (136, 4), just
+left of the battery icon. The local preview shows the actual header position and
+a magnified frame. Import a GIF to keep up to eight sampled frames, or a PNG for
+a single still. Prepared frames are stored at 32×32 and displayed at 16×16.
+Frame interval uses roughly 60 display ticks per second: 12 ticks means 0.2
+seconds per frame (5 fps). GIF frame delays are replaced by this uniform timing.
+The console advances the accent during idle browsing; Reduced motion holds the
+first frame. These are browsing accents, separate from startup splashes.
+
+**Selection feedback** adds a brief left-edge gleam after moving to an item;
+`pulse` lasts about 0.2 seconds, rather than continuously pulsing an icon. The
+local demonstration repeats that selection with a pause; the actual appearance
+depends on the selected-row/card skin. Reduced motion disables the gleam. Native
+DS/DSi banner animation is independent.
+
+Both demonstrations start only when Play is pressed, and have visible Stop
+buttons. Switching views stops playback. Changing a setting is reflected the
+next time Play is pressed; the main two-screen authoring image remains static.

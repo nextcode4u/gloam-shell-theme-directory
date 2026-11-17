@@ -51,6 +51,9 @@ function rememberNavigation(previous = captureNavigation()) {
   if (navigationHistory.length > 40) navigationHistory.shift();
 }
 function stopMedia() {
+  document
+    .querySelectorAll("img[data-motion-demo]")
+    .forEach((image) => image.stopMotion?.());
   document.querySelectorAll("audio,video").forEach((media) => media.pause());
 }
 function closeTool(panel) {
@@ -205,8 +208,8 @@ const sections = [
     "motion",
     "◌",
     "Motion",
-    "Ambient & focus",
-    "Small bounded accents and focus feedback; Reduced motion stays available.",
+    "Header accent & selection feedback",
+    "Animate a small mark beside the top heading, or briefly highlight a newly selected item.",
   ],
   [
     "splash",
@@ -727,7 +730,13 @@ function renderFields(container, name, keys = null) {
     input.id = "control-" + ++controlId;
     const children = [
       el("label", {
-        text: key === "chrome" ? "Interface framing" : key.replaceAll("_", " "),
+        text:
+          {
+            "layout.chrome": "Interface framing",
+            "motion.ambient": "Header accent file",
+            "motion.ambient_ticks": "Header frame interval (ticks)",
+            "motion.focus": "Selection feedback",
+          }[name + "." + key] || key.replaceAll("_", " "),
         htmlFor: input.id,
       }),
       control,
@@ -1563,17 +1572,92 @@ function audioInspector(host) {
     );
   renderFields(host, "audio");
 }
+function motionDemo(kind) {
+  const image = el("img", {
+      src: url("/api/motion-preview", { kind, play: "0" }),
+      alt:
+        kind === "ambient"
+          ? "Actual header accent position and enlarged frame detail"
+          : "Selected-row edge gleam demonstration",
+      class: "texture-preview",
+      "data-motion-demo": kind,
+    }),
+    status = el("small", {
+      role: "status",
+      text: "Stopped. Press Play to demonstrate the effect.",
+    });
+  let playing = false;
+  image.stopMotion = () => {
+    if (!playing) return;
+    playing = false;
+    image.src = url("/api/motion-preview", { kind, play: "0" });
+    status.textContent = "Stopped; the project is still open.";
+  };
+  image.onerror = () => {
+    playing = false;
+    status.textContent =
+      "Preview unavailable. Check or reimport the accent file, then try again.";
+  };
+  return el(
+    "div",
+    {},
+    image,
+    row(
+      button(
+        "Play " + (kind === "ambient" ? "header accent" : "selection feedback"),
+        () => {
+          playing = true;
+          image.src = url("/api/motion-preview", { kind, play: "1" });
+          status.textContent =
+            kind === "focus" && state.config.motion?.focus !== "pulse"
+              ? "Feedback is Off. Select pulse below, then press Play."
+              : "Playing a looping demonstration. Stop or leave this view to end it.";
+        },
+      ),
+      button(
+        "Stop " + (kind === "ambient" ? "header accent" : "selection feedback"),
+        () => image.stopMotion(),
+      ),
+    ),
+    status,
+  );
+}
 function motionInspector(host) {
   host.append(
     note(
-      "The header accent is limited to eight 32×32 frames, displayed at 16×16. It never becomes a full-screen animation.",
+      "These are two small browsing effects. They do not animate the wallpaper or startup splash; use Startup splash for a full-screen intro.",
     ),
   );
-  const [cf, count] = number("Prepared frames", 8, 1, 8);
-  host.append(
+  const header = group(
+    "1. Top-screen header accent",
+    note(
+      "Your imported image appears as a 16×16 mark beside the header title, immediately left of the battery icon. The preview outlines its reserved position and shows a larger detail underneath.",
+    ),
+  );
+  const asset = state.assets.find(
+    (a) => a.path === state.config.motion?.ambient,
+  );
+  if (asset) {
+    const frames = Math.max(0, Math.min(8, (asset.bytes - 16) / 2304));
+    header.append(
+      el("p", {
+        text:
+          frames +
+          " prepared frame(s). A single frame is a still image, not an animation.",
+      }),
+      motionDemo("ambient"),
+    );
+  } else
+    header.append(
+      note(
+        "No header accent imported yet. Import a small GIF for animation, or a PNG for a still mark.",
+      ),
+    );
+  const [cf, count] = number("Maximum frames to keep", 8, 1, 8);
+  header.append(
     cf,
     button(
-      "Import animated GIF / still…",
+      "Import header GIF / PNG…",
       async () => {
         const file = await upload("image/gif,image/png");
         if (file)
@@ -1586,8 +1670,28 @@ function motionInspector(host) {
       true,
     ),
   );
-  renderFields(host, "motion");
+  renderFields(header, "motion", ["ambient", "ambient_ticks"]);
+  header.append(
+    note(
+      "GIF frames are sampled evenly, up to the limit above, and resized to 32×32 for storage. Gloam displays them at 16×16. Frame interval sets uniform playback timing; original GIF delays are not retained. On the console, the accent advances while the browser is idle; Reduced motion holds the first frame.",
+    ),
+  );
+  const focus = group(
+    "2. Selection edge feedback",
+    note(
+      "A short gleam along the left edge of the item you just selected, lasting about 0.2 seconds. The title icon and wallpaper stay still. This demonstration repeats a selection so the brief effect is easy to see; contrast depends on your selection skin.",
+    ),
+    motionDemo("focus"),
+  );
+  renderFields(focus, "motion", ["focus"]);
+  focus.append(
+    note(
+      "Reduced motion disables this gleam. It does not replace animated DS/DSi banner icons, which keep their own title animation.",
+    ),
+  );
+  host.append(header, focus);
 }
+
 function splashInspector(host) {
   const file = state.assets.find((a) => a.path === "splash.gsp");
   host.append(

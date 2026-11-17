@@ -112,9 +112,20 @@ SCHEMA = {
         for key in ("music", "cursor", "confirm", "back")
     },
     "motion": {
-        "ambient": path("GLMFX001, 1–8 frames at 32×32, rendered at 16×16."),
-        "ambient_ticks": number(5, 120, "12"),
-        "focus": choice("off pulse", "off"),
+        "ambient": path(
+            "Prepared header-accent file. Import below creates it; it appears beside the top-screen heading, not over the wallpaper."
+        ),
+        "ambient_ticks": number(
+            5,
+            120,
+            "12",
+            "DS display ticks per frame, about 60 ticks per second. 12 = 0.2 seconds per frame (5 fps); larger values are slower. GIF timing is replaced by this uniform interval.",
+        ),
+        "focus": choice(
+            "off pulse",
+            "off",
+            "Pulse is a short edge gleam when selecting a browser item, lasting about 0.2 seconds. It does not animate the icon or wallpaper. Reduced motion disables it.",
+        ),
     },
     "assets": {
         "prepared": path("Rebuilt at export; GLMART02 avoids many small SD reads.")
