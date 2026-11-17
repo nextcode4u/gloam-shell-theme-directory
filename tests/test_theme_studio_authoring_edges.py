@@ -118,3 +118,35 @@ class AuthoringEdges(unittest.TestCase):
             self.assertEqual(
                 page.locator("#paint").evaluate("c => c.toDataURL()"), newest
             )
+
+    def test_rapid_undo_and_redo_preserve_every_intermediate_stroke(self):
+        with editor() as (page, root, expect):
+            page.locator("[data-section=icons]").click()
+            page.locator('.slot[title="icons/folder.png"]').click()
+            states = [page.locator("#paint").evaluate("c => c.toDataURL()")]
+            for color in ("#ff0000", "#00ff00", "#0000ff"):
+                page.locator("#paint-color").fill(color)
+                draw(page)
+                states.append(page.locator("#paint").evaluate("c => c.toDataURL()"))
+            page.evaluate("""() => {
+                const original = loadImage;
+                document.body.edgeLoads = 0;
+                loadImage = async value => {
+                    document.body.edgeLoads++;
+                    try { await new Promise(resolve => setTimeout(resolve, 100)); return await original(value); }
+                    finally { document.body.edgeLoads--; }
+                };
+            }""")
+            page.locator("#paint-undo").focus()
+            for _ in range(3):
+                page.keyboard.press("Control+z")
+            expect(page.locator("body")).to_have_js_property("edgeLoads", 0)
+            self.assertEqual(
+                page.locator("#paint").evaluate("c => c.toDataURL()"), states[0]
+            )
+            for state in states[1:]:
+                page.get_by_role("button", name="↷ Redo", exact=True).click()
+                expect(page.locator("body")).to_have_js_property("edgeLoads", 0)
+                self.assertEqual(
+                    page.locator("#paint").evaluate("c => c.toDataURL()"), state
+                )

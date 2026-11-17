@@ -148,6 +148,8 @@ let pending = Promise.resolve(),
   dirtyArt = false,
   paintHistory = [],
   paintFuture = [],
+  paintHistoryQueue = Promise.resolve(),
+  paintHistoryBusy = false,
   layers = [],
   layerIndex = 0,
   artWidth = 32,
@@ -413,6 +415,7 @@ function editDecision(message) {
   });
 }
 async function settleEdits(art = true, manifest = false) {
+  if (art) await paintHistoryQueue;
   if (!(art && dirtyArt) && !(manifest && rawDraft !== null)) return;
   const choice = await editDecision(
     "Save your current edits before continuing, discard them, or keep editing.",
@@ -1986,6 +1989,7 @@ function snapshotPaint() {
   };
 }
 function checkpointPaint() {
+  if (paintHistoryBusy) return false;
   paintHistory.push(snapshotPaint());
   while (
     paintHistory.length > 30 ||
@@ -1997,20 +2001,52 @@ function checkpointPaint() {
   paintFuture = [];
   dirtyArt = true;
   saveStatus();
+  return true;
 }
-async function restorePaint(s) {
+async function decodePaintDocument(s) {
+  const restored = [];
+  for (const layer of s.layers) {
+    const c = canvas(s.width, s.height);
+    c.getContext("2d").drawImage(await loadImage(layer.data), 0, 0);
+    restored.push({ ...layer, canvas: c });
+  }
+  return { layers: restored, width: s.width, height: s.height, index: s.index };
+}
+function applyPaintDocument(s) {
   artWidth = s.width;
   artHeight = s.height;
-  layers = [];
-  for (const l of s.layers) {
-    const c = canvas();
-    c.getContext("2d").drawImage(await loadImage(l.data), 0, 0);
-    layers.push({ ...l, canvas: c });
-  }
+  layers = s.layers;
   layerIndex = Math.max(0, Math.min(layers.length - 1, s.index));
   dirtyArt = true;
   paintRender();
 }
+async function restorePaint(s) {
+  applyPaintDocument(await decodePaintDocument(s));
+}
+function stepPaintHistory(redo = false) {
+  const task = async () => {
+    const source = redo ? paintFuture : paintHistory,
+      destination = redo ? paintHistory : paintFuture;
+    if (!source.length) return;
+    paintHistoryBusy = true;
+    drawing = null;
+    paintRender();
+    try {
+      const current = snapshotPaint(),
+        restored = await decodePaintDocument(source.at(-1));
+      source.pop();
+      destination.push(current);
+      applyPaintDocument(restored);
+    } finally {
+      paintHistoryBusy = false;
+      paintRender();
+    }
+  };
+  const operation = paintHistoryQueue.then(task);
+  paintHistoryQueue = operation.catch(() => {});
+  return operation;
+}
+
 async function editAsset(path, width = 32, height = 32, binding = null) {
   const previous = captureNavigation();
   await settleEdits(true, false);
@@ -2019,16 +2055,23 @@ async function editAsset(path, width = 32, height = 32, binding = null) {
   let image = null;
   if (!doc && state.assets.some((a) => a.path === path))
     image = await loadImage(assetUrl(path));
+  const restored = doc ? await decodePaintDocument(doc) : null;
   if (!navigationRestoring && epoch !== navigationEpoch)
     throw new CanceledEdit();
+  if (dirtyArt) {
+    toast(
+      "Newer artwork edits kept; select the other asset again when finished.",
+    );
+    throw new CanceledEdit();
+  }
   activeAsset = path;
   canvasNeedsReload = false;
   loadedAsset = path;
   assetBinding = binding;
   artWidth = width;
   artHeight = height;
-  if (doc) {
-    await restorePaint(doc);
+  if (restored) {
+    applyPaintDocument(restored);
     dirtyArt = false;
   } else {
     const c = canvas();
@@ -2118,6 +2161,9 @@ function renderAssignment() {
   };
 }
 function paintRender() {
+  document.querySelector(".artboard-scroll").inert = paintHistoryBusy;
+  $("layer-list").inert = paintHistoryBusy;
+  $("asset-assignment").disabled = paintHistoryBusy;
   $("paint-undo").disabled = !paintHistory.length;
   $("paint-redo").disabled = !paintFuture.length;
   const c = $("paint");
@@ -2150,7 +2196,7 @@ function paintRender() {
         type: "checkbox",
         checked: l.visible,
         onchange: (e) => {
-          checkpointPaint();
+          if (!checkpointPaint()) return;
           l.visible = e.target.checked;
           paintRender();
         },
@@ -2161,14 +2207,14 @@ function paintRender() {
         max: 100,
         value: l.opacity * 100,
         onchange: (e) => {
-          checkpointPaint();
+          if (!checkpointPaint()) return;
           l.opacity = Number(e.target.value) / 100;
           paintRender();
         },
       }),
       blend = select(["source-over", "multiply", "screen", "overlay"], l.blend);
     blend.onchange = () => {
-      checkpointPaint();
+      if (!checkpointPaint()) return;
       l.blend = blend.value;
       paintRender();
     };
@@ -2295,7 +2341,7 @@ $("paint").onpointerdown = (event) =>
       $("paint-alpha").value = p[3];
       return;
     }
-    checkpointPaint();
+    if (!checkpointPaint()) return;
     drawing = {
       x,
       y,
@@ -2385,21 +2431,10 @@ $("paint").onpointermove = (event) => {
 $("paint").onpointerup = $("paint").onpointercancel = () => {
   drawing = null;
 };
-$("paint-undo").onclick = () =>
-  guard(async () => {
-    if (paintHistory.length) {
-      paintFuture.push(snapshotPaint());
-      await restorePaint(paintHistory.pop());
-    }
-  });
-$("paint-redo").onclick = () =>
-  guard(async () => {
-    if (paintFuture.length) {
-      paintHistory.push(snapshotPaint());
-      await restorePaint(paintFuture.pop());
-    }
-  });
+$("paint-undo").onclick = () => guard(() => stepPaintHistory());
+$("paint-redo").onclick = () => guard(() => stepPaintHistory(true));
 async function saveArtwork() {
+  await paintHistoryQueue;
   if (!layers.length) return;
   if (
     activeAsset !== loadedAsset &&
@@ -2436,7 +2471,7 @@ $("commit-art").onclick = () => guard(saveArtwork);
 $("add-layer").onclick = () =>
   guard(() => {
     if (layers.length >= 16) throw Error("Use at most 16 layers per artboard.");
-    checkpointPaint();
+    if (!checkpointPaint()) return;
     layers.push({
       name: prompt("Layer name:", "Layer " + (layers.length + 1)) || "Layer",
       visible: true,
@@ -2452,7 +2487,7 @@ async function importLayer(droppedFile = null) {
   const file = droppedFile || (await upload("image/*"));
   if (!file) return;
   const image = await loadImage(await fileData(file));
-  checkpointPaint();
+  if (!checkpointPaint()) return;
   const c = canvas();
   const scale = Math.min(artWidth / image.width, artHeight / image.height);
   c.getContext("2d").drawImage(
@@ -2501,7 +2536,7 @@ window.addEventListener("drop", (event) => {
 $("duplicate-layer").onclick = () =>
   guard(() => {
     if (!layers.length || layers.length >= 16) return;
-    checkpointPaint();
+    if (!checkpointPaint()) return;
     const c = canvas();
     c.getContext("2d").drawImage(layers[layerIndex].canvas, 0, 0);
     layers.splice(layerIndex + 1, 0, {
@@ -2515,7 +2550,7 @@ $("duplicate-layer").onclick = () =>
 function moveLayer(delta) {
   const target = layerIndex + delta;
   if (target < 0 || target >= layers.length) return;
-  checkpointPaint();
+  if (!checkpointPaint()) return;
   [layers[target], layers[layerIndex]] = [layers[layerIndex], layers[target]];
   layerIndex = target;
   paintRender();
@@ -2551,7 +2586,7 @@ $("resize-canvas").onclick = () =>
       h = Number(match[2]);
     if (w < 1 || w > 512 || h < 1 || h > 512)
       throw Error("Dimensions must be 1–512.");
-    checkpointPaint();
+    if (!checkpointPaint()) return;
     for (const layer of layers) {
       const c = canvas(w, h);
       c.getContext("2d").imageSmoothingEnabled = !$("pixel-grid").checked;
@@ -2564,7 +2599,7 @@ $("resize-canvas").onclick = () =>
   });
 function transformLayer(rotate) {
   if (!layers.length) return;
-  checkpointPaint();
+  if (!checkpointPaint()) return;
   const c = canvas(),
     ctx = c.getContext("2d");
   ctx.translate(artWidth / 2, artHeight / 2);
@@ -2578,7 +2613,7 @@ $("rotate-layer").onclick = () => transformLayer(true);
 $("flip-layer").onclick = () => transformLayer(false);
 $("coverage-layer").onclick = () => {
   if (!layers.length) return;
-  checkpointPaint();
+  if (!checkpointPaint()) return;
   const ctx = layers[layerIndex].canvas.getContext("2d"),
     image = ctx.getImageData(0, 0, artWidth, artHeight);
   for (let i = 3; i < image.data.length; i += 4)
@@ -2597,7 +2632,7 @@ $("up-layer").onclick = () => moveLayer(1);
 $("down-layer").onclick = () => moveLayer(-1);
 $("delete-layer").onclick = () => {
   if (layers.length <= 1) return;
-  checkpointPaint();
+  if (!checkpointPaint()) return;
   layers.splice(layerIndex, 1);
   layerIndex = Math.min(layerIndex, layers.length - 1);
   paintRender();
@@ -2807,12 +2842,7 @@ window.addEventListener("keydown", (e) => {
   if (e.key.toLowerCase() === "z" && !editing) {
     e.preventDefault();
     if (activeStage === "canvas" && layers.length) {
-      const source = e.shiftKey ? paintFuture : paintHistory;
-      const destination = e.shiftKey ? paintHistory : paintFuture;
-      if (source.length) {
-        destination.push(snapshotPaint());
-        guard(() => restorePaint(source.pop()));
-      }
+      guard(() => stepPaintHistory(e.shiftKey));
     } else guard(() => api(e.shiftKey ? "redo" : "undo"));
   }
 });
