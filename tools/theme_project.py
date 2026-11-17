@@ -322,18 +322,31 @@ class ThemeProject:
         parse_ini(to_ini(config))
         self.data["config"] = config
 
-    def write_asset(self, relative, data, source_name=None, binding=None):
+    def write_asset(
+        self, relative, data, source_name=None, binding=None, *, source_data=None
+    ):
         if relative.casefold() == "theme.ini":
             raise ValueError("Use the manifest editor to change theme.ini.")
         if len(data) > MAX_FILE:
             raise ValueError("Asset exceeds 32 MiB.")
         target = inside(self.theme, relative)
-        self.checkpoint([relative])
-        self.bind_asset(relative, binding)
-        if source_name:
-            self.record_source(source_name, data)
+        previous = copy.deepcopy(self.data)
+        undo, redo = list(self.undo_stack), list(self.redo_stack)
+        try:
+            self.checkpoint([relative])
+            self.bind_asset(relative, binding)
+            if source_name:
+                self.record_source(
+                    source_name, data if source_data is None else source_data
+                )
+            # Keep editable layers until the replacement has reached disk. A full
+            # disk or invalid assignment must not destroy the previous drawing.
+            atomic_write(target, data)
+        except Exception:
+            self.data = previous
+            self.undo_stack, self.redo_stack = undo, redo
+            raise
         self.clear_artboard(relative)
-        atomic_write(target, data)
         self.save()
 
     def clear_artboard(self, relative):
@@ -405,12 +418,14 @@ class ThemeProject:
         image.putalpha(image.getchannel("A").point(lambda a: a * opacity // 100))
         output = io.BytesIO()
         image.save(output, "PNG", optimize=True)
-        self.checkpoint([relative])
-        self.bind_asset(relative, binding)
-        self.record_source(options.get("source_name", "artwork.png"), data)
-        self.clear_artboard(relative)
-        atomic_write(inside(self.theme, relative), output.getvalue())
-        self.save()
+        # Keep the imported master separately from its converted runtime image.
+        self.write_asset(
+            relative,
+            output.getvalue(),
+            options.get("source_name", "artwork.png"),
+            binding,
+            source_data=data,
+        )
 
     def import_theme(self, source):
         self.assert_current()

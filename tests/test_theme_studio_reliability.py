@@ -2,6 +2,7 @@
 """End-user failure cases: retained notices, layered undo and scoped installation."""
 
 import base64
+import copy
 from pathlib import Path
 import sys
 import tempfile
@@ -92,6 +93,44 @@ class AuthoringReliabilityTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 self.p.prepare()
             self.assertEqual((self.p.theme / path).read_bytes(), b"KEEP THIS SOURCE")
+
+    def test_failed_asset_write_preserves_layers_assignment_and_history(self):
+        import theme_project
+
+        self.board("red", "Original layered drawing")
+        self.p.write_asset("icons/game.png", b"Another edit")
+        self.p.undo()
+        state = copy.deepcopy(self.p.data)
+        undo, redo = list(self.p.undo_stack), list(self.p.redo_stack)
+        board = self.p.artboard_path("icons/folder.png").read_bytes()
+        image = (self.p.theme / "icons/folder.png").read_bytes()
+        write = theme_project.atomic_write
+
+        def fail_asset(path, data):
+            if path == self.p.theme / "icons/folder.png":
+                raise OSError("Simulated full disk")
+            return write(path, data)
+
+        binding = dict(section="backgrounds", key="top", value="icons/folder.png")
+        replacements = (
+            lambda: self.p.write_asset(
+                "icons/folder.png", b"Replacement", binding=binding
+            ),
+            lambda: self.p.image_asset("icons/folder.png", image, {}, binding=binding),
+        )
+        for replace in replacements:
+            with mock.patch.object(
+                theme_project, "atomic_write", side_effect=fail_asset
+            ):
+                with self.assertRaises(OSError):
+                    replace()
+            self.assertEqual(self.p.data, state)
+            self.assertEqual(self.p.undo_stack, undo)
+            self.assertEqual(self.p.redo_stack, redo)
+            self.assertEqual(
+                self.p.artboard_path("icons/folder.png").read_bytes(), board
+            )
+            self.assertEqual((self.p.theme / "icons/folder.png").read_bytes(), image)
 
     def test_existing_authoring_credits_are_not_replaced_by_export(self):
         self.p.write_asset(

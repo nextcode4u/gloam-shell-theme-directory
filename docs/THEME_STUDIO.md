@@ -65,7 +65,9 @@ Ctrl+Shift+Z), enabled when drawing history is available. Rapid history commands
 run in order; the canvas waits for each restoration before accepting another
 stroke. Global undo retains up to 30 edits and 64 MiB of asset/layer snapshots in
 the session; drawing has separate undo. Neither undo stack survives a restart.
-Replacing an image outside the layer editor invalidates its old artboard.
+Replacing an image outside the layer editor invalidates its old artboard only
+after the replacement reaches disk. A failed replacement write keeps the previous
+layers, assignment and history.
 
 Direct edits to `theme/theme.ini` are read on project reopen. Visual controls
 rewrite it in canonical form; keep prose in credits files.
