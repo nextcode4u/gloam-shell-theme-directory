@@ -83,6 +83,7 @@ class InspiredCollectionTests(unittest.TestCase):
             "aero-glass",
             "desktop-98",
             "classic-ds",
+            "pokedex",
         ):
             folder = ROOT / "themes" / theme
             config = configparser.ConfigParser()
@@ -177,22 +178,45 @@ class InspiredCollectionTests(unittest.TestCase):
                 self.assertTrue(set(icon.getchannel("A").getdata()) <= {0, 255})
                 self.assertLessEqual(len(icon.getcolors()), 32, path.name)
 
-    def test_pokedex_uses_the_device_art_without_white_panel_fills(self):
+    def test_pokedex_keeps_casing_outside_readable_celadon_surfaces(self):
         folder = ROOT / "themes/pokedex"
         for screen in ("top", "bottom"):
-            with Image.open(
-                folder / "backgrounds" / ("material-" + screen + ".png")
-            ) as surface:
-                self.assertEqual(surface.getchannel("A").getextrema(), (0, 0))
-        for name in ("header", "footer", "panel", "row", "card", "artwork-frame"):
+            with Image.open(folder / "backgrounds" / ("material-" + screen + ".png")) as surface:
+                self.assertEqual(surface.getpixel((0, 0))[3], 0)
+                self.assertGreaterEqual(surface.getpixel((128, 100))[3], 230)
+                r, g, b, _ = surface.getpixel((128, 100))
+                self.assertGreater(g, r)
+                self.assertGreater(g, b)
+        for name in ("panel", "row", "card"):
+            with Image.open(folder / "components" / (name + ".png")) as component:
+                self.assertEqual(component.getpixel((16, 16))[3], 255, name)
+        for name in ("icon-frame", "artwork-frame"):
             with Image.open(folder / "components" / (name + ".png")) as component:
                 self.assertEqual(component.getpixel((16, 16))[3], 0, name)
-        with Image.open(folder / "components/row-selected.png") as selection:
-            self.assertEqual(selection.getpixel((16, 16))[3], 255)
         with Image.open(folder / "backgrounds/top.png") as top, Image.open(
             folder / "backgrounds/bottom.png"
         ) as bottom:
             self.assertEqual(top.tobytes(), bottom.tobytes())
+
+    def test_pokedex_text_contrast_across_both_preblended_reading_areas(self):
+        from theme_native.theme_prepared_surfaces import screens, color555
+
+        folder = ROOT / "themes/pokedex"
+        config = configparser.ConfigParser()
+        config.read(folder / "theme.ini", encoding="utf-8")
+        def light(pixel):
+            values = [((pixel >> shift) & 31) / 31 for shift in (0, 5, 10)]
+            return sum(w * (v / 12.92 if v <= 0.04045 else ((v + 0.055) / 1.055) ** 2.4)
+                       for v, w in zip(values, (0.2126, 0.7152, 0.0722)))
+        inks = [light(color555(config['colors'][key])) for key in ('text','muted','accent')]
+        for _, _, data in screens(folder, config, lambda root, path: root / path):
+            pixels = struct.unpack_from('<' + 'H' * (256 * 192), data, 8)
+            for y in range(32, 171):
+                for x in range(10, 247):
+                    background = light(pixels[y * 256 + x])
+                    for ink in inks:
+                        ratio = (max(ink, background) + 0.05) / (min(ink, background) + 0.05)
+                        self.assertGreaterEqual(ratio, 4.5, (x, y, ratio))
 
     def test_intros_use_three_still_layers_not_full_screen_movies(self):
         for name in SPECS:

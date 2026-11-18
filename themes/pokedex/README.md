@@ -1,10 +1,15 @@
 # Pokédex
 
-Red illustrated casing and a celadon display form the UI, with open frames, blue sensor lenses and teal selections.
+Red illustrated casing surrounds quiet celadon LCD surfaces, with dark forest text, matte teal selections and blue sensor details.
 
 ![Two-screen renderer preview](preview.png)
 
 [Home preview](home-preview.png) · [Settings preview](settings-preview.png)
+
+The celadon LCD surfaces protect text while leaving the illustrated red casing
+visible around the edges. Headers and footers use matte red strips, and the
+background music is a calm electric-piano loop. Use a current Gloam build for the
+matching item-menu and file-picker contrast fixes.
 
 ## Install
 
@@ -15,8 +20,9 @@ wallpaper or accent overrides can alter the supplied defaults.
 
 Defaults: Journal top composition, Extended browser,
 large icons and numbered tabs. Native DS/DSi banner icons keep priority;
-theme file/system/category icons cover other entries. Both reading surfaces,
-all control skins, eight ambient frames, body/heading fonts, three UI cues,
+theme file/system/category icons cover other entries.
+Both reading surfaces are included.
+All control skins, eight ambient frames, body/heading fonts, three UI cues,
 recorded music and a startup splash are included. Reduced motion is respected.
 
 See [credits](CREDITS.md), [music attribution](MUSIC.md) and original notices.

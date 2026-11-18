@@ -1,7 +1,7 @@
 # Pokédex — credits
 
 Original Gloam interpretation of Pokémon field-research devices, by nextcode4u / Gloam project
-(agent-assisted). Red illustrated casing and a celadon display form the UI, with open frames, blue sensor lenses and teal selections.
+(agent-assisted). Red illustrated casing surrounds quiet celadon LCD surfaces, with dark forest text, matte teal selections and blue sensor details.
 
 ## Artwork and controls
 

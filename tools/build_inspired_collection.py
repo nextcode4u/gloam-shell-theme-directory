@@ -17,6 +17,7 @@ from theme_icons import CELLS, native_icon
 from theme_typography import prepare_fonts
 from luna_assets import reading_surface as luna_reading_surface
 from aero_assets import reading_surface as aero_reading_surface
+from pokedex_assets import reading_surface as pokedex_reading_surface
 from build_theme_splashes import build_theme
 from inspired_assets import (
     ROOT,
@@ -136,6 +137,8 @@ def build(theme, gloam, font_dir, download):
             surface = luna_reading_surface(screen)
         elif theme == "aero-glass":
             surface = aero_reading_surface(screen)
+        elif theme == "pokedex":
+            surface = pokedex_reading_surface(screen)
         surface.save(
             folder / "backgrounds" / ("material-" + screen + ".png"), optimize=True
         )
@@ -321,6 +324,13 @@ Artwork and control skins are prepared specifically for this Gloam pack.
         else "Previews use the current Gloam source with selection-ink fixes for menus and "
         "settings. The original 1.1.0 binary accepts the pack format but lacks those fixes."
     )
+    reading_note = (
+        "The celadon LCD surfaces protect text while leaving the illustrated red casing\n"
+        "visible around the edges. Headers and footers use matte red strips, and the\n"
+        "background music is a calm electric-piano loop. Use a current Gloam build for the\n"
+        "matching item-menu and file-picker contrast fixes.\n\n"
+        if theme == "pokedex" else ""
+    )
     (folder / "README.md").write_text(
         f"""# {s['name']}
 
@@ -330,7 +340,7 @@ Artwork and control skins are prepared specifically for this Gloam pack.
 
 [Home preview](home-preview.png) · [Settings preview](settings-preview.png)
 
-## Install
+{reading_note}## Install
 
 {compatibility} Copy this whole folder to
 `/_nds/dsi-frontend/themes/{theme}/`. Open START → Appearance → Theme:

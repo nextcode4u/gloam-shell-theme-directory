@@ -8,12 +8,12 @@
 #include "picker.h"
 #include "renderer.h"
 #include "settings.h"
+#include "theme_assets.h"
 #include "theme_motion.h"
 #include "themes.h"
-#include "theme_assets.h"
-#include <stdlib.h>
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 static App app;
 static struct {
@@ -28,6 +28,15 @@ static void draw(void)
     render_app(&app, top.data, bottom.data, "10:24");
     assert(top.pre == 0x12345678 && bottom.pre == 0x12345678);
     assert(top.post == 0x87654321 && bottom.post == 0x87654321);
+}
+/* Captures show the pack's defaults, rather than a tab's remembered view. */
+static void preview_defaults(void)
+{
+    if (app.themes.active.default_view >= 0)
+        app.browser_style = app.themes.active.default_view;
+    if (app.themes.active.default_icon_size >= 0)
+        app.icon_size = app.themes.active.default_icon_size;
+    browser_reflow(&app);
 }
 static void ppm(const char *dir, const char *theme, const char *kind, uint16_t *pixels)
 {
@@ -77,7 +86,7 @@ int main(int argc, char **argv)
         bool wallpaper;
         bool expected_background = *app.themes.active.backgrounds[screen] != 0;
         assert(theme_assets_background(&app.themes.active, screen, prepared_screen, &scene,
-                                        &wallpaper) == expected_background);
+                                       &wallpaper) == expected_background);
         free(scene);
         if (!expected_background) {
             themes_background_draw(&app.themes.active, screen, prepared_screen);
@@ -116,6 +125,7 @@ int main(int argc, char **argv)
     for (int i = 0; i < 3; i++)
         assert((app.audio.effects[i].samples != NULL) == (*app.themes.active.sounds[i] != 0));
     app_category(&app, CATEGORY_GAMES);
+    preview_defaults();
     for (int f = 0; f < 180; f++)
         app_tick(&app);
     const uint8_t *ambient_alpha;
@@ -144,12 +154,13 @@ int main(int argc, char **argv)
     ppm(argv[3], argv[2], "bottom", bottom.data);
     snprintf(app.locations[app.category].path, PATH_CAP, "%s", saved_path);
     app_category(&app, CATEGORY_HOME);
+    preview_defaults();
     app.locations[CATEGORY_HOME].selected = 1;
     draw();
     ppm(argv[3], argv[2], "home-top", top.data);
     ppm(argv[3], argv[2], "home-bottom", bottom.data);
     for (int view = 0; view < BROWSER_STYLE_COUNT; view++)
-        for (int size = 0; size < 2; size++) {
+        for (int size = 0; size < ICON_SIZE_COUNT; size++) {
             app.browser_style = view;
             app.icon_size = size;
             browser_reflow(&app);
@@ -168,7 +179,32 @@ int main(int argc, char **argv)
     settings_open(&app);
     draw();
     ppm(argv[3], argv[2], "settings", bottom.data);
+    ppm(argv[3], argv[2], "settings-top", top.data);
+    for (int section = 0; section < settings_section_count(&app); section++) {
+        draw();
+        settings_section(&app, 1);
+    }
     app.settings.open = false;
+    app_category(&app, CATEGORY_GAMES);
+    preview_defaults();
+    app_panel(&app, PANEL_ACTIONS);
+    app.panel_selection = 4; /* A disabled action still needs readable focus text. */
+    app.panel_age = 12;
+    draw();
+    ppm(argv[3], argv[2], "actions", bottom.data);
+    for (int row = 0; row < ACTION_COUNT * 2; row++) {
+        app_panel_move(&app, row < ACTION_COUNT ? 1 : -1);
+        draw();
+    }
+    app_panel(&app, PANEL_QUICK);
+    app.panel_age = 12;
+    draw();
+    ppm(argv[3], argv[2], "quick", bottom.data);
+    for (int row = 0; row < QUICK_CONTROL_COUNT * 2; row++) {
+        app_panel_move(&app, row < QUICK_CONTROL_COUNT ? 1 : -1);
+        draw();
+    }
+    app_panel_close(&app);
     assert(picker_open_background(&app, 1));
     for (int frame = 0; frame < 60; frame++)
         picker_tick(&app);

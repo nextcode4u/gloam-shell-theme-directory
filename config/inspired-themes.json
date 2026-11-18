@@ -174,14 +174,14 @@
     "pokedex": {
       "name": "Pok\u00e9dex",
       "inspiration": "Pok\u00e9mon field-research devices",
-      "description": "Red illustrated casing and a celadon display form the UI, with open frames, blue sensor lenses and teal selections.",
+      "description": "Red illustrated casing surrounds quiet celadon LCD surfaces, with dark forest text, matte teal selections and blue sensor details.",
       "colors": [
         "#dce8cd",
-        "#e8f2dd",
-        "#648776",
-        "#1c3431",
-        "#4f6962",
-        "#277c8c",
+        "#dcead5",
+        "#547460",
+        "#132d29",
+        "#294a3d",
+        "#185460",
         "#ffffff"
       ],
       "layout": "journal",
@@ -191,8 +191,8 @@
       "size": "large",
       "radius": 3,
       "opacity": [
-        0,
-        0
+        239,
+        239
       ],
       "body": "atkinsonhyperlegible",
       "heading": "archivoblack",
