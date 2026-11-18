@@ -114,7 +114,7 @@ def status_icon(name):
     return image
 
 
-def wallpaper():
+def wallpaper(screen="top"):
     image = Image.new("RGB", (256, 192), "#f6f6f3")
     draw = ImageDraw.Draw(image)
     for y in range(0, 192, 3):
@@ -128,6 +128,14 @@ def wallpaper():
     draw.line((0, 24, 255, 24), fill="#344955")
     draw.rectangle((0, 176, 255, 191), fill="#d8dddc")
     draw.line((0, 176, 255, 176), fill="#ffffff")
+    if screen == "bottom":
+        # The touch panel has inset horizontal control bays, not another status strip.
+        draw.rectangle((0, 0, 255, 24), fill="#e4e8e7")
+        draw.line((0, 24, 255, 24), fill="#ffffff")
+        for y in (37, 81, 125):
+            draw.rectangle((5, y, 250, y + 39), fill="#eceeea")
+            draw.line((5, y + 39, 5, y, 250, y), fill="#a9b1b1")
+            draw.line((6, y + 39, 250, y + 39, 250, y + 1), fill="#ffffff")
     return image
 
 
@@ -250,6 +258,7 @@ def icon(cell):
 def main():
     folder = ROOT / "source/art"
     wallpaper().save(folder / "classic-ds.png", optimize=True)
+    wallpaper("bottom").save(folder / "classic-ds-bottom.png", optimize=True)
     atlas = Image.new("RGBA", (512, 512))
     for cell in range(16):
         atlas.paste(
@@ -259,7 +268,7 @@ def main():
     atlas.save(folder / "classic-ds-icons.png", optimize=True)
     path = ROOT / "config/inspired-art.json"
     manifest = json.loads(path.read_text(encoding="utf-8"))
-    for name in ("classic-ds.png", "classic-ds-icons.png"):
+    for name in ("classic-ds.png", "classic-ds-bottom.png", "classic-ds-icons.png"):
         relative = "source/art/" + name
         manifest["sources"][relative] = {
             "sha256": hashlib.sha256((ROOT / relative).read_bytes()).hexdigest(),

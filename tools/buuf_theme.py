@@ -173,9 +173,10 @@ def build_buuf(gloam, font_dir, profile, load_tool, compose_audio, download=Fals
             "assets": {"prepared": "assets.gfx"},
         }
     )
-    with Image.open(ROOT / "source/art/buuf.png") as original:
-        backdrop = original.convert("RGB").resize((256, 192), Image.Resampling.LANCZOS)
     for screen in ("top", "bottom"):
+        suffix = "-bottom" if screen == "bottom" else ""
+        with Image.open(ROOT / "source/art" / ("buuf" + suffix + ".png")) as original:
+            backdrop = original.convert("RGB").resize((256, 192), Image.Resampling.LANCZOS)
         backdrop.save(folder / "backgrounds" / (screen + ".png"), optimize=True)
         # A complete image-backed reading veil; illustration stays visible beneath it.
         paper = tint("buuf", COLORS["background"], amplitude=4).convert("RGBA")

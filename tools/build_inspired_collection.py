@@ -79,7 +79,7 @@ def build(theme, gloam, font_dir, download):
     artwork_names = (
         (theme + "-icons.png",)
         if s.get("solid_background")
-        else (theme + ".png", theme + "-icons.png")
+        else (theme + ".png", theme + "-bottom.png", theme + "-icons.png")
     )
     for name in artwork_names:
         relative = "source/art/" + name
@@ -94,16 +94,17 @@ def build(theme, gloam, font_dir, download):
     folder = ROOT / "themes" / theme
     for part in ("backgrounds", "components", "icons", "fonts", "sounds", "motion"):
         (folder / part).mkdir(parents=True, exist_ok=True)
-    if not s.get("solid_background"):
-        with Image.open(ROOT / "source/art" / (theme + ".png")) as source:
-            art = ImageOps.fit(
-                source.convert("RGB"), (256, 192), method=Image.Resampling.LANCZOS
-            )
-        art.save(folder / "backgrounds/top.png", optimize=True)
-        bottom = Image.blend(
-            art, Image.new("RGB", art.size, s["colors"][0]), s.get("bottom_tint", 0.14)
-        )
-        bottom.save(folder / "backgrounds/bottom.png", optimize=True)
+    for screen in ("top", "bottom"):
+        if s.get("solid_background"):
+            from desktop98_assets import workspace
+            art = workspace(screen)
+        else:
+            suffix = "-bottom" if screen == "bottom" else ""
+            with Image.open(ROOT / "source/art" / (theme + suffix + ".png")) as source:
+                art = ImageOps.fit(
+                    source.convert("RGB"), (256, 192), method=Image.Resampling.LANCZOS
+                )
+        art.save(folder / "backgrounds" / (screen + ".png"), optimize=True)
     with Image.open(ROOT / "source/art" / (theme + "-icons.png")) as source:
         if source.width < 256 or source.height < 256:
             raise ValueError("The 4x4 source atlas needs at least 64px per cell")
@@ -197,14 +198,10 @@ def build(theme, gloam, font_dir, download):
         "bottom_surface": "backgrounds/material-bottom.png",
     }
     if s.get("solid_background"):
-        config["backgrounds"] = {"strength": "100"}
-        for filename in (
-            "top.png",
-            "bottom.png",
-            "material-top.png",
-            "material-bottom.png",
-        ):
-            (folder / "backgrounds" / filename).unlink(missing_ok=True)
+        # Native desktop and recessed Explorer surfaces; no decorative wallpaper.
+        for screen in ("top", "bottom"):
+            config["backgrounds"].pop(screen + "_surface", None)
+            (folder / "backgrounds" / ("material-" + screen + ".png")).unlink(missing_ok=True)
     config["icons"] = {"directory": "icons"}
     config["components"] = {
         "directory": "components",
@@ -350,7 +347,7 @@ wallpaper or accent overrides can alter the supplied defaults.
 Defaults: {s['layout'].title()} top composition, {s['view'].title()} browser,
 {s['size']} icons and {s['tabs']} tabs. Native DS/DSi banner icons keep priority;
 theme file/system/category icons cover other entries.
-{"The workspace uses a solid palette color without wallpaper bitmaps." if s.get("solid_background") else "Both reading surfaces are included."}
+{"The desktop and recessed Explorer pane use tiny native UI surfaces without decorative wallpaper." if s.get("solid_background") else "Both reading surfaces are included."}
 All control skins, eight ambient frames, body/heading fonts, three UI cues,
 recorded music and a startup splash are included. Reduced motion is respected.
 

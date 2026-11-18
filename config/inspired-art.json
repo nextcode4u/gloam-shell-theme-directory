@@ -43,6 +43,25 @@
     },
     "source/art/synthwave-icons.png": {
       "sha256": "d052b7b31036b826e1866ab4d9d1f33cda7ea90cd0344fe31d41238e6e45718f"
+    },
+    "source/art/luna-bottom.png": {
+      "sha256": "a61719614ee81fbd7dbfcfd88142e75c5df38677db613724138ee703c3275606"
+    },
+    "source/art/portal-terminal-bottom.png": {
+      "sha256": "263ea78b017d1d2a6c23c0a3eedfb54f6cbb2046d72f940f72031190810bf97d"
+    },
+    "source/art/aero-glass-bottom.png": {
+      "sha256": "4fbe4ea7f2289dbb15bb0929747d3eb3544cfd81fc5a334b2cfdd624ccc264b4"
+    },
+    "source/art/synthwave-bottom.png": {
+      "sha256": "70b261573473dd957af9a0a417ca9d3fd9412c326114303681abd14505e57861"
+    },
+    "source/art/pokedex-bottom.png": {
+      "sha256": "da82373a53f56664f5e04cf6c28626017d1eb4ac08332f9c66e947d1f1fb1c7d"
+    },
+    "source/art/classic-ds-bottom.png": {
+      "sha256": "7eff3042e0683fe7264d93433875c7a5f56e98c7bb05e0f5519abcf862ca77c3",
+      "authoring": "tools/classic_ds_assets.py"
     }
   }
 }

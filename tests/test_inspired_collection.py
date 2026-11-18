@@ -165,14 +165,16 @@ class InspiredCollectionTests(unittest.TestCase):
                     )
                 )
 
-    def test_desktop98_has_pixel_icons_and_no_hidden_wallpaper(self):
+    def test_desktop98_has_pixel_icons_and_native_workspace_surfaces(self):
         folder = ROOT / "themes/desktop-98"
         config = configparser.ConfigParser()
         config.read(folder / "theme.ini", encoding="utf-8")
         for screen in ("top", "bottom"):
-            self.assertFalse(config.has_option("backgrounds", screen))
+            with Image.open(folder / config["backgrounds"][screen]) as workspace:
+                self.assertEqual(workspace.size, (256, 192))
+                self.assertLessEqual(len(workspace.getcolors()), 5)
             self.assertFalse(config.has_option("backgrounds", screen + "_surface"))
-        self.assertFalse(list((folder / "backgrounds").glob("*.png")))
+        self.assertEqual(len(list((folder / "backgrounds").glob("*.png"))), 2)
         for path in (folder / "icons").glob("*.png"):
             with Image.open(path) as icon:
                 self.assertTrue(set(icon.getchannel("A").getdata()) <= {0, 255})
@@ -196,7 +198,7 @@ class InspiredCollectionTests(unittest.TestCase):
         with Image.open(folder / "backgrounds/top.png") as top, Image.open(
             folder / "backgrounds/bottom.png"
         ) as bottom:
-            self.assertEqual(top.tobytes(), bottom.tobytes())
+            self.assertNotEqual(top.tobytes(), bottom.tobytes())
 
     def test_pokedex_text_contrast_across_both_preblended_reading_areas(self):
         from theme_native.theme_prepared_surfaces import screens, color555

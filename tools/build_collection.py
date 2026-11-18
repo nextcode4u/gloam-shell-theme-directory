@@ -263,16 +263,13 @@ def build(id):
     p = ROOT / "themes" / id
     for sub in ("backgrounds", "icons", "components", "sounds", "fonts"):
         (p / sub).mkdir(parents=True, exist_ok=True)
-    art = ImageOps.fit(
-        Image.open(ROOT / "source/art" / f"{id}.png").convert("RGB"),
-        (256, 192),
-        method=Image.Resampling.LANCZOS,
-    )
-    art.save(p / "backgrounds/top.png", optimize=True)
-    # A cohesive secondary surface, with the image subdued for long browser rows.
-    tone = Image.new("RGB", (256, 192), spec["colors"][0])
-    bottom = Image.blend(art, tone, 0.18)
-    bottom.save(p / "backgrounds/bottom.png", optimize=True)
+    for screen in ("top", "bottom"):
+        suffix = "-bottom" if screen == "bottom" else ""
+        with Image.open(ROOT / "source/art" / f"{id}{suffix}.png") as source:
+            art = ImageOps.fit(
+                source.convert("RGB"), (256, 192), method=Image.Resampling.LANCZOS
+            )
+        art.save(p / "backgrounds" / f"{screen}.png", optimize=True)
     for name in COMPONENTS:
         component(name, spec).save(p / "components" / f"{name}.png", optimize=True)
     length = audio(spec, p / "sounds")
@@ -405,6 +402,12 @@ def refresh_style(id, gloam, font_dir, download_fonts=False):
     folder = ROOT / "themes" / id
     config = configparser.ConfigParser()
     config.read(folder / "theme.ini")
+    if id in ("slate", "folio", "phosphor"):
+        # Starter artwork follows its authoritative source; local skins stay local.
+        source = gloam / "sdroot/_nds/dsi-frontend/themes" / id / "backgrounds"
+        for screen in ("top", "bottom"):
+            name = "scene-" + screen + ".png"
+            (folder / "backgrounds" / name).write_bytes((source / name).read_bytes())
     config["theme"]["version"] = "2"
     layout = config["layout"]
     layout.update(

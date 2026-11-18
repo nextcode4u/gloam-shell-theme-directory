@@ -96,7 +96,6 @@
       "chrome": "full",
       "heading_size": 12,
       "heading_baseline": 12,
-      "bottom_tint": 0,
       "header_text": "#ffffff",
       "header_link_text": "#ffffff",
       "footer_text": "#252b2d"
@@ -160,7 +159,6 @@
       "heading": "sourcesans3",
       "pitch": 1040,
       "chrome": "full",
-      "bottom_tint": 0,
       "heading_size": 13,
       "heading_baseline": 12,
       "heading_weight": 600,
@@ -198,7 +196,6 @@
       "heading": "archivoblack",
       "pitch": 880,
       "chrome": "full",
-      "bottom_tint": 0,
       "header_text": "#ffffff",
       "footer_text": "#ffffff",
       "header_link_text": "#ffffff"

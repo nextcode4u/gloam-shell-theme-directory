@@ -16,7 +16,7 @@ wallpaper or accent overrides can alter the supplied defaults.
 Defaults: Sidebar_Left top composition, Classic browser,
 small icons and labels tabs. Native DS/DSi banner icons keep priority;
 theme file/system/category icons cover other entries.
-The workspace uses a solid palette color without wallpaper bitmaps.
+The desktop and recessed Explorer pane use tiny native UI surfaces without decorative wallpaper.
 All control skins, eight ambient frames, body/heading fonts, three UI cues,
 recorded music and a startup splash are included. Reduced motion is respected.
 

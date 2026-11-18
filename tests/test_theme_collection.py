@@ -22,6 +22,20 @@ from inspired_assets import SPECS as INSPIRED_SPECS
 
 
 class ThemeCollectionTests(unittest.TestCase):
+    def test_screen_artwork_is_distinct_and_native_size(self):
+        for folder in sorted((ROOT / "themes").iterdir()):
+            config = configparser.ConfigParser()
+            config.read(folder / "theme.ini")
+            if not config.has_section("theme"):
+                continue
+            with self.subTest(theme=folder.name):
+                images = []
+                for screen in ("top", "bottom"):
+                    with Image.open(folder / config["backgrounds"][screen]) as image:
+                        self.assertEqual(image.size, (256, 192))
+                        images.append(image.convert("RGB").tobytes())
+                self.assertNotEqual(*images)
+
     def test_prepared_assets_motion_and_audio_stay_bounded(self):
         for name in PROFILES:
             with self.subTest(theme=name):

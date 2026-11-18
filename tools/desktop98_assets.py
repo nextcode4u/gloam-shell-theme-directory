@@ -13,6 +13,18 @@ GRAY, SILVER, NAVY, TEAL = "#808080", "#c0c0c0", "#000080", "#008080"
 YELLOW, PALE, OLIVE = "#ffff00", "#ffffc0", "#808000"
 
 
+def workspace(screen):
+    """Flat desktop above, recessed Explorer list below; no hidden wallpaper."""
+    image = Image.new("RGB", (256, 192), SILVER)
+    if screen == "bottom":
+        draw = ImageDraw.Draw(image)
+        draw.rectangle((3, 36, 252, 173), fill="#f8f8f0")
+        draw.line((3, 173, 3, 36, 252, 36), fill=GRAY)
+        draw.line((4, 172, 4, 37, 251, 37), fill=BLACK)
+        draw.line((3, 174, 253, 174, 253, 36), fill=WHITE)
+    return image
+
+
 def sheet(draw):
     draw.polygon(
         [(7, 2), (22, 2), (28, 8), (28, 29), (7, 29)], fill=WHITE, outline=BLACK
