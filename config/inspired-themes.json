@@ -178,8 +178,8 @@
         "#dcead5",
         "#547460",
         "#132d29",
-        "#294a3d",
-        "#185460",
+        "#233f34",
+        "#13434a",
         "#ffffff"
       ],
       "layout": "journal",
@@ -189,8 +189,8 @@
       "size": "large",
       "radius": 3,
       "opacity": [
-        239,
-        239
+        190,
+        190
       ],
       "body": "atkinsonhyperlegible",
       "heading": "archivoblack",

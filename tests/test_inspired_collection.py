@@ -185,7 +185,8 @@ class InspiredCollectionTests(unittest.TestCase):
         for screen in ("top", "bottom"):
             with Image.open(folder / "backgrounds" / ("material-" + screen + ".png")) as surface:
                 self.assertEqual(surface.getpixel((0, 0))[3], 0)
-                self.assertGreaterEqual(surface.getpixel((128, 100))[3], 230)
+                self.assertGreaterEqual(surface.getpixel((128, 100))[3], 170)
+                self.assertLessEqual(surface.getpixel((128, 100))[3], 205)
                 r, g, b, _ = surface.getpixel((128, 100))
                 self.assertGreater(g, r)
                 self.assertGreater(g, b)

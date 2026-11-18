@@ -16,7 +16,7 @@ def reading_surface(screen):
     # lightly translucent LCD beneath every layout's text and navigation.
     draw.rounded_rectangle(
         (6, 26, 249, 174), radius=6,
-        fill=(220, 234, 213, 239), outline=(84, 116, 96, 210)
+        fill=(220, 234, 213, 190), outline=(84, 116, 96, 160)
     )
     return image
 
