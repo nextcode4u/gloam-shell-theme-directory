@@ -751,7 +751,7 @@ function renderFields(container, name, keys = null) {
         await api("field", { section: name, key, value }, false);
         const inherit = input.closest(".field").querySelector(".inherit input");
         if (inherit) inherit.checked = false;
-        if (name === "layout" && key === "top_layout") inspect();
+        if (name === "layout" && ["top_layout", "top_content"].includes(key)) inspect();
       });
     input.onchange = () => save(input.value);
     describeControl(input, spec.help);
@@ -823,7 +823,8 @@ function renderFields(container, name, keys = null) {
       );
     }
     if (name === "layout") {
-      const composition = state.config.layout?.top_layout || "sidebar",
+      const contentPreset = ![undefined, "theme", "layout"].includes(state.config.layout?.top_content),
+        composition = state.config.layout?.top_layout || "sidebar",
         composed = [
           "spotlight",
           "gallery",
@@ -834,8 +835,8 @@ function renderFields(container, name, keys = null) {
         ].includes(composition),
         side = ["sidebar", "sidebar_left"].includes(composition),
         unavailable =
-          (key === "tabs_position" && !composed) ||
-          (side && ["tab_visible", "tab_gap"].includes(key));
+          (key === "tabs_position" && (!composed || contentPreset)) ||
+          (!contentPreset && side && ["tab_visible", "tab_gap"].includes(key));
       if (unavailable) {
         input.disabled = true;
         if (key === "tab_visible") input.value = "6";
@@ -851,7 +852,7 @@ function renderFields(container, name, keys = null) {
           input.replaceChildren(
             el("option", {
               value: "",
-              text: side ? "Fixed side rail" : "Fixed bottom dock",
+              text: side && !contentPreset ? "Fixed side rail" : "Fixed bottom dock",
             }),
           );
           children.push(

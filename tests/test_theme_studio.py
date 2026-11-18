@@ -401,6 +401,22 @@ class ThemeStudioTests(unittest.TestCase):
             self.project.data["config"]["layout"]["top_layout"] = composition
             self.assertEqual(theme_preview.render(self.project).size, (256, 396))
 
+    def test_optional_top_content_presets_preview_without_changing_legacy_layouts(self):
+        baseline = theme_preview.render(self.project).tobytes()
+        for mode in ("context", "neighbors", "folder", "activity", "smart", "layout"):
+            for tabs in ("labels", "icons", "numbered", "pager"):
+                config = copy.deepcopy(self.project.data["config"])
+                config["layout"]["top_content"] = mode
+                config["layout"]["tab_style"] = tabs
+                self.project.update(config=config)
+                self.assertEqual(theme_preview.render(self.project).size, (256, 396))
+                self.assertIn("top_content=" + mode, (self.project.theme / "theme.ini").read_text())
+        config = copy.deepcopy(self.project.data["config"])
+        config["layout"].pop("top_content")
+        config["layout"]["tab_style"] = "labels"
+        self.project.update(config=config)
+        self.assertEqual(theme_preview.render(self.project).tobytes(), baseline)
+
 
 if __name__ == "__main__":
     unittest.main()

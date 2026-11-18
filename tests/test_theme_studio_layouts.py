@@ -170,3 +170,23 @@ class LayoutJourneys(unittest.TestCase):
             with Image.open(root / "theme/skins/tab-selected.png") as result:
                 self.assertEqual(result.size, (32, 32))
                 self.assertEqual(result.getpixel((16, 16)), (185, 88, 225, 255))
+
+    def test_top_content_presets_save_preview_and_leave_a_return_to_layout(self):
+        with editor() as (page, root, expect):
+            page.locator('[data-section=layout]').click()
+            picker = page.get_by_label('top content', exact=True)
+            picker.select_option('neighbors')
+            expect(page.locator('#save-state')).to_have_text('Saved locally')
+            expect(page.get_by_label('tabs position', exact=True)).to_be_disabled()
+            config = json.loads((root / 'theme-project.json').read_text())['config']['layout']
+            self.assertEqual(config['top_content'], 'neighbors')
+            picker = page.get_by_label('top content', exact=True)
+            picker.select_option('context')
+            expect(page.locator('#save-state')).to_have_text('Saved locally')
+            picker = page.get_by_label('top content', exact=True)
+            picker.select_option('theme')
+            expect(page.locator('#save-state')).to_have_text('Saved locally')
+            expect(page.get_by_label('tabs position', exact=True)).to_be_enabled()
+            page.locator('[data-section=backgrounds]').click()
+            page.locator('[data-section=layout]').click()
+            expect(page.get_by_label('top content', exact=True)).to_have_value('theme')

@@ -272,3 +272,14 @@ For contributor changes to authoring tools or shared notices, run
 Theme Studio and standalone Splash Builder download hashes; `--check` verifies
 both without writing. Shared converter/license edits must keep both launchers
 usable, including cached and offline startup.
+
+### Top-screen content presets
+
+Layout → **Top content** optionally selects Context, Neighbors, Folder overview,
+Home activity or Smart for development builds of Gloam after 1.2.0. These presets
+replace the artwork composition with a bounded content body and bottom tab dock;
+Theme (or Inherit/omit) keeps the original layout. Cards, backgrounds, fonts and
+status skins remain yours. The quick preview uses example facts and artwork,
+not an inspection of your SD library. Use the native preview with a matching
+frontend checkout and verify the result on the console. Published 1.2.0 rejects
+this new key; existing themes are not automatically changed.

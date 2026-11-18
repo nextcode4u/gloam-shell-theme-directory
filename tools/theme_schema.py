@@ -56,6 +56,10 @@ SCHEMA = {
         ),
         "row_padding": number(0, 12, "2"),
         "large_grid_columns": number(2, 4, "3"),
+        "top_content": choice(
+            "theme context neighbors folder activity smart layout",
+            help="Optional content preset for development Gloam after 1.2.0. Theme preserves the layout below. Other presets use a bottom dock: Context shows selected facts; Neighbors shows nearby covers; Folder summarizes the current batch; Activity shows Home shortcuts; Smart chooses by context. Layout only ignores a theme content preset. Users can override this in Gloam.",
+        ),
         "top_layout": choice(
             "sidebar sidebar_left poster scene spotlight gallery journal panorama dossier portrait",
             "gallery",

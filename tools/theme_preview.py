@@ -18,6 +18,44 @@ from theme_schema import COLORS
 from theme_validate import inside, font_info
 
 
+
+def content_preview(project, top, palette, mode):
+    """Illustrative fixture for the bounded native content presets."""
+    p = palette
+    draw = theme_draw(project, top)
+    if mode == "smart":
+        mode = "folder"
+    title = "sd:/roms" if mode == "folder" else "Home activity" if mode == "activity" else "Adventure"
+    text(draw, (12, 31), title, p["text"], 232, size=13)
+    if mode == "context":
+        skin(project, top, "card-selected", (10, 51, 74, 111), p["surface"])
+        top.alpha_composite(icon(project, "folder", 40), (22, 61))
+        for y, value, color in ((54, "Nintendo DS", p["accent"]),
+                                 (70, "Header selects launch route", p["text"]),
+                                 (86, "Save slot: 0 / 2 overrides", p["muted"]),
+                                 (102, "Checked again at launch", p["muted"])):
+            text(draw, (82, y), value, color, 160, size=10)
+        text(draw, (12, 117), "Example studio / Adventure / 2026", p["text"], 232, size=10)
+        text(draw, (12, 131), "Optional title description / Y: details", p["muted"], 232, size=10)
+    elif mode == "neighbors":
+        for i in range(3):
+            selected = i == 1
+            x, y, w, h = (89, 50, 78, 79) if selected else (12 + i * 82, 60, 66, 61)
+            skin(project, top, "card-selected" if selected else "card", (x, y, x+w, y+h), p["surface"])
+            size = min(w-20, h-20)
+            top.alpha_composite(icon(project, "folder", size), (x+(w-size)//2, y+(h-size)//2))
+        text(draw, (12, 132), "2 / 6", p["muted"], 232, size=10)
+    else:
+        text(draw, (12, 52), "12 files / 3 folders" if mode == "folder" else "3 pins / 2 collections / 4 requests", p["text"], 232, size=10)
+        if mode == "folder":
+            text(draw, (12, 68), "DS/DSi 8 / Music 4", p["muted"], 232, size=10)
+        for i in range(3):
+            y = 87 if mode == "folder" else 72
+            skin(project, top, "card", (18+i*78, y, 82+i*78, y+45), p["surface"])
+            top.alpha_composite(icon(project, "folder", 24), (38+i*78, y+10))
+        text(draw, (12, 132), "Current folder / no recursive scan" if mode == "folder" else "Recent requests do not measure playtime", p["muted"], 232, size=10)
+    horizontal_tabs(project, top, p, 144 if project.data["config"].get("layout", {}).get("tab_style") == "icons" else 155)
+
 COMPOSED_LAYOUTS = (
     "spotlight",
     "gallery",
@@ -374,7 +412,10 @@ def render(project, sample="browser", view=None, selected=1, guides=False):
             with Image.open(file) as image:
                 top.alpha_composite(image.convert("RGBA").resize((14, 14)), (x, 6))
     composition = layout.get("top_layout", "sidebar")
-    if composition in ("sidebar", "sidebar_left"):
+    content = layout.get("top_content", "theme")
+    if content not in ("theme", "layout"):
+        content_preview(project, top, p, content)
+    elif composition in ("sidebar", "sidebar_left"):
         rail = 7 if composition == "sidebar_left" else 184
         art_x = 80 if rail == 7 else 14
         skin(project, top, "card", (art_x, 48, art_x + 76, 143), p["surface"])
