@@ -14,13 +14,13 @@ themed fallback icons.
 
 ## Install
 
-Requires [Gloam `6aacad1` or later](https://github.com/nextcode4u/gloam-shell-ndx/commit/6aacad1e965ddcf36553637ab17ccd475936602c),
-with theme format 2 and full-image material support. Gloam 1.0.0 cannot load
+Requires **Gloam 1.1.0 or later**, with theme format 2 and full-image
+material support. Gloam 1.2.0 is recommended to match the current previews. Gloam 1.0.0 cannot load
 this revision. The [original collection](https://github.com/nextcode4u/gloam-shell-theme-directory/tree/74fd2dd/themes/koi) remains available in history.
 
 Copy the entire `koi` folder to `/_nds/dsi-frontend/themes/koi/` on the SD
 card. Back up a same-named theme first. Choose **START → Appearance → Theme**,
-select Koi and press A. Reset personal wallpaper overrides to see the
+select Koi, press X to preview, then A to apply once ready. Reset personal wallpaper overrides to see the
 supplied artwork. Other browser views and icon sizes remain selectable.
 
 See [credits and licenses](CREDITS.md), [authoring](../../docs/AUTHORING.md) and

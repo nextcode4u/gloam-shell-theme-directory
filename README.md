@@ -49,10 +49,10 @@ See [BUUF credits](themes/buuf/CREDITS.md).
 
 ## Install
 
-**These revisions require Gloam 1.1.0 or a newer build with full-image
-material support. They do not load in Gloam 1.0.0.** Use the current release or build
-[Gloam `6aacad1` or later](https://github.com/nextcode4u/gloam-shell-ndx/commit/6aacad1e965ddcf36553637ab17ccd475936602c),
-or use the [original 1.0-compatible collection](https://github.com/nextcode4u/gloam-shell-theme-directory/tree/74fd2dd/themes).
+**Use [Gloam 1.2.0 or later](https://github.com/nextcode4u/gloam-shell-ndx/releases/latest)
+for the complete collection.** Individual minimum versions are listed in
+[catalog.json](catalog.json). These format-2 revisions do not load in Gloam 1.0.0;
+the [original 1.0-compatible collection](https://github.com/nextcode4u/gloam-shell-theme-directory/tree/74fd2dd/themes) remains in history.
 
 1. Choose **Code → Download ZIP**, then extract the archive on your computer.
 2. Copy the desired folder from `themes/` to `/_nds/dsi-frontend/themes/` on your SD card.
@@ -62,7 +62,7 @@ or use the [original 1.0-compatible collection](https://github.com/nextcode4u/gl
 Copy the whole theme folder, including its assets. Back up any theme with the same
 folder name before replacing it. Do not copy this repository over your SD root.
 Gloam 1.0/1.1.0 displays the alphabetically first 23 valid theme folders plus
-Built-in. Newer source builds expand this to 64 installed themes plus Built-in;
+Built-in. Gloam 1.2.0 and later support 64 installed themes plus Built-in;
 keep a selection installed if your build still has the earlier limit.
 
 Each pack also includes a lightweight, 1.2-second startup intro using its own
@@ -112,7 +112,7 @@ submission before preparing a pull request.
 
 The [theme format guide](https://github.com/nextcode4u/gloam-shell-ndx/blob/main/docs/guides/THEME_PACKAGES.md)
 lives with Gloam’s source. [catalog.json](catalog.json) lists the entries and their
-requirements. Gloam SD Setup builds after 1.1.0 can browse this catalog, cache
+requirements. Gloam SD Setup 1.2.0 and later can browse this catalog, cache
 `preview.png` screenshots before installation, and download individual themes
 with their credits and license notices. See the [Windows setup guide](https://github.com/nextcode4u/gloam-shell-ndx/blob/main/docs/guides/WINDOWS_SETUP.md#themes).
 

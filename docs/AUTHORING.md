@@ -36,10 +36,10 @@ use independent faces at up to 16 pixels. The profile records size and baseline
 for reproducible glyph placement. Coverage uses four grayscale levels, never RGB
 subpixel smoothing. Other source fonts require a fresh bounds/readability review.
 
-The audio generator composes four bars with a varied second phrase, sustained
-harmony, melodic voices and circular delay tails. Music is 16 kHz, mono PCM16,
-below Gloam’s 1 MiB cap. All cues are also bounded mono PCM16. No recordings from
-commercial games or royalty-free marketplaces are embedded.
+Background loops use the licensed recordings documented in each theme’s `MUSIC.md` (for example, [Aerial](../themes/aerial/MUSIC.md));
+original synthesized UI cues are generated separately. Music is converted offline
+to bounded mono PCM16 WAV files under Gloam’s 1 MiB cap. Preserve each track’s
+credits and redistribution terms when rebuilding or replacing audio.
 
 Packaging writes nine individual ZIPs, illustrated/starter collection ZIPs and SHA256SUMS under `dist/`.
 Paths are ready for extraction into an SD root. Each archive contains its theme
@@ -138,7 +138,9 @@ claiming a hardware performance improvement. No personal SD card is accessed.
 
 ## Full-image materials and illustrated icons
 
-The current packs require Gloam `6aacad1` or later. Their ordinary/focus material
+The current packs require Gloam 1.1.0 or later; Luna, Desktop 98, Classic DS,
+Aero Glass and Pokédex require 1.2.0 for separate header/footer colors. Use
+Gloam 1.2.0 when rebuilding previews for the complete collection. Their ordinary/focus material
 PNGs are complete 256×192 shade fields, sampled without tiling. The optional
 fields add up to 48 KiB per active/preview theme bank; Morrow shares one 24-KiB
 field while retaining its complete translucent parchment composition. Headers
@@ -168,7 +170,7 @@ counts and sizes remain unchanged.
 `tools/buuf_theme.py` checks every retained upstream PNG against
 `source/buuf/UPSTREAM.json` before preparing native icons and controls. The
 original files and license remain unchanged. Its full-image fields, translucent
-labels, Public Sans/Delius typography, original synthesized audio and bounded
+labels, Public Sans/Delius typography, original synthesized UI cues, licensed background music and bounded
 ambient mark use the same runtime contracts as the other packs.
 
 Build with `--theme buuf` after obtaining the verified OFL font inputs. The

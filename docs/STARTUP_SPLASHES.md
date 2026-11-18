@@ -4,8 +4,7 @@ The Splash Builder and command-line converter live in this repository. Gloam
 loads their prepared `.gsp` packages; the console does not need Python or a copy
 of the builder.
 
-Splash playback requires a Gloam build containing commit
-[`82e6116`](https://github.com/nextcode4u/gloam-shell-ndx/commit/82e6116).
+Splash playback requires **Gloam 1.1.0 or later**.
 Gloam 1.0.0 does not support splashes. Existing themes still work without one.
 
 ## Launch from Windows PowerShell
@@ -127,8 +126,8 @@ opened, preserving their global choices and overlay behavior. The previous file
 is backed up when saved. Older builders cannot edit version-2 projects.
 
 The GUI also compresses each layer's prepared frames when this makes the package
-smaller. Compressed exports use **splash format 3**, requiring a matching Gloam
-build with compressed-frame playback. Compression preserves the prepared pixels,
+smaller. Compressed exports use **splash format 3**, supported by Gloam
+1.1.0 and later. Compression preserves the prepared pixels,
 timing and motion controls; it does not drop frames or reduce resolution. Both
 formats use the same editable project files. The standalone Gloam 1.0.0 release
 supports neither format.

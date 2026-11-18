@@ -12,12 +12,12 @@ breathes gently. Pizzicato strings and bassoon, with original UI cues, complete 
 
 ## Install
 
-Requires Gloam's theme format 2 and full-image materials:
-[Gloam 6aacad1 or later](https://github.com/nextcode4u/gloam-shell-ndx/commit/6aacad1e965ddcf36553637ab17ccd475936602c).
+Requires **Gloam 1.1.0 or later**, with theme format 2 and full-image materials.
+Gloam 1.2.0 is recommended to match the current previews.
 This revision does not load in Gloam 1.0.0.
 
 Copy this whole folder to `/_nds/dsi-frontend/themes/buuf/`, then select **BUUF**
-under **START → Appearance → Theme**. Reduced motion holds the header mark still;
+under **START → Appearance → Theme**, press X to preview, then A to apply once ready. Reduced motion holds the header mark still;
 background music and UI sounds follow your audio preferences.
 
 ## Credits and terms

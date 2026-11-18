@@ -207,7 +207,7 @@ with facts at left; Portrait gives artwork a tall left column. These join the
 existing seven top layouts. The six composed layouts reserve separate title,
 artwork and top/bottom navigation regions, including icon-tab captions. Scene
 retains its movable artwork box. Panorama/Dossier/Portrait and medium icons need
-a Gloam build after 1.1.0; older layouts and small/large sizes remain compatible.
+Gloam 1.2.0 or later; older layouts and small/large sizes remain compatible.
 
 **Interface framing** is the `chrome` setting in theme.ini: Full draws the
 header/footer skins and dividers; Minimal leaves these areas open. It does not
