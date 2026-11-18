@@ -21,5 +21,5 @@ recorded music and a startup splash are included. Reduced motion is respected.
 
 See [credits](CREDITS.md), [music attribution](MUSIC.md) and original notices.
 Illustrations interpret Rick and Morty; this is not an official theme.
-Previews use the current Gloam source with selection-ink fixes for menus and settings. The original 1.1.0 binary accepts the pack format but lacks those fixes.
+Previews use Gloam 1.2.0 with selection-ink fixes for menus and settings.
 These are renderer captures, not photographs of a DSi LCD.

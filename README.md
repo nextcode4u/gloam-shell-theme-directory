@@ -23,11 +23,12 @@ Community submissions are welcome. Gloam themes use their own format.
 
 These are original, unofficial interpretations with separate icon sets, controls,
 font pairs, recorded music, UI cues and short startup splashes. No extracted
-operating-system/franchise artwork or audio is included. Luna, Desktop 98, Classic DS, Aero Glass and Pokédex require a source build with the new header/footer theme colors
-(commit `99a5fab` or later); the other two support **Gloam 1.1.0 or later**.
+operating-system/franchise artwork or audio is included. Luna, Desktop 98, Classic DS, Aero Glass and Pokédex require **Gloam 1.2.0 or later**
+for their separate header/footer colors. Portal Terminal and Synthwave support
+**Gloam 1.1.0 or later**.
 Names and marks remain with their respective owners.
-Previews use the current source build, which also fixes selection-text contrast
-in settings and other menus; that fix is not present in the original 1.1.0 binary.
+Use [Gloam 1.2.0](https://github.com/nextcode4u/gloam-shell-ndx/releases/tag/v1.2.0)
+to match the previews, including selection-text and numbered-tab fixes.
 
 Each theme page includes renderer previews, installation instructions and credits.
 Slate, Folio and Phosphor extend their original Gloam designs with the same new

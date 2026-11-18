@@ -310,16 +310,14 @@ Artwork and control skins are prepared specifically for this Gloam pack.
         key in s for key in ("header_text", "footer_text", "header_link_text")
     )
     compatibility = (
-        "Requires a **Gloam source build with header/footer theme colors** "
-        "(commit `99a5fab` or later). The original 1.1.0 binary rejects these new keys."
+        "Requires **Gloam 1.2.0 or later**, including separate header/footer theme colors."
         if uses_chrome_inks
         else "Requires **Gloam 1.1.0 or later**."
     )
     preview_note = (
-        "Previews use the matching Gloam source build with separate chrome inks."
+        "Previews use Gloam 1.2.0 with separate header/footer inks."
         if uses_chrome_inks
-        else "Previews use the current Gloam source with selection-ink fixes for menus and "
-        "settings. The original 1.1.0 binary accepts the pack format but lacks those fixes."
+        else "Previews use Gloam 1.2.0 with selection-ink fixes for menus and settings."
     )
     reading_note = (
         "The celadon LCD surfaces protect text while leaving the illustrated red casing\n"

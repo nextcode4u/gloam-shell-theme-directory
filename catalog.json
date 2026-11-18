@@ -13,9 +13,10 @@
       "configuration_license": "GPL-3.0-or-later",
       "asset_license": "CC0-1.0 project assets; SIL Open Font License 1.1 fonts; CC-BY-4.0 background music",
       "credits": "themes/slate/CREDITS.md",
-      "requires_gloam": "Gloam development build with theme format 2 and full-image material fields",
+      "requires_gloam": "Gloam 1.1.0 or later with theme format 2 and full-image material fields",
       "preview": "themes/slate/preview.png",
-      "minimum_gloam_commit": "6aacad1e965ddcf36553637ab17ccd475936602c"
+      "minimum_gloam_commit": "6aacad1e965ddcf36553637ab17ccd475936602c",
+      "minimum_gloam_version": "1.1.0"
     },
     {
       "id": "folio",
@@ -29,9 +30,10 @@
       "configuration_license": "GPL-3.0-or-later",
       "asset_license": "CC0-1.0 project assets; SIL Open Font License 1.1 fonts; CC-BY-4.0 background music",
       "credits": "themes/folio/CREDITS.md",
-      "requires_gloam": "Gloam development build with theme format 2 and full-image material fields",
+      "requires_gloam": "Gloam 1.1.0 or later with theme format 2 and full-image material fields",
       "preview": "themes/folio/preview.png",
-      "minimum_gloam_commit": "6aacad1e965ddcf36553637ab17ccd475936602c"
+      "minimum_gloam_commit": "6aacad1e965ddcf36553637ab17ccd475936602c",
+      "minimum_gloam_version": "1.1.0"
     },
     {
       "id": "phosphor",
@@ -45,9 +47,10 @@
       "configuration_license": "GPL-3.0-or-later",
       "asset_license": "CC0-1.0 project assets; SIL Open Font License 1.1 fonts; CC-BY-4.0 background music",
       "credits": "themes/phosphor/CREDITS.md",
-      "requires_gloam": "Gloam development build with theme format 2 and full-image material fields",
+      "requires_gloam": "Gloam 1.1.0 or later with theme format 2 and full-image material fields",
       "preview": "themes/phosphor/preview.png",
-      "minimum_gloam_commit": "6aacad1e965ddcf36553637ab17ccd475936602c"
+      "minimum_gloam_commit": "6aacad1e965ddcf36553637ab17ccd475936602c",
+      "minimum_gloam_version": "1.1.0"
     },
     {
       "id": "aerial",
@@ -61,8 +64,9 @@
       "asset_license": "CC0-1.0 project assets; SIL Open Font License 1.1 fonts; CC-BY-4.0 background music",
       "credits": "themes/aerial/CREDITS.md",
       "preview": "themes/aerial/preview.png",
-      "requires_gloam": "Gloam development build with theme format 2 and full-image material fields",
-      "minimum_gloam_commit": "6aacad1e965ddcf36553637ab17ccd475936602c"
+      "requires_gloam": "Gloam 1.1.0 or later with theme format 2 and full-image material fields",
+      "minimum_gloam_commit": "6aacad1e965ddcf36553637ab17ccd475936602c",
+      "minimum_gloam_version": "1.1.0"
     },
     {
       "id": "koi",
@@ -76,8 +80,9 @@
       "asset_license": "CC0-1.0 project assets; SIL Open Font License 1.1 fonts; CC-BY-4.0 background music",
       "credits": "themes/koi/CREDITS.md",
       "preview": "themes/koi/preview.png",
-      "requires_gloam": "Gloam development build with theme format 2 and full-image material fields",
-      "minimum_gloam_commit": "6aacad1e965ddcf36553637ab17ccd475936602c"
+      "requires_gloam": "Gloam 1.1.0 or later with theme format 2 and full-image material fields",
+      "minimum_gloam_commit": "6aacad1e965ddcf36553637ab17ccd475936602c",
+      "minimum_gloam_version": "1.1.0"
     },
     {
       "id": "vesper",
@@ -91,8 +96,9 @@
       "asset_license": "CC0-1.0 project assets; SIL Open Font License 1.1 fonts; CC-BY-4.0 background music",
       "credits": "themes/vesper/CREDITS.md",
       "preview": "themes/vesper/preview.png",
-      "requires_gloam": "Gloam development build with theme format 2 and full-image material fields",
-      "minimum_gloam_commit": "6aacad1e965ddcf36553637ab17ccd475936602c"
+      "requires_gloam": "Gloam 1.1.0 or later with theme format 2 and full-image material fields",
+      "minimum_gloam_commit": "6aacad1e965ddcf36553637ab17ccd475936602c",
+      "minimum_gloam_version": "1.1.0"
     },
     {
       "id": "tidal",
@@ -106,8 +112,9 @@
       "asset_license": "CC0-1.0 project assets; SIL Open Font License 1.1 fonts; CC-BY-4.0 background music",
       "credits": "themes/tidal/CREDITS.md",
       "preview": "themes/tidal/preview.png",
-      "requires_gloam": "Gloam development build with theme format 2 and full-image material fields",
-      "minimum_gloam_commit": "6aacad1e965ddcf36553637ab17ccd475936602c"
+      "requires_gloam": "Gloam 1.1.0 or later with theme format 2 and full-image material fields",
+      "minimum_gloam_commit": "6aacad1e965ddcf36553637ab17ccd475936602c",
+      "minimum_gloam_version": "1.1.0"
     },
     {
       "id": "morrow",
@@ -121,8 +128,9 @@
       "asset_license": "CC0-1.0 project assets; DejaVu font terms; CC-BY-4.0 background music",
       "credits": "themes/morrow/CREDITS.md",
       "preview": "themes/morrow/preview.png",
-      "requires_gloam": "Gloam development build with theme format 2 and full-image material fields",
-      "minimum_gloam_commit": "6aacad1e965ddcf36553637ab17ccd475936602c"
+      "requires_gloam": "Gloam 1.1.0 or later with theme format 2 and full-image material fields",
+      "minimum_gloam_commit": "6aacad1e965ddcf36553637ab17ccd475936602c",
+      "minimum_gloam_version": "1.1.0"
     },
     {
       "id": "buuf",
@@ -136,9 +144,10 @@
       "configuration_license": "GPL-3.0-or-later",
       "asset_license": "CC-BY-NC-SA-2.5 artwork; CC0-1.0 synthesized sounds; SIL Open Font License 1.1 fonts; CC-BY-4.0 background music",
       "credits": "themes/buuf/CREDITS.md",
-      "requires_gloam": "Gloam development build with theme format 2 and full-image material fields",
+      "requires_gloam": "Gloam 1.1.0 or later with theme format 2 and full-image material fields",
       "preview": "themes/buuf/preview.png",
-      "minimum_gloam_commit": "6aacad1e965ddcf36553637ab17ccd475936602c"
+      "minimum_gloam_commit": "6aacad1e965ddcf36553637ab17ccd475936602c",
+      "minimum_gloam_version": "1.1.0"
     },
     {
       "id": "luna",
@@ -151,9 +160,10 @@
       "configuration_license": "GPL-3.0-or-later",
       "asset_license": "CC0-1.0 project-held artwork/UI cues; SIL OFL 1.1 fonts; CC-BY-4.0 recorded music; third-party marks excluded",
       "credits": "themes/luna/CREDITS.md",
-      "requires_gloam": "Gloam source build with theme format 2 and header/footer theme colors (99a5fab or later)",
+      "requires_gloam": "Gloam 1.2.0 or later with theme format 2 and header/footer theme colors",
       "preview": "themes/luna/preview.png",
-      "minimum_gloam_commit": "99a5fab1dd929822ca06c828ff95431a55518019"
+      "minimum_gloam_commit": "99a5fab1dd929822ca06c828ff95431a55518019",
+      "minimum_gloam_version": "1.2.0"
     },
     {
       "id": "desktop-98",
@@ -166,9 +176,10 @@
       "configuration_license": "GPL-3.0-or-later",
       "asset_license": "CC0-1.0 project-held artwork/UI cues; SIL OFL 1.1 fonts; CC-BY-4.0 recorded music; third-party marks excluded",
       "credits": "themes/desktop-98/CREDITS.md",
-      "requires_gloam": "Gloam source build with theme format 2 and header/footer theme colors (99a5fab or later)",
+      "requires_gloam": "Gloam 1.2.0 or later with theme format 2 and header/footer theme colors",
       "preview": "themes/desktop-98/preview.png",
-      "minimum_gloam_commit": "99a5fab1dd929822ca06c828ff95431a55518019"
+      "minimum_gloam_commit": "99a5fab1dd929822ca06c828ff95431a55518019",
+      "minimum_gloam_version": "1.2.0"
     },
     {
       "id": "classic-ds",
@@ -181,9 +192,10 @@
       "configuration_license": "GPL-3.0-or-later",
       "asset_license": "CC0-1.0 project-held artwork/UI cues; SIL OFL 1.1 fonts; CC-BY-4.0 recorded music; third-party marks excluded",
       "credits": "themes/classic-ds/CREDITS.md",
-      "requires_gloam": "Gloam source build with theme format 2 and header/footer theme colors (99a5fab or later)",
+      "requires_gloam": "Gloam 1.2.0 or later with theme format 2 and header/footer theme colors",
       "preview": "themes/classic-ds/preview.png",
-      "minimum_gloam_commit": "99a5fab1dd929822ca06c828ff95431a55518019"
+      "minimum_gloam_commit": "99a5fab1dd929822ca06c828ff95431a55518019",
+      "minimum_gloam_version": "1.2.0"
     },
     {
       "id": "portal-terminal",
@@ -211,9 +223,10 @@
       "configuration_license": "GPL-3.0-or-later",
       "asset_license": "CC0-1.0 project-held artwork/UI cues; SIL OFL 1.1 fonts; CC-BY-4.0 recorded music; third-party marks excluded",
       "credits": "themes/aero-glass/CREDITS.md",
-      "requires_gloam": "Gloam source build with theme format 2 and header/footer theme colors (99a5fab or later)",
+      "requires_gloam": "Gloam 1.2.0 or later with theme format 2 and header/footer theme colors",
       "preview": "themes/aero-glass/preview.png",
-      "minimum_gloam_commit": "99a5fab1dd929822ca06c828ff95431a55518019"
+      "minimum_gloam_commit": "99a5fab1dd929822ca06c828ff95431a55518019",
+      "minimum_gloam_version": "1.2.0"
     },
     {
       "id": "pokedex",
@@ -226,9 +239,10 @@
       "configuration_license": "GPL-3.0-or-later",
       "asset_license": "CC0-1.0 project-held artwork/UI cues; SIL OFL 1.1 fonts; CC-BY-4.0 recorded music; third-party marks excluded",
       "credits": "themes/pokedex/CREDITS.md",
-      "requires_gloam": "Gloam source build with theme format 2 and header/footer theme colors (99a5fab or later)",
+      "requires_gloam": "Gloam 1.2.0 or later with theme format 2 and header/footer theme colors",
       "preview": "themes/pokedex/preview.png",
-      "minimum_gloam_commit": "99a5fab1dd929822ca06c828ff95431a55518019"
+      "minimum_gloam_commit": "99a5fab1dd929822ca06c828ff95431a55518019",
+      "minimum_gloam_version": "1.2.0"
     },
     {
       "id": "synthwave",
