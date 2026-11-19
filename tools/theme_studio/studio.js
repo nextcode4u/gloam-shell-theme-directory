@@ -722,7 +722,10 @@ function renderFields(container, name, keys = null) {
             : (spec.default ?? ""));
     let control, input;
     if (spec.type === "choice") {
-      input = select(spec.choices, value);
+      const legacy = spec.legacy_choices || {};
+      const existing = Object.hasOwn(legacy, value);
+      input = select(existing ? [...spec.choices, value] : spec.choices, value);
+      if (existing) input.options[input.options.length - 1].textContent = legacy[value];
       control = input;
     } else if (spec.type === "color") {
       input = el("input", { value, placeholder: "#RRGGBB" });

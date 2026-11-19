@@ -263,7 +263,8 @@ def check(root, config, metadata=None):
                 error("Invalid text: " + label)
                 continue
             kind = spec["type"]
-            if kind == "choice" and value not in spec["choices"]:
+            if (kind == "choice" and value not in spec["choices"]
+                    and value not in spec.get("legacy_choices", {})):
                 error("Unsupported option: " + label)
             if kind == "number" and (
                 not re.fullmatch("[0-9]+", value)

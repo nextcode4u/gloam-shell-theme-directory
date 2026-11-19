@@ -275,11 +275,16 @@ usable, including cached and offline startup.
 
 ### Top-screen content presets
 
-Layout → **Top content** optionally selects Context, Neighbors, Folder overview,
-Home activity or Smart for development builds of Gloam after 1.2.0. These presets
+Layout → **Top content** offers Theme, Neighbors and Smart for development builds
+of Gloam after 1.2.0. Y remains the console item-details control. These presets
 replace the artwork composition with a bounded content body and bottom tab dock;
 Theme (or Inherit/omit) keeps the original layout. Cards, backgrounds, fonts and
 status skins remain yours. The quick preview uses example facts and artwork,
 not an inspection of your SD library. Use the native preview with a matching
 frontend checkout and verify the result on the console. Published 1.2.0 rejects
 this new key; existing themes are not automatically changed.
+
+Existing themes keep their layout and explicit content preset. Older Context,
+Folder overview, Home activity and Layout only presets remain visible only when
+already used by the loaded theme; unrelated edits preserve them. New designs
+choose Theme, Neighbors or Smart.

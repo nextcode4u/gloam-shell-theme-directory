@@ -57,8 +57,8 @@ SCHEMA = {
         "row_padding": number(0, 12, "2"),
         "large_grid_columns": number(2, 4, "3"),
         "top_content": choice(
-            "theme context neighbors folder activity smart layout",
-            help="Optional content preset for development Gloam after 1.2.0. Theme preserves the layout below. Other presets use a bottom dock: Context shows selected facts; Neighbors shows nearby covers; Folder summarizes the current batch; Activity shows Home shortcuts; Smart chooses by context. Layout only ignores a theme content preset. Users can override this in Gloam.",
+            "theme neighbors smart",
+            help="Optional preset for development Gloam after 1.2.0. Theme follows the layout below. Neighbors shows nearby covers; Smart adapts to the selection. Users press Y for item details and can override this setting in Gloam.",
         ),
         "top_layout": choice(
             "sidebar sidebar_left poster scene spotlight gallery journal panorama dossier portrait",
@@ -148,6 +148,15 @@ SCHEMA = {
     "assets": {
         "prepared": path("Rebuilt at export; GLMART02 avoids many small SD reads.")
     },
+}
+
+
+# Existing authored presets remain valid, but are not offered for new designs.
+SCHEMA["layout"]["top_content"]["legacy_choices"] = {
+    "context": "Context (existing theme)",
+    "folder": "Folder overview (existing theme)",
+    "activity": "Home activity (existing theme)",
+    "layout": "Layout only (existing theme)",
 }
 
 

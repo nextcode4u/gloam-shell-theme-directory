@@ -401,9 +401,28 @@ class ThemeStudioTests(unittest.TestCase):
             self.project.data["config"]["layout"]["top_layout"] = composition
             self.assertEqual(theme_preview.render(self.project).size, (256, 396))
 
+    def test_top_content_rejects_invalid_project_values(self):
+        config = copy.deepcopy(self.project.data["config"])
+        config.setdefault("layout", {})["top_content"] = 5
+        with self.assertRaises(ValueError):
+            self.project.update(config=config)
+
+    def test_existing_theme_content_presets_are_preserved(self):
+        from theme_schema import SCHEMA
+        from theme_validate import parse_ini
+        self.assertEqual(SCHEMA["layout"]["top_content"]["choices"], ["theme", "neighbors", "smart"])
+        for legacy in ("context", "folder", "activity", "layout"):
+            raw = "[theme]\nversion=2\n[layout]\ntop_content=" + legacy + "\n"
+            config = parse_ini(raw)
+            self.assertEqual(config["layout"]["top_content"], legacy)
+            self.project.update(raw=raw)
+            self.assertEqual(self.project.data["config"]["layout"]["top_content"], legacy)
+            self.assertIn("top_content=" + legacy, (self.project.theme / "theme.ini").read_text())
+            self.assertEqual(self.project.state()["report"]["errors"], [])
+
     def test_optional_top_content_presets_preview_without_changing_legacy_layouts(self):
         baseline = theme_preview.render(self.project).tobytes()
-        for mode in ("context", "neighbors", "folder", "activity", "smart", "layout"):
+        for mode in ("theme", "neighbors", "smart"):
             for tabs in ("labels", "icons", "numbered", "pager"):
                 config = copy.deepcopy(self.project.data["config"])
                 config["layout"]["top_content"] = mode

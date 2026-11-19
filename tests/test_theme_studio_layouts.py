@@ -171,6 +171,28 @@ class LayoutJourneys(unittest.TestCase):
                 self.assertEqual(result.size, (32, 32))
                 self.assertEqual(result.getpixel((16, 16)), (185, 88, 225, 255))
 
+    def test_existing_theme_content_preset_survives_an_unrelated_edit(self):
+        with editor() as (page, root, expect):
+            result = page.evaluate("""async () => {
+                const response = await fetch('/api/action', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json',
+                              'X-Studio-Token': document.body.dataset.token},
+                    body: JSON.stringify({action: 'save',
+                        raw: '[theme]\\nversion=2\\n[layout]\\ntop_content=context\\nicon_size=large\\n'})
+                });
+                return {ok: response.ok, body: await response.json()};
+            }""")
+            self.assertTrue(result['ok'], result['body'])
+            page.reload()
+            page.locator('[data-section=layout]').click()
+            picker = page.get_by_label('top content', exact=True)
+            expect(picker).to_have_value('context')
+            expect(picker.locator('option')).to_have_count(4)
+            page.get_by_label('icon size', exact=True).select_option('medium')
+            expect(page.locator('#save-state')).to_have_text('Saved locally')
+            self.assertIn('top_content=context', (root / 'theme/theme.ini').read_text())
+
     def test_top_content_presets_save_preview_and_leave_a_return_to_layout(self):
         with editor() as (page, root, expect):
             page.locator('[data-section=layout]').click()
@@ -181,7 +203,7 @@ class LayoutJourneys(unittest.TestCase):
             config = json.loads((root / 'theme-project.json').read_text())['config']['layout']
             self.assertEqual(config['top_content'], 'neighbors')
             picker = page.get_by_label('top content', exact=True)
-            picker.select_option('context')
+            picker.select_option('smart')
             expect(page.locator('#save-state')).to_have_text('Saved locally')
             picker = page.get_by_label('top content', exact=True)
             picker.select_option('theme')
